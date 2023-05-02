@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "701145036808",
+    "project_id": "danapay-capstone-android-2",
+    "storage_bucket": "danapay-capstone-android-2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701145036808:android:f9f1b87e8d49489e1679bd",
+        "android_client_info": {
+          "package_name": "com.bangkit.bisamerchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "701145036808-2hhd4q343qgi06aio27rh4abvqg706e9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-MSWy27r-nW_CHpd8zU7frQhhnj1ILwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "701145036808-2hhd4q343qgi06aio27rh4abvqg706e9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701145036808:android:bf6e6d22074cf29c1679bd",
+        "android_client_info": {
+          "package_name": "com.bangkit.danapaytesting.data"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "701145036808-2hhd4q343qgi06aio27rh4abvqg706e9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-MSWy27r-nW_CHpd8zU7frQhhnj1ILwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "701145036808-2hhd4q343qgi06aio27rh4abvqg706e9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
