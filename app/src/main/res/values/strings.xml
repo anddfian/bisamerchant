@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">BISA Merchant</string>
+
+    <string name="title_menu_1">Simpel Mengelola Keuangan</string>
+    <string name="title_menu_2">Buat QR dengan mudah</string>
+    <string name="title_menu_3">Selalu Aman</string>
+    <string name="desc_menu_1">Tak perlu lagi ribet dengan catatan keuangan yang rumit, BISA akan memudahkanmu untuk merencanakan dan mengontrol keuangan merchantmu!.</string>
+    <string name="desc_menu_2">Cukup dengan beberapa klik, kamu bisa membuat QR code yang dapat digunakan untuk berbagai keperluan, seperti pembayaran atau pemesanan!</string>
+    <string name="desc_menu_3"> keamanan data pengguna adalah prioritas utama kami. kamu bisa tenang menggunakan BISA tanpa khawatir data pribadimu dicuri atau disalahgunakan!</string>
+    <string name="get_started">Get Started</string>
+    <string name="logo">Logo</string>
+    <string name="onboarding_1">Onboarding 1</string>
+    <string name="onboarding_2">Onboarding 2</string>
+    <string name="onboarding_3">Onboarding 3</string>
 </resources>
