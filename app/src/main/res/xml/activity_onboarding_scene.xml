@@ -22,7 +22,7 @@
             app:layout_constraintStart_toStartOf="parent" />
         <Constraint
             android:id="@+id/btn_get_started"
-            android:layout_width="match_parent"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
@@ -109,7 +109,7 @@
             app:maxWidth="350dp" />
         <Constraint
             android:id="@+id/btn_get_started"
-            android:layout_width="match_parent"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
