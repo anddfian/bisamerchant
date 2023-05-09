@@ -20,11 +20,6 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnGetStarted.setOnClickListener(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_get_started -> {
@@ -33,5 +28,10 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
