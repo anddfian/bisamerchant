@@ -28,4 +28,16 @@ object Auth {
                 Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
             }
     }
+
+    fun resetPasswordEmail(context: Context, email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(context, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { error ->
+                Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+            }
+    }
 }
