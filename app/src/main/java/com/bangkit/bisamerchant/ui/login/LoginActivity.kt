@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 if (email.isNotEmpty() && password.isNotEmpty()) {
                     Auth.login(this, this@LoginActivity, email, password)
                 } else {
-                    Toast.makeText(this, "Email dan Password harap diisi!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Email and Password is required!", Toast.LENGTH_SHORT).show()
                 }
             }
         }
