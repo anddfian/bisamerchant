@@ -21,4 +21,14 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="create_account">Create New Account</string>
     <string name="login_button">Login</string>
+    <string name="term_policy"><![CDATA[Email akan digunakan sebagai ID kamu & menjaga akun selalu aman. Dengan melanjutkan, kamu setuju dengan]]></string>
+
+    <array name="setting">
+        <item>Pengaturan Merchant</item>
+        <item>Syarat dan Ketentuan</item>
+        <item>Kebijakan Privasi</item>
+        <item>Frequently Asked Questions</item>
+        <item>Customer Care</item>
+    </array>
+
 </resources>
