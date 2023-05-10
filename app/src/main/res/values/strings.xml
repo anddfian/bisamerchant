@@ -26,9 +26,9 @@
     <string name="setting_menu">Setting Menu</string>
     <string name="setting">Setting</string>
     <string name="notification">Notification</string>
-    <string name="transaction">Transaction</string>
-    <string name="payment">Payment</string>
-    <string name="withdraw">Withdraw</string>
+    <string name="tab_text_1">Transaction</string>
+    <string name="tab_text_2">Payment</string>
+    <string name="tab_text_3">Withdraw</string>
 
     <array name="setting">
         <item>Pengaturan Merchant</item>
@@ -37,5 +37,35 @@
         <item>Frequently Asked Questions</item>
         <item>Customer Care</item>
     </array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enter_amount">Enter Amount</string>
+    <string name="amount">Amount</string>
+    <string name="bank_name">Bank Name</string>
+    <string name="enter_bank_name">Enter Bank Name</string>
+    <string name="account_number">Account Number</string>
+    <string name="enter_account_number">Enter Account Number</string>
+    <string name="withdraw">Withdraw</string>
+    <string name="qr_label_text">For faster transaction process</string>
+    <string name="qr_title_text">Use Dynamic QR</string>
+    <string name="scan_qr_customer">Scan QR Customer</string>
+    <string name="create_qr">Create QR</string>
+    <string name="total_daily_transactions">Total Daily Transactions</string>
+    <string name="date_example">Monday, 01 May 2023</string>
+    <string name="rupiah">Rp</string>
+    <string name="cash_out">Cash Out</string>
+    <string name="transaction_date_example">01 Mei 2023 - 08:18</string>
+    <string name="transaction_out_amount_example">- Rp261.000</string>
+    <string name="transaction_in_amount_example">Rp245.000</string>
+    <string name="cash_in">Cash In</string>
+    <string name="money_example">250.000</string>
+    <string name="balance">Balance</string>
+    <string name="bisa_store">BISA Store</string>
+    <string name="history">History</string>
+    <string name="profile">Profile</string>
+    <string name="icon_qr">Icon QR</string>
+    <string name="icon_transaction_in">Icon Transaction In</string>
+    <string name="icon_transaction_out">Icon Transaction Out</string>
+    <string name="qr_image">QR Image</string>
 
 </resources>
