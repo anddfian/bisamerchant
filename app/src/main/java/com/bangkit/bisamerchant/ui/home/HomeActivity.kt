@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
+import com.bangkit.bisamerchant.ui.notification.NotificationActivity
 import com.bangkit.bisamerchant.ui.setting.SettingActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -50,7 +51,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_notification -> {
-//                startActivity(Intent(this@HomeActivity, NotificationActivity::class.java))
+                startActivity(Intent(this@HomeActivity, NotificationActivity::class.java))
                 true
             }
 

@@ -13,6 +13,9 @@
         android:theme="@style/Theme.BISAMerchant"
         tools:targetApi="31">
         <activity
+            android:name=".ui.notification.NotificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.home.HomeActivity"
             android:exported="false" />
         <activity
