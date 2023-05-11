@@ -1,12 +1,10 @@
 package com.bangkit.bisamerchant.ui.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.databinding.FragmentPaymentBinding
+import androidx.fragment.app.Fragment
 import com.bangkit.bisamerchant.databinding.FragmentTransactionBinding
 
 class TransactionFragment : Fragment() {

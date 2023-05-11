@@ -59,12 +59,34 @@
     <string name="cash_in_example_1">Cash In - Fulan Store</string>
     <string name="money_example">250.000</string>
     <string name="balance">Balance</string>
-    <string name="bisa_store">BISA Store</string>
+    <string name="bisa_store">Fulan Store</string>
     <string name="history">History</string>
     <string name="profile">Profile</string>
     <string name="icon_qr">Icon QR</string>
     <string name="icon_transaction_in">Icon Transaction In</string>
     <string name="icon_transaction_out">Icon Transaction Out</string>
     <string name="qr_image">QR Image</string>
+    <string name="email_example">bisastore@store.id</string>
+    <string name="location_example">Samarinda</string>
+    <string name="bronze_merchant">Bronze Merchant</string>
+    <string name="benefits1">Benefits 1</string>
+    <string name="benefits2">Benefits 2</string>
+    <string name="silver">Silver</string>
+    <string name="bronze">Bronze</string>
+    <string name="gold">Gold</string>
+    <string name="update_profil_floating_action_button">Update Profil Floating Action Button</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="loyalty_count_example">40</string>
+    <string name="loyalty_target_example">100</string>
+    <string name="bronze_merchant_benefits">Bronze Merchant Benefits</string>
+    <string name="silver_merchant_benefits">Silver Merchant Benefits</string>
+    <string name="gold_merchant_benefits">Gold Merchant Benefits</string>
+    <string name="bronze_benefits_1">Limit for receiving money and withdrawing balances per month is up to \nRp5.000.000</string>
+    <string name="bronze_benefits_2">Free Withdrawal Fees</string>
+    <string name="silver_benefits_1">Additional limits for receiving money and withdrawing balances per month up to \nRp170.000.000</string>
+    <string name="silver_benefits_2">0.7% Withdrawal Fees</string>
+    <string name="gold_benefits_1">Additional limits for receiving money and withdrawing balances per month up to \nRp200.000.000</string>
+    <string name="gold_benefits_2">0.7% Withdrawal Fees</string>
+    <string name="minimarket">Minimarket</string>
 
 </resources>

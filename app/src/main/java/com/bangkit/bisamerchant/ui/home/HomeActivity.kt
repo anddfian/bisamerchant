@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
 import com.bangkit.bisamerchant.ui.notification.NotificationActivity
+import com.bangkit.bisamerchant.ui.profile.ProfileActivity
 import com.bangkit.bisamerchant.ui.setting.SettingActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -19,30 +20,31 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeActivity : AppCompatActivity() {
 
-    private var binding: ActivityHomeBinding? = null
-
-    companion object {
-        @StringRes
-        private val TAB_TITLES = intArrayOf(
-            R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3
-        )
-
-        @DrawableRes
-        private val TAB_ICONS = intArrayOf(
-            R.drawable.ic_transaction_24, R.drawable.ic_payment_24, R.drawable.ic_withdraw_24
-        )
-    }
+    private var _binding: ActivityHomeBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        _binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setSupportActionBar(binding?.topAppBar)
-        supportActionBar?.title = ""
+        initTopAppBar()
+        initClickListener()
         tabLayoutConnector()
     }
 
+    private fun initTopAppBar() {
+        setSupportActionBar(binding.topAppBar)
+        supportActionBar?.title = ""
+    }
+    private fun initClickListener() {
+        binding.btnHistory.setOnClickListener {
+//            startActivity(Intent(this@HomeActivity, HistoryActivity::class.java))
+        }
+        binding.btnProfileMerchant.setOnClickListener {
+            startActivity(Intent(this@HomeActivity, ProfileActivity::class.java))
+        }
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
         return true
@@ -75,5 +77,22 @@ class HomeActivity : AppCompatActivity() {
         }.attach()
 
         supportActionBar?.elevation = 0f
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    companion object {
+        @StringRes
+        private val TAB_TITLES = intArrayOf(
+            R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3
+        )
+
+        @DrawableRes
+        private val TAB_ICONS = intArrayOf(
+            R.drawable.ic_transaction_24, R.drawable.ic_payment_24, R.drawable.ic_withdraw_24
+        )
     }
 }
