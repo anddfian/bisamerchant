@@ -100,5 +100,8 @@
     <color name="md_theme_dark_surfaceDim">#121316</color>
     <color name="md_theme_dark_surfaceBright">#38393C</color>
     <color name="Success">#40B862</color>
+    <color name="Gold">#FFD700</color>
+    <color name="Bronze">#CD7F32</color>
+    <color name="Silver">#C0C0C0</color>
     <color name="white">#fff</color>
 </resources>

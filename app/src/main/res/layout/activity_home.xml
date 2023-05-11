@@ -42,7 +42,7 @@
             android:background="?attr/colorPrimary">
 
             <Button
-                android:id="@+id/btn_report"
+                android:id="@+id/btn_history"
                 style="@style/Widget.Material3.Button.IconButton.Outlined"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -62,9 +62,9 @@
                 android:text="@string/history"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintEnd_toEndOf="@id/btn_report"
-                app:layout_constraintStart_toStartOf="@id/btn_report"
-                app:layout_constraintTop_toBottomOf="@id/btn_report" />
+                app:layout_constraintEnd_toEndOf="@id/btn_history"
+                app:layout_constraintStart_toStartOf="@id/btn_history"
+                app:layout_constraintTop_toBottomOf="@id/btn_history" />
 
             <Button
                 android:id="@+id/btn_profile_merchant"
