@@ -5,62 +5,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.history.TransactionHistoryActivity">
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <include layout="@layout/total_transaction" />
+    <include
+        android:id="@+id/transaction_toolbar"
+        layout="@layout/total_transaction" />
 
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transaction_toolbar">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/transaction_out_card" />
+
+            <include layout="@layout/transaction_in_card" />
+
+            <include layout="@layout/transaction_out_card" />
+
+            <include layout="@layout/transaction_out_card" />
+
+            <include layout="@layout/transaction_in_card" />
+
+            <include layout="@layout/transaction_in_card" />
+
+            <include layout="@layout/transaction_out_card" />
+
+            <include layout="@layout/transaction_in_card" />
+
+            <include layout="@layout/transaction_in_card" />
+
+            <include layout="@layout/transaction_out_card" />
+
+            <include layout="@layout/transaction_out_card" />
+
+            <include layout="@layout/transaction_in_card" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/md_theme_light_surface"
-        android:gravity="center">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
+            android:id="@+id/btn_filter"
             style="@style/Widget.Material3.Button.TextButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="Filter"
-            android:background="@color/md_theme_light_surface"
-            app:icon="@drawable/filter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </LinearLayout>
+            app:icon="@drawable/filter" />
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
