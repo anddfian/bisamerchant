@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
+import com.bangkit.bisamerchant.ui.history.TransactionHistoryActivity
 import com.bangkit.bisamerchant.ui.notification.NotificationActivity
 import com.bangkit.bisamerchant.ui.profile.ProfileActivity
 import com.bangkit.bisamerchant.ui.setting.SettingActivity
@@ -39,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
     }
     private fun initClickListener() {
         binding.btnHistory.setOnClickListener {
-//            startActivity(Intent(this@HomeActivity, HistoryActivity::class.java))
+            startActivity(Intent(this@HomeActivity, TransactionHistoryActivity::class.java))
         }
         binding.btnProfileMerchant.setOnClickListener {
             startActivity(Intent(this@HomeActivity, ProfileActivity::class.java))
