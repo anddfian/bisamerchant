@@ -13,6 +13,9 @@
         android:theme="@style/Theme.BISAMerchant"
         tools:targetApi="31">
         <activity
+            android:name=".ui.pin.PinActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.history.TransactionHistoryActivity"
             android:exported="false" />
         <activity

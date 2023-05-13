@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.pin.PinActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/top_app_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:paddingEnd="16dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIconTint="@color/white"
+            app:titleTextColor="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:id="@+id/tv_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/pin_title"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_app_bar_container" />
+
+    <LinearLayout
+        android:id="@+id/codeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginHorizontal="47dp"
+        android:layout_marginVertical="24dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_pin">
+
+        <EditText
+            android:id="@+id/digit1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_rounded"
+            android:inputType="numberPassword"
+            android:labelFor="@id/digit1"
+            android:maxLength="1"
+            android:textAlignment="center"
+            android:textCursorDrawable="@drawable/cursor_horizontal"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/digit2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_rounded"
+            android:inputType="numberPassword"
+            android:labelFor="@id/digit2"
+            android:maxLength="1"
+            android:textAlignment="center"
+            android:textCursorDrawable="@drawable/cursor_horizontal"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/digit3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_rounded"
+            android:inputType="numberPassword"
+            android:labelFor="@id/digit3"
+            android:maxLength="1"
+            android:textAlignment="center"
+            android:textCursorDrawable="@drawable/cursor_horizontal"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/digit4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_rounded"
+            android:inputType="numberPassword"
+            android:labelFor="@id/digit4"
+            android:maxLength="1"
+            android:textAlignment="center"
+            android:textCursorDrawable="@drawable/cursor_horizontal"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/digit5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_rounded"
+            android:inputType="numberPassword"
+            android:labelFor="@id/digit5"
+            android:maxLength="1"
+            android:textAlignment="center"
+            android:textCursorDrawable="@drawable/cursor_horizontal"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/digit6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_rounded"
+            android:inputType="numberPassword"
+            android:labelFor="@id/digit6"
+            android:maxLength="1"
+            android:textAlignment="center"
+            android:textCursorDrawable="@drawable/cursor_horizontal"
+            android:textSize="24sp" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

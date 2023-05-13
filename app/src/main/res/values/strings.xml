@@ -88,7 +88,7 @@
     <string name="gold_benefits_1">Additional limits for receiving money and withdrawing balances per month up to \nRp200.000.000</string>
     <string name="gold_benefits_2">0.7% Withdrawal Fees</string>
     <string name="minimarket">Minimarket</string>
+    <string name="pin_title">Enter your account PIN to continue</string>
     <string name="share">share</string>
     <string name="share_action">Bagikan</string>
-
 </resources>
