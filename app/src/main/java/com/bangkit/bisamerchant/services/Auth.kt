@@ -63,4 +63,8 @@ object Auth {
                 Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
             }
     }
+
+    fun getEmail(): String? {
+        return auth.currentUser?.email
+    }
 }
