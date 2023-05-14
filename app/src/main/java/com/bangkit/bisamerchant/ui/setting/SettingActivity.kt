@@ -1,11 +1,13 @@
 package com.bangkit.bisamerchant.ui.setting
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivitySettingBinding
 import com.bangkit.bisamerchant.services.Auth
+import com.bangkit.bisamerchant.ui.faq.FaqActivity
 
 class SettingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivitySettingBinding? = null
@@ -24,6 +26,10 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_logout -> {
                 Auth.logout(this, this@SettingActivity)
             }
+
+            R.id.btn_faq -> {
+                startActivity(Intent(this@SettingActivity, FaqActivity::class.java))
+            }
         }
     }
 
@@ -34,4 +40,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setupClickListeners() {
         binding.btnLogout.setOnClickListener(this)
-    }}
+        binding.btnFaq.setOnClickListener(this)
+    }
+}
