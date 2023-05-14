@@ -43,6 +43,9 @@
             android:name=".ui.termpolicy.TermConditionActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.register.MerchantRegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.register.UserRegisterActivity"
             android:exported="false" />
         <activity

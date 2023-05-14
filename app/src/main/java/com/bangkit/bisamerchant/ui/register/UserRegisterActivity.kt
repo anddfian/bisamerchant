@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityUserRegisterBinding
+import com.bangkit.bisamerchant.services.Auth
 import com.bangkit.bisamerchant.ui.termpolicy.PrivacyPolicyActivity
 import com.bangkit.bisamerchant.ui.termpolicy.TermConditionActivity
 
@@ -17,10 +19,8 @@ class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
         _binding = ActivityUserRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.tvTerm.setOnClickListener(this)
-        binding.tvPolicy.setOnClickListener(this)
-        binding.btnLogin.setOnClickListener(this)
-        binding.btnCreateAccount.setOnClickListener(this)
+
+        setupClickListeners()
     }
 
     override fun onClick(v: View) {
@@ -36,9 +36,26 @@ class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_login -> {
                 finish()
             }
-            R.id.btn_create_account -> {
-                val intent = Intent(this@UserRegisterActivity, MerchantRegisterActivity::class.java)
-                startActivity(intent)
+            R.id.btn_register -> {
+                val name = binding.tilRegistName.editText?.text.toString()
+                val email = binding.tilRegistEmail.editText?.text.toString()
+                val password = binding.tilRegistPassword.editText?.text.toString()
+                val pin = binding.tilRegistPin.editText?.text.toString()
+                if (name.isEmpty()) {
+                    Toast.makeText(this, "Name is required!", Toast.LENGTH_SHORT).show()
+                } else if (email.isEmpty()) {
+                    Toast.makeText(this, "Email is required!", Toast.LENGTH_SHORT).show()
+                } else if (password.isEmpty()) {
+                    Toast.makeText(this, "Password is required!", Toast.LENGTH_SHORT).show()
+                } else if (password.length < 6) {
+                    Toast.makeText(this, "Password less than 6 digit!", Toast.LENGTH_SHORT).show()
+                } else if (pin.isEmpty()) {
+                    Toast.makeText(this, "PIN is required!", Toast.LENGTH_SHORT).show()
+                } else if (pin.length < 6) {
+                    Toast.makeText(this, "PIN less than 6 digit!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Auth.register(this@UserRegisterActivity, name, email, password, pin)
+                }
             }
         }
     }
@@ -46,5 +63,12 @@ class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun setupClickListeners() {
+        binding.tvTerm.setOnClickListener(this)
+        binding.tvPolicy.setOnClickListener(this)
+        binding.btnLogin.setOnClickListener(this)
+        binding.btnRegister.setOnClickListener(this)
     }
 }
