@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.bangkit.bisamerchant.databinding.ActivitySplashScreenBinding
 import com.bangkit.bisamerchant.services.Auth
+import com.bangkit.bisamerchant.services.Merchant
 import com.bangkit.bisamerchant.ui.home.HomeActivity
 import com.bangkit.bisamerchant.ui.onboarding.OnboardingActivity
+import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -18,25 +21,14 @@ class SplashScreenActivity : AppCompatActivity() {
     private var _binding: ActivitySplashScreenBinding? = null
     private val binding get() = _binding!!
 
+    private val threeSecond = 3000L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        CoroutineScope(Dispatchers.Default).launch {
-            delay(THREE_SECOND)
-
-            val isLogged = Auth.isLogged()
-            if(isLogged) {
-                val intent = Intent(this@SplashScreenActivity, HomeActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else {
-                val intent = Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
+        startSplashScreen()
     }
 
     override fun onDestroy() {
@@ -44,7 +36,33 @@ class SplashScreenActivity : AppCompatActivity() {
         _binding = null
     }
 
-    companion object {
-        private const val THREE_SECOND = 3000L
+    private fun startSplashScreen() {
+        CoroutineScope(Dispatchers.Default).launch {
+            delay(threeSecond)
+
+            val isLogged = Auth.isLogged()
+            if(isLogged) {
+                Merchant.checkMerchantExists(
+                    onSuccess = { exists ->
+                        if (exists) {
+                            val intent = Intent(this@SplashScreenActivity, HomeActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            val intent = Intent(this@SplashScreenActivity, MerchantRegisterActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    },
+                    onFailure = { exception ->
+                        Toast.makeText(this@SplashScreenActivity, exception.localizedMessage, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            } else {
+                val intent = Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 }
