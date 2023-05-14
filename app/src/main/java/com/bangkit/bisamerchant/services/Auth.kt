@@ -51,4 +51,16 @@ object Auth {
         context.startActivity(intent)
         activity.finish()
     }
+
+    fun register(context: Context, name: String, email: String, password: String, pin: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Owner.addOwner(context, name, email, pin)
+                }
+            }
+            .addOnFailureListener { error ->
+                Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+            }
+    }
 }
