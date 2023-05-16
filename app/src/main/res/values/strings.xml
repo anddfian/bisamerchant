@@ -29,14 +29,6 @@
     <string name="tab_text_1">Transaction</string>
     <string name="tab_text_2">Payment</string>
     <string name="tab_text_3">Withdraw</string>
-
-    <array name="setting">
-        <item>Pengaturan Merchant</item>
-        <item>Syarat dan Ketentuan</item>
-        <item>Kebijakan Privasi</item>
-        <item>Frequently Asked Questions</item>
-        <item>Customer Care</item>
-    </array>
     <string name="enter_amount">Enter Amount</string>
     <string name="amount">Amount</string>
     <string name="bank_name">Bank Name</string>
