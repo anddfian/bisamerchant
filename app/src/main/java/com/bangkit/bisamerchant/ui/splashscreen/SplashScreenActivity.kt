@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.bangkit.bisamerchant.databinding.ActivitySplashScreenBinding
 import com.bangkit.bisamerchant.services.Auth
 import com.bangkit.bisamerchant.services.Merchant
@@ -28,12 +29,17 @@ class SplashScreenActivity : AppCompatActivity() {
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupNoDarkMode()
         startSplashScreen()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun setupNoDarkMode() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     private fun startSplashScreen() {
