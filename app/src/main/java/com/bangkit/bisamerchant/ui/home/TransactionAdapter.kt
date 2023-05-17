@@ -1,7 +1,6 @@
 package com.bangkit.bisamerchant.ui.home
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +37,7 @@ class TransactionAdapter(private val listTransaction: ArrayList<Transaction>) :
             transactionCard.setOnClickListener {
                 val intent = Intent(holder.itemView.context, DetailTransactionActivity::class.java)
                 intent.putExtra(DetailTransactionActivity.EXTRA_ID, transaction.id)
-                ContextCompat.startActivity(holder.itemView.context, intent, Bundle.EMPTY)
+                ContextCompat.startActivity(holder.itemView.context, intent, null)
             }
             if (transaction.trxType == "PAYMENT") {
                 ivTransactionImage.setImageDrawable(
@@ -67,7 +66,10 @@ class TransactionAdapter(private val listTransaction: ArrayList<Transaction>) :
                     R.string.cash_out
                 )
                 tvAmount.text =
-                    holder.tvAmount.context.getString(R.string.minus_rp, Utils.currencyFormat(transaction.amount))
+                    holder.tvAmount.context.getString(
+                        R.string.minus_rp,
+                        Utils.currencyFormat(transaction.amount)
+                    )
             }
             tvTransactionSupport.text = transaction.timestamp?.let { simpleDateFormatToday(it) }
         }

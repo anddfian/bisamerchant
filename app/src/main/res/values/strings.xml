@@ -106,4 +106,5 @@
     <string name="no_transaction_today">Tidak ada transaksi hari ini</string>
     <string name="rp">Rp%1$s</string>
     <string name="minus_rp">- Rp%1$s</string>
+    <string name="payment">Payment</string>
 </resources>

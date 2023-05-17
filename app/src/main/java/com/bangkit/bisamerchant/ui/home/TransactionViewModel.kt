@@ -19,7 +19,7 @@ class TransactionViewModel(private val repository: TransactionRepository) : View
         viewModelScope.launch {
             val querySnapshot = repository.getTransactionsToday()
             val data = repository.processTransactionQuerySnapshot(querySnapshot)
-            val totalAmount = repository.getTotalDailyTransactions(data)
+            val totalAmount = repository.getTotalAmountTransactions(data)
 
             _transactions.value = data
             _totalAmountTransactionToday.value = totalAmount
