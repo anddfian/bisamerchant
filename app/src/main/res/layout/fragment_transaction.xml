@@ -3,41 +3,84 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/transaction_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_light_surface"
     tools:context=".ui.home.TransactionFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/daily_transaction" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bottom"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
 
-        <include layout="@layout/transaction_out_card" />
+            <TextView
+                android:id="@+id/tv_daily_transactions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/total_daily_transactions"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
-        <include layout="@layout/transaction_in_card" />
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_daily_transactions"
+                android:text="@string/date_example"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
-        <include layout="@layout/transaction_out_card" />
+            <TextView
+                android:id="@+id/tv_rupiah"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_date"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="4dp"
+                android:text="@string/rupiah"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
-        <include layout="@layout/transaction_out_card" />
+            <TextView
+                android:id="@+id/tv_amount_daily_transactions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_date"
+                android:layout_marginTop="16dp"
+                android:layout_toEndOf="@id/tv_rupiah"
+                android:text="@string/money_example"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
-        <include layout="@layout/transaction_in_card" />
+            <Button
+                android:id="@+id/btn_history"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@string/see_all" />
 
-        <include layout="@layout/transaction_in_card" />
+        </RelativeLayout>
 
-        <include layout="@layout/transaction_out_card" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_transactions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/transaction_card" />
 
-        <include layout="@layout/transaction_in_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_out_card" />
-
-        <include layout="@layout/transaction_in_card" />
-
-
+        <TextView
+            android:id="@+id/tv_no_transactions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="24dp"
+            android:gravity="center"
+            android:text="@string/no_transaction_today"
+            android:visibility="gone" />
     </LinearLayout>
 
 </FrameLayout>
