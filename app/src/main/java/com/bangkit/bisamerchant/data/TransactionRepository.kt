@@ -1,8 +1,10 @@
 package com.bangkit.bisamerchant.data
 
+import com.bangkit.bisamerchant.data.response.DetailTransaction
 import com.bangkit.bisamerchant.data.response.Transaction
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -22,6 +24,10 @@ class TransactionRepository(
 
         return@withContext db.collection("transaction").whereEqualTo("merchantId", merchantId).get()
             .await()
+    }
+
+    suspend fun getTransactionById(id: String): DocumentSnapshot = withContext(Dispatchers.IO) {
+        return@withContext db.collection("transaction").document(id).get().await()
     }
 
     suspend fun getTransactionsToday(): QuerySnapshot = withContext(Dispatchers.IO) {
@@ -54,7 +60,40 @@ class TransactionRepository(
         return data
     }
 
-    fun getTotalDailyTransactions(listTransactions: List<Transaction>): Long {
+
+    fun processTransactionDocumentSnapshot(documentSnapshot: DocumentSnapshot): DetailTransaction {
+        val id = documentSnapshot.id
+        val amount = documentSnapshot.getLong("amount")
+        val merchantId = documentSnapshot.getString("merchantId")
+        val trxType = documentSnapshot.getString("trxType")
+        val timestamp = documentSnapshot.getLong("timestamp")
+
+        if (trxType == "PAYMENT") {
+            val payerId = documentSnapshot.getString("payerId")
+            return DetailTransaction(
+                id = id,
+                amount = amount,
+                merchantId = merchantId,
+                payerId = payerId,
+                trxType = trxType,
+                timestamp = timestamp
+            )
+        }
+
+        val bankAccountNo = documentSnapshot.getLong("bankAccountNo")
+        val bankInst = documentSnapshot.getString("bankInst")
+        return DetailTransaction(
+            id = id,
+            amount = amount,
+            merchantId = merchantId,
+            bankAccountNo = bankAccountNo,
+            bankInst = bankInst,
+            trxType = trxType,
+            timestamp = timestamp
+        )
+    }
+
+    fun getTotalAmountTransactions(listTransactions: List<Transaction>): Long {
         return listTransactions.sumOf { it.amount }
     }
 

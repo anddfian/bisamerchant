@@ -5,6 +5,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 
+
 object Utils {
     fun currencyFormat(money: Long?): String {
         val formatter: NumberFormat = DecimalFormat("#,###")

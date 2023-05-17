@@ -1,9 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.notification.NotificationActivity">
 
-<include layout="@layout/invoice_card"/>
-</LinearLayout>
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/top_app_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:paddingEnd="16dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIconTint="@color/white"
+            app:titleTextColor="@color/white"
+            app:menu="@menu/invoice_app_bar"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/invoice_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:background="@color/md_theme_light_surface"
+        android:visibility="gone"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_invoice_logo"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="32dp"
+                android:src="@drawable/ic_logo_colorized" />
+
+            <TextView
+                android:id="@+id/tv_invoice_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_invoice_logo"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:drawablePadding="8sp"
+                android:text="Transaksi berhasil"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textSize="18sp"
+                app:drawableLeftCompat="@drawable/ic_check_24" />
+
+
+            <TextView
+                android:id="@+id/tv_invoice_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_invoice_status"
+                android:layout_marginVertical="12dp"
+                android:layout_marginStart="16dp"
+                android:gravity="bottom"
+                android:text="01 Mei 2023 - 08:18"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_invoice_date"
+                android:layout_marginTop="16dp" />
+
+            <TableLayout
+                android:id="@+id/tl_invoice_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_invoice_date"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:stretchColumns="1">
+
+                <TableRow android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:gravity="start"
+                        android:text="ID Merchant"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                    <TextView
+                        android:id="@+id/merchant_id"
+                        android:gravity="end"
+                        android:text="2eqwdszxdgerdfgh"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/account_no_container"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:gravity="start"
+                        android:text="Nomor Rekening"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                    <TextView
+                        android:id="@+id/account_no"
+                        android:gravity="end"
+                        android:text="1682955491721"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/payer_id_container"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:gravity="start"
+                        android:text="ID Customer"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                    <TextView
+                        android:id="@+id/payer_id"
+                        android:gravity="end"
+                        android:text="ju89xkia0kxo92u17"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/bank_name_container"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:gravity="start"
+                        android:text="Nama Bank"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                    <TextView
+                        android:id="@+id/bank_name"
+                        android:gravity="end"
+                        android:text="BCA"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                </TableRow>
+
+                <TableRow android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:gravity="start"
+                        android:text="Jenis Transaksi"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                    <TextView
+                        android:id="@+id/trx_type"
+                        android:gravity="end"
+                        android:text="Withdraw"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                </TableRow>
+
+                <TableRow android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:gravity="start"
+                        android:text="ID Transaksi"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                    <TextView
+                        android:id="@+id/transaction_id"
+                        android:gravity="end"
+                        android:text="2R6a1WK83JCOUfQ0UbWd"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+                </TableRow>
+
+
+            </TableLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tl_invoice_detail"
+                android:layout_marginTop="16dp" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tl_invoice_detail"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="32dp"
+                android:stretchColumns="0">
+
+                <TextView
+                    android:gravity="start"
+                    android:text="Total"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                <TextView
+                    android:id="@+id/total_amount"
+                    android:gravity="end"
+                    android:text="Rp65.000"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+            </TableLayout>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

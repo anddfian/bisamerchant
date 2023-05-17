@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bangkit.bisamerchant.data.TransactionRepository
 import com.bangkit.bisamerchant.di.Injection
 import com.bangkit.bisamerchant.ui.home.TransactionViewModel
+import com.bangkit.bisamerchant.ui.invoice.DetailTransactionViewModel
 
 class ViewModelTransactionFactory constructor(private val transactionRepository: TransactionRepository) :
     ViewModelProvider.NewInstanceFactory() {
@@ -13,6 +14,8 @@ class ViewModelTransactionFactory constructor(private val transactionRepository:
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TransactionViewModel::class.java)) {
             return TransactionViewModel(transactionRepository) as T
+        } else if (modelClass.isAssignableFrom(DetailTransactionViewModel::class.java)) {
+            return DetailTransactionViewModel(transactionRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
