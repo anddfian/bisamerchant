@@ -5,7 +5,7 @@
     android:id="@+id/withdraw_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/md_theme_light_surface"
     tools:context=".ui.home.WithdrawFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout

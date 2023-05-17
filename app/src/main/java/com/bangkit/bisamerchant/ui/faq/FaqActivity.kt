@@ -42,7 +42,7 @@ class FaqActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(true)
-            title = "Notification"
+            title = "FAQ"
         }
     }
 
