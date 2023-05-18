@@ -43,6 +43,7 @@ object Merchant {
                     "merchantName" to name,
                     "merchantAddress" to location,
                     "merchantType" to type,
+                    "merchantActive" to "Active",
                     "balance" to 0
                 )
 
