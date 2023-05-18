@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">BISA Merchant</string>
-
     <string name="title_menu_1">Simpel Mengelola Keuangan</string>
     <string name="title_menu_2">Buat QR dengan mudah</string>
     <string name="title_menu_3">Selalu Aman</string>
@@ -61,6 +60,8 @@
     <string name="email_example">bisastore@store.id</string>
     <string name="location_example">Samarinda</string>
     <string name="bronze_merchant">Bronze Merchant</string>
+    <string name="silver_merchant">Silver Merchant</string>
+    <string name="gold_merchant">Gold Merchant</string>
     <string name="benefits1">Benefits 1</string>
     <string name="benefits2">Benefits 2</string>
     <string name="silver">Silver</string>
@@ -68,8 +69,9 @@
     <string name="gold">Gold</string>
     <string name="update_profil_floating_action_button">Update Profil Floating Action Button</string>
     <string name="update_profile">Update Profile</string>
-    <string name="loyalty_count_example">40</string>
-    <string name="loyalty_target_example">100</string>
+    <string name="loyalty_count_bronze">0</string>
+    <string name="loyalty_target_silver">100</string>
+    <string name="loyalty_target_gold">200</string>
     <string name="bronze_merchant_benefits">Bronze Merchant Benefits</string>
     <string name="silver_merchant_benefits">Silver Merchant Benefits</string>
     <string name="gold_merchant_benefits">Gold Merchant Benefits</string>
