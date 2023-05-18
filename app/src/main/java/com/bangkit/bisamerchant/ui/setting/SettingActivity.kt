@@ -64,6 +64,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        _merchantViewModel = null
     }
 
     private fun initTopAppBar() {
