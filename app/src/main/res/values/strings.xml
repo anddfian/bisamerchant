@@ -111,4 +111,10 @@
     <string name="terjadi_kesalahan">Terjadi kesalahan</string>
     <string name="transaksi_berhasil">Transaksi berhasil</string>
     <string name="uang_tidak_cukup">Uang tidak cukup</string>
+    <string name="merchant_name">Merchant Name</string>
+    <string name="max_5mb">Max. 5MB</string>
+    <string name="merchant_location">Merchant Location</string>
+    <string name="merchant_type">Merchant Type</string>
+    <string name="register">Register</string>
+    <string name="click_to_upload_a_photo">Click to upload a photo</string>
 </resources>

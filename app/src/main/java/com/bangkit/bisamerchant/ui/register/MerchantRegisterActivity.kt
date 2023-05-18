@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityMerchantRegisterBinding
 import com.bangkit.bisamerchant.services.Merchant
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 
 class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityMerchantRegisterBinding? = null
@@ -31,6 +32,64 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         setupClickListeners()
+        updateUI()
+    }
+
+    private fun updateUI() {
+        val merchantItems = arrayOf(
+            "Restoran",
+            "Cafe",
+            "Toko Baju",
+            "Minimarket",
+            "Apotek",
+            "Salon",
+            "Barbershop",
+            "Warung Makan",
+            "Kedai Kopi",
+            "Butik",
+            "Toko Elektronik",
+            "Supermarket",
+            "Bengkel Motor",
+            "Bengkel Mobil",
+            "Toko Perlengkapan Bayi",
+            "Gudang",
+            "Pasar Swalayan",
+            "Toko Sepatu",
+            "Pabrik",
+            "Toko Perhiasan",
+            "Toko Alat Tulis",
+            "Kantor Desa",
+            "Toko Furniture",
+            "Galeri Seni",
+            "Studio Fotografi",
+            "Toko Roti",
+            "Toko Mainan",
+            "Kios",
+            "Restoran Cepat Saji",
+            "Toko Handphone",
+            "Bakery",
+            "Toko Buku",
+            "Sekolah",
+            "Universitas",
+            "Hotel",
+            "Motel",
+            "Rumah Makan Padang",
+            "Rumah Makan Jawa",
+            "Toko Oleh-Oleh",
+            "Pusat Perbelanjaan",
+            "Toko Aksesoris",
+            "Tempat Hiburan",
+            "Toko Souvenir",
+            "Rumah Makan Betawi",
+            "Toko Jam Tangan",
+            "Bengkel Elektronik",
+            "Toko Komputer",
+            "Toko Barang Antik",
+            "Toko Kain",
+            "Katering"
+        )
+
+        (binding.edMerchantType as? MaterialAutoCompleteTextView)?.setSimpleItems(merchantItems)
     }
 
     override fun onClick(v: View) {

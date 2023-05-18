@@ -31,7 +31,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Click to upload a photo"
+        android:text="@string/click_to_upload_a_photo"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/iv_regist_upload"
         app:layout_constraintStart_toStartOf="@+id/iv_regist_upload"
@@ -41,7 +41,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Max. 5MB"
+        android:text="@string/max_5mb"
         app:layout_constraintEnd_toEndOf="@+id/textView"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
-        android:hint="Merchant Name"
+        android:hint="@string/merchant_name"
         app:helperText="Enter Merchant Name"
         app:helperTextEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Merchant Location"
+        android:hint="@string/merchant_location"
         app:helperText="Enter Merchant Location"
         app:helperTextEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Merchant Type"
+        android:hint="@string/merchant_type"
         app:helperText="Search Merchant Type"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         app:layout_constraintEnd_toEndOf="parent"
@@ -99,11 +99,13 @@
         app:startIconDrawable="@drawable/ic_search_24">
 
         <AutoCompleteTextView
+            android:id="@+id/ed_merchant_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none"
+            android:inputType="text"
             />
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/btn_register_merchant"
@@ -111,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Register"
+        android:text="@string/register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
