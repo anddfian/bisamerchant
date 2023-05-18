@@ -44,7 +44,8 @@ object Merchant {
                     "merchantAddress" to location,
                     "merchantType" to type,
                     "merchantActive" to "Active",
-                    "balance" to 0
+                    "balance" to 0,
+                    "transactionCount" to 0
                 )
 
                 merchantCollection.add(data)
