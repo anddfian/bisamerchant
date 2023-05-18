@@ -55,7 +55,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
                 TODO("QR-039")
             }
             R.id.btn_logout -> {
-                merchantViewModel.observeMerchantActive()
+                merchantViewModel.deleteMerchant()
                 Auth.logout(this, this@SettingActivity)
             }
         }
