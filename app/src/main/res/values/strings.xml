@@ -107,4 +107,5 @@
     <string name="rp">Rp%1$s</string>
     <string name="minus_rp">- Rp%1$s</string>
     <string name="payment">Payment</string>
+    <string name="share_qr">Share QR</string>
 </resources>

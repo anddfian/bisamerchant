@@ -10,14 +10,56 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/qr_dynamic_switch"
-            layout="@layout/qr_dynamic_switch" />
+        <RelativeLayout
+            android:id="@+id/switch_qr_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bottom"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_ic_qr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/icon_qr"
+                android:src="@drawable/ic_payment_24" />
+
+            <TextView
+                android:id="@+id/tv_qr_dynamic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@id/iv_ic_qr"
+                android:text="@string/qr_title_text"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+            <TextView
+                android:id="@+id/tv_qr_dynamic_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_qr_dynamic"
+                android:layout_toEndOf="@id/iv_ic_qr"
+                android:text="@string/qr_label_text"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_qr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:checked="false" />
+        </RelativeLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ed_withdraw_amount_layout"
+            android:id="@+id/ed_payment_amount_layout"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -25,11 +67,12 @@
             app:endIconMode="clear_text"
             app:helperText="@string/enter_amount"
             app:helperTextEnabled="true"
-            app:layout_constraintTop_toBottomOf="@id/qr_dynamic_switch"
+            app:errorEnabled="true"
+            app:layout_constraintTop_toBottomOf="@id/switch_qr_container"
             app:startIconDrawable="@drawable/ic_rupiah_24">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ed_withdraw_amount"
+                android:id="@+id/ed_payment_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
@@ -37,7 +80,19 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
-            android:id="@+id/iv_payment_qr"
+            android:id="@+id/iv_dynamic_qr"
+            android:layout_width="210dp"
+            android:layout_height="210dp"
+            android:visibility="gone"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/qr_image"
+            android:src="@drawable/img_qr_example"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ed_payment_amount_layout" />
+
+        <ImageView
+            android:id="@+id/iv_static_qr"
             android:layout_width="210dp"
             android:layout_height="210dp"
             android:layout_margin="16dp"
@@ -45,31 +100,45 @@
             android:src="@drawable/img_qr_example"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ed_withdraw_amount_layout" />
+            app:layout_constraintTop_toBottomOf="@id/switch_qr_container" />
 
         <Button
-            android:id="@+id/scan_user_qr_button"
+            android:id="@+id/btn_scan_qr"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="24dp"
             android:text="@string/scan_qr_customer"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_payment_qr" />
+            app:layout_constraintTop_toBottomOf="@id/iv_dynamic_qr" />
 
         <Button
-            android:id="@+id/withdraw_button"
+            android:id="@+id/btn_share_qr"
             style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/share_qr"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_static_qr" />
+
+        <Button
+            android:id="@+id/btn_create_qr"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="24dp"
             android:text="@string/create_qr"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline_vertical"
-            app:layout_constraintTop_toBottomOf="@id/iv_payment_qr" />
+            app:layout_constraintTop_toBottomOf="@id/iv_dynamic_qr" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_vertical"
