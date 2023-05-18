@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_transaction_title"
             android:layout_toEndOf="@+id/iv_transaction_img"
-            android:text="@string/transaction_date_example"
+            android:text="@string/date_zero"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="16sp"
             tools:ignore="RelativeOverlap" />
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:text="@string/transaction_in_amount_example"
+            android:text="@string/money_zero"
             android:textColor="?attr/colorSuccess"
             android:textSize="16sp"
             tools:ignore="RelativeOverlap" />

@@ -4,12 +4,10 @@ import com.bangkit.bisamerchant.data.response.Merchant
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class MerchantRepository(
     private val pref: MerchantPreferences
@@ -17,14 +15,29 @@ class MerchantRepository(
     private val auth = Firebase.auth
     private val email = auth.currentUser?.email
     private val db = FirebaseFirestore.getInstance()
+    private var listenerRegistration: ListenerRegistration? = null
 
-    suspend fun getMerchantActive(): QuerySnapshot = withContext(Dispatchers.IO) {
-        return@withContext db.collection("merchant").whereEqualTo("merchantActive", true)
-            .whereEqualTo("email", email).get().await()
+    fun observeMerchantActive(callback: (Merchant) -> Unit): ListenerRegistration {
+        val query = db.collection("merchant")
+            .whereEqualTo("merchantActive", true)
+            .whereEqualTo("email", email)
 
+        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+            querySnapshot?.let {
+                val merchant = processMerchantQuerySnapshot(it)
+                callback(merchant)
+            }
+        }
+
+        return listenerRegistration as ListenerRegistration
     }
 
-    fun processMerchantQuerySnapshot(querySnapshot: QuerySnapshot): Merchant {
+    fun stopObserving() {
+        listenerRegistration?.remove()
+        listenerRegistration = null
+    }
+
+    private fun processMerchantQuerySnapshot(querySnapshot: QuerySnapshot): Merchant {
         var data = Merchant()
 
         for (document in querySnapshot.documents) {

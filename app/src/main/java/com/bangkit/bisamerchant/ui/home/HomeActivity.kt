@@ -55,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
     private fun updateUI(
         merchantViewModel: MerchantViewModel,
     ) {
-        merchantViewModel.getMerchantActive()
+        merchantViewModel.observeMerchantActive()
         merchantViewModel.merchant.observe(this) { merchant ->
             binding.apply {
                 tvMerchantName.text = merchant.merchantName

@@ -136,7 +136,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tv_rupiah"
-                android:text="@string/money_example"
+                android:text="@string/money_zero"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
                 android:textColor="?attr/colorOnPrimary"
                 app:layout_constraintStart_toEndOf="@id/tv_rupiah"

@@ -41,7 +41,7 @@
     <string name="scan_qr_customer">Scan QR Customer</string>
     <string name="create_qr">Create QR</string>
     <string name="total_daily_transactions">Total Daily Transactions</string>
-    <string name="date_example">Monday, 01 May 2023</string>
+    <string name="date_zero">Kam, 01 Jan 1970</string>
     <string name="rupiah">Rp</string>
     <string name="cash_out">Cash Out</string>
     <string name="transaction_date_example">01 Mei 2023 – 08:18</string>
@@ -49,7 +49,7 @@
     <string name="transaction_in_amount_example">Rp245.000</string>
     <string name="cash_in">Cash In</string>
     <string name="cash_in_example_1">Cash In - Fulan Store</string>
-    <string name="money_example">250.000</string>
+    <string name="money_zero">0</string>
     <string name="balance">Balance</string>
     <string name="bisa_store">Fulan Store</string>
     <string name="history">History</string>
@@ -107,4 +107,8 @@
     <string name="rp">Rp%1$s</string>
     <string name="minus_rp">- Rp%1$s</string>
     <string name="payment">Payment</string>
+    <string name="share_qr">Share QR</string>
+    <string name="terjadi_kesalahan">Terjadi kesalahan</string>
+    <string name="transaksi_berhasil">Transaksi berhasil</string>
+    <string name="uang_tidak_cukup">Uang tidak cukup</string>
 </resources>

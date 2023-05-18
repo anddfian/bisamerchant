@@ -57,11 +57,11 @@ class TransactionFragment : Fragment() {
         transactionViewModel: TransactionViewModel
     ) {
         binding.tvDate.text = Utils.getCurrentDate()
-        transactionViewModel.getTransactionToday()
+
+        transactionViewModel.observeTransactionsToday()
         transactionViewModel.totalAmountTransactionToday.observe(viewLifecycleOwner) { amount ->
             binding.tvAmountDailyTransactions.text = Utils.currencyFormat(amount)
         }
-
         transactionViewModel.transactions.observe(viewLifecycleOwner) { transactions ->
             if (transactions.isNotEmpty()) {
                 setTransactionsData(transactions)

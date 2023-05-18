@@ -1,13 +1,16 @@
 package com.bangkit.bisamerchant.data
 
 import com.bangkit.bisamerchant.data.response.DetailTransaction
+import com.bangkit.bisamerchant.data.response.Payment
 import com.bangkit.bisamerchant.data.response.Transaction
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -18,28 +21,75 @@ class TransactionRepository(
     private val pref: MerchantPreferences
 ) {
     private val db = FirebaseFirestore.getInstance()
+    private var listenerRegistration: ListenerRegistration? = null
 
-    suspend fun getTransactions(): QuerySnapshot = withContext(Dispatchers.IO) {
-        val merchantId = runBlocking { pref.getMerchantId().first() }
+    suspend fun addTransaction(
+        payment: Payment
+    ): String? {
+        val deferredMessage = CompletableDeferred<String>()
+        val transactionDocument = db.collection("transaction")
+        val currentBalance = getPayerBalance(payment.payerId)
+        if (currentBalance != null) {
+            if (currentBalance > payment.amount) {
+                withContext(Dispatchers.IO) {
+                    val transaction = hashMapOf(
+                        "amount" to payment.amount,
+                        "merchantId" to payment.merchantId,
+                        "payerId" to payment.payerId,
+                        "id" to transactionDocument.document().id,
+                        "timestamp" to payment.timestamp,
+                        "trxType" to payment.trxType
+                    )
 
-        return@withContext db.collection("transaction").whereEqualTo("merchantId", merchantId).get()
-            .await()
+                    transactionDocument
+                        .add(transaction)
+                        .addOnSuccessListener {
+                            deferredMessage.complete("Transaksi berhasil")
+                        }
+                        .addOnFailureListener { e ->
+                            deferredMessage.completeExceptionally(e)
+                        }
+                }
+            }
+        }
+
+        return try {
+            deferredMessage.await()
+        } catch (e: Exception) {
+            e.message
+        }
     }
 
-    suspend fun getTransactionById(id: String): DocumentSnapshot = withContext(Dispatchers.IO) {
-        return@withContext db.collection("transaction").document(id).get().await()
+    private suspend fun getPayerBalance(payerId: String): Long? = withContext(Dispatchers.IO) {
+        val documentSnapshot = db.collection("user").document(payerId).get().await()
+        return@withContext documentSnapshot.getLong("balance")
     }
 
-    suspend fun getTransactionsToday(): QuerySnapshot = withContext(Dispatchers.IO) {
+    fun observeTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration {
         val merchantId = runBlocking { pref.getMerchantId().first() }
         val timestampToday = Utils.getTodayTimestamp()
 
-        return@withContext db.collection("transaction").whereEqualTo("merchantId", merchantId)
+        val query = db.collection("transaction")
+            .whereEqualTo("merchantId", merchantId)
             .whereGreaterThanOrEqualTo("timestamp", timestampToday)
-            .orderBy("timestamp", Query.Direction.DESCENDING).get().await()
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+
+        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+            querySnapshot?.let {
+                val transactions = processTransactionQuerySnapshot(it)
+                callback(transactions)
+            }
+        }
+
+        return listenerRegistration as ListenerRegistration
     }
 
-    fun processTransactionQuerySnapshot(querySnapshot: QuerySnapshot): List<Transaction> {
+    fun stopObserving() {
+        listenerRegistration?.remove()
+        listenerRegistration = null
+    }
+
+    private fun processTransactionQuerySnapshot(querySnapshot: QuerySnapshot): List<Transaction> {
         val data = mutableListOf<Transaction>()
 
         for (document in querySnapshot.documents) {
@@ -60,6 +110,9 @@ class TransactionRepository(
         return data
     }
 
+    suspend fun getTransactionById(id: String): DocumentSnapshot = withContext(Dispatchers.IO) {
+        return@withContext db.collection("transaction").document(id).get().await()
+    }
 
     fun processTransactionDocumentSnapshot(documentSnapshot: DocumentSnapshot): DetailTransaction {
         val id = documentSnapshot.id
