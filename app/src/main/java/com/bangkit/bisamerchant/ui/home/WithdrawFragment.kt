@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bangkit.bisamerchant.databinding.FragmentWithdrawBinding
 import com.bangkit.bisamerchant.ui.pin.PinActivity
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 
 class WithdrawFragment : Fragment() {
 
@@ -23,6 +24,49 @@ class WithdrawFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initClickListener()
+        updateUI()
+    }
+
+    private fun updateUI() {
+        val bankItems = arrayOf(
+            "BCA - Bank Central Asia",
+            "Mandiri",
+            "BRI - Bank Rakyat Indonesia",
+            "BNI - Bank Negara Indonesia",
+            "CIMB Niaga",
+            "BTN - Bank Tabungan Negara",
+            "Maybank",
+            "OCBC NISP",
+            "Permata Bank",
+            "DBS Bank",
+            "Panin Bank",
+            "BTPN - Bank Tabungan Pensiunan Nasional",
+            "UOB Indonesia",
+            "HSBC",
+            "Standard Chartered Bank",
+            "BII - Bank Internasional Indonesia",
+            "BNP Paribas",
+            "Bank Mega",
+            "Bank Danamon",
+            "Bank Bukopin",
+            "Bank Tabungan Pemuda",
+            "Bank Muamalat",
+            "Bank Mestika",
+            "Bank Jago",
+            "Bank Ina",
+            "Bank Ganesha",
+            "Bank Fama Internasional",
+            "Bank Ekonomi Raharja",
+            "Bank Chinatrust Indonesia",
+            "Bank BPD DIY",
+            "Bank BJB",
+            "Bank Artha Graha Internasional",
+            "Bank Amar Indonesia",
+            "Bank Agris",
+            "Bank Syariah Mandiri",
+            "Bank Kaltimtara",
+        )
+        (binding.edWithdrawBank as? MaterialAutoCompleteTextView)?.setSimpleItems(bankItems)
     }
 
     private fun initClickListener() {
