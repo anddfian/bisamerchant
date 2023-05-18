@@ -10,6 +10,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.EnumMap
+import java.util.Locale
 
 
 object Utils {
@@ -30,24 +31,10 @@ object Utils {
         return dateParsed.time / 1000
     }
 
-    fun simpleDateFormat(date: Long): String? {
-        return try {
-            val simpleDateFormat = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss")
-            val netDate = Date(date * 1000)
-            simpleDateFormat.format(netDate)
-        } catch (e: Exception) {
-            e.toString()
-        }
-    }
-
-    fun simpleDateFormatToday(date: Long): String? {
-        return try {
-            val simpleDateFormat = SimpleDateFormat("HH:mm")
-            val netDate = Date(date * 1000)
-            simpleDateFormat.format(netDate)
-        } catch (e: Exception) {
-            e.toString()
-        }
+    fun simpleDateFormat(date: Long, format: String): String? {
+        val dateFormatted = Date(date)
+        val formatter = SimpleDateFormat(format, Locale.getDefault())
+        return formatter.format(dateFormatted)
     }
 
     fun generateQRCode(

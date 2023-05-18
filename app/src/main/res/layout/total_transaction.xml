@@ -38,7 +38,7 @@
         android:layout_below="@id/tv_date"
         android:layout_marginTop="16dp"
         android:layout_toEndOf="@id/tv_rupiah"
-        android:text="@string/money_example"
+        android:text="@string/money_zero"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
 </RelativeLayout>

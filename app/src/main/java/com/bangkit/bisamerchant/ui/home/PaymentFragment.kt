@@ -18,9 +18,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.bangkit.bisamerchant.data.response.Payment
 import com.bangkit.bisamerchant.databinding.FragmentPaymentBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
+import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
 import com.google.zxing.client.android.Intents
 import com.journeyapps.barcodescanner.CaptureActivity
 import kotlinx.coroutines.flow.first
@@ -30,6 +33,7 @@ import kotlinx.coroutines.runBlocking
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
 
 class PaymentFragment : Fragment() {
+    private var scannedAmount: Long? = null
     private var _binding: FragmentPaymentBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -42,10 +46,23 @@ class PaymentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val pref = MerchantPreferences.getInstance(requireContext().dataStore)
+        val transactionViewModel = initTransactionViewModel(pref)
         generateStaticQRCode(pref)
         initClickListener(pref)
+        updateUI(transactionViewModel)
     }
 
+    private fun updateUI(transactionViewModel: TransactionViewModel) {
+        transactionViewModel.message.observe(viewLifecycleOwner) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun initTransactionViewModel(pref: MerchantPreferences): TransactionViewModel {
+        val factory = ViewModelTransactionFactory.getInstance(pref)
+        val transactionViewModel: TransactionViewModel by viewModels { factory }
+        return transactionViewModel
+    }
 
     private fun startQRCodeScanner() {
         if (ContextCompat.checkSelfPermission(
@@ -67,14 +84,24 @@ class PaymentFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val intentResult = data?.getStringExtra(Intents.Scan.RESULT)
+                val pref = MerchantPreferences.getInstance(requireContext().dataStore)
+                val merchantId = runBlocking { pref.getMerchantId().first() }
                 if (!intentResult.isNullOrEmpty()) {
-                    Toast.makeText(
-                        requireContext(), "Scanned Data: $intentResult", Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        requireContext(), "Something went wrong", Toast.LENGTH_SHORT
-                    ).show()
+                    val transactionViewModel = initTransactionViewModel(pref)
+                    val listResult = intentResult.split("#")
+                    scannedAmount?.let {
+                        Payment(
+                            amount = it,
+                            merchantId = merchantId,
+                            payerId = listResult[2],
+                            timestamp = System.currentTimeMillis(),
+                            trxType = "PAYMENT"
+                        )
+                    }?.let {
+                        transactionViewModel.addTransaction(
+                            it
+                        )
+                    }
                 }
             }
         }
@@ -117,11 +144,6 @@ class PaymentFragment : Fragment() {
                     btnScanQr.visibility = View.VISIBLE
                     btnShareQr.visibility = View.GONE
                     btnCreateQr.visibility = View.VISIBLE
-                    if (binding.edPaymentAmount.text?.isNotEmpty() == true) {
-                        ivDynamicQr.visibility = View.VISIBLE
-                    } else if (binding.edPaymentAmount.text?.isEmpty() == true) {
-                        ivDynamicQr.visibility = View.GONE
-                    }
                     edPaymentAmountLayout.visibility = View.VISIBLE
                 } else {
                     ivStaticQr.visibility = View.VISIBLE
@@ -149,6 +171,7 @@ class PaymentFragment : Fragment() {
         binding.btnScanQr.setOnClickListener {
             binding.apply {
                 if (binding.edPaymentAmount.text?.isNotEmpty() == true) {
+                    scannedAmount = binding.edPaymentAmount.text.toString().toLong()
                     startQRCodeScanner()
                 } else {
                     Toast.makeText(requireContext(), "Amount cannot be empty", Toast.LENGTH_LONG)
@@ -165,6 +188,7 @@ class PaymentFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        scannedAmount = null
         _binding = null
     }
 

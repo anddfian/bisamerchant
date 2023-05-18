@@ -13,7 +13,6 @@ import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.data.response.Transaction
 import com.bangkit.bisamerchant.databinding.TransactionCardBinding
 import com.bangkit.bisamerchant.helper.Utils
-import com.bangkit.bisamerchant.helper.Utils.simpleDateFormatToday
 import com.bangkit.bisamerchant.ui.invoice.DetailTransactionActivity
 
 class TransactionAdapter(private val listTransaction: ArrayList<Transaction>) :
@@ -71,7 +70,8 @@ class TransactionAdapter(private val listTransaction: ArrayList<Transaction>) :
                         Utils.currencyFormat(transaction.amount)
                     )
             }
-            tvTransactionSupport.text = transaction.timestamp?.let { simpleDateFormatToday(it) }
+            tvTransactionSupport.text =
+                transaction.timestamp?.let { Utils.simpleDateFormat(it, "HH:mm") }
         }
 
     }

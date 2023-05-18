@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_daily_transactions"
-                android:text="@string/date_example"
+                android:text="@string/date_zero"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_below="@id/tv_date"
                 android:layout_marginTop="16dp"
                 android:layout_toEndOf="@id/tv_rupiah"
-                android:text="@string/money_example"
+                android:text="@string/money_zero"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
             <Button

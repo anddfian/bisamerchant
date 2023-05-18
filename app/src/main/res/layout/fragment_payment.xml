@@ -59,15 +59,15 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/ed_payment_amount_layout"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:hint="@string/amount"
+            android:visibility="gone"
             app:endIconMode="clear_text"
+            app:errorEnabled="true"
             app:helperText="@string/enter_amount"
             app:helperTextEnabled="true"
-            app:errorEnabled="true"
             app:layout_constraintTop_toBottomOf="@id/switch_qr_container"
             app:startIconDrawable="@drawable/ic_rupiah_24">
 
@@ -83,10 +83,9 @@
             android:id="@+id/iv_dynamic_qr"
             android:layout_width="210dp"
             android:layout_height="210dp"
-            android:visibility="gone"
             android:layout_margin="16dp"
             android:contentDescription="@string/qr_image"
-            android:src="@drawable/img_qr_example"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ed_payment_amount_layout" />
@@ -97,7 +96,6 @@
             android:layout_height="210dp"
             android:layout_margin="16dp"
             android:contentDescription="@string/qr_image"
-            android:src="@drawable/img_qr_example"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/switch_qr_container" />
@@ -131,11 +129,11 @@
             android:id="@+id/btn_create_qr"
             style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
-            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="24dp"
             android:text="@string/create_qr"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline_vertical"
             app:layout_constraintTop_toBottomOf="@id/iv_dynamic_qr" />
