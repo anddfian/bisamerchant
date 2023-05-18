@@ -72,6 +72,12 @@ class MerchantRepository(
         }
     }
 
+    fun deleteMerchant() {
+        runBlocking {
+            pref.delete()
+        }
+    }
+
     companion object {
         @Volatile
         private var instance: MerchantRepository? = null
