@@ -1,4 +1,4 @@
-package com.bangkit.bisamerchant.utils
+package com.bangkit.bisamerchant.helper
 
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
@@ -12,7 +12,6 @@ object AESUtil {
     private const val ALGORITHM = "AES"
     private const val TRANSFORMATION = "AES/CBC/PKCS7Padding"
     private const val ENCRYPTION_KEY = "YOUR_ENCRYPTION_KEY" // Replace with your encryption key
-    private const val IV = "YOUR_INITIALIZATION_VECTOR" // Replace with your initialization vector
     private const val ITERATION_COUNT = 10000
     private const val KEY_LENGTH = 256
 
