@@ -49,6 +49,7 @@ class MerchantRepository(
             val merchantType = document.getString("merchantType")
             val email = document.getString("email")
             val merchantName = document.getString("merchantName")
+            val transactionCount = document.getLong("transactionCount")
 
             data = Merchant(
                 balance,
@@ -58,6 +59,7 @@ class MerchantRepository(
                 merchantType,
                 email,
                 merchantName,
+                transactionCount
             )
         }
 
