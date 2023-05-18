@@ -3,7 +3,6 @@ package com.bangkit.bisamerchant.data.response
 import com.google.gson.annotations.SerializedName
 
 data class Merchant(
-
 	@field:SerializedName("balance")
 	val balance: Long? = null,
 
@@ -23,5 +22,8 @@ data class Merchant(
 	val email: String? = null,
 
 	@field:SerializedName("merchantName")
-	val merchantName: String? = null
+	val merchantName: String? = null,
+
+	@field:SerializedName("transactionCount")
+	val transactionCount: Long? = null
 )
