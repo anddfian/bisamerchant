@@ -3,6 +3,7 @@ package com.bangkit.bisamerchant.ui.setting
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -58,6 +59,16 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
                 merchantViewModel.deleteMerchant()
                 Auth.logout(this, this@SettingActivity)
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressedDispatcher.onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
