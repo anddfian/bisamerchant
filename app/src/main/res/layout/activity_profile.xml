@@ -24,17 +24,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_edit_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/update_profil_floating_action_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_pencil_outline_24" />
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -123,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="7dp"
-                android:text="@string/loyalty_count_example"
+                android:text="@string/loyalty_count_bronze"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 app:layout_constraintBottom_toTopOf="@id/progress_indicator"
                 app:layout_constraintStart_toStartOf="@id/progress_indicator" />
@@ -133,7 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="7dp"
-                android:text="@string/loyalty_target_example"
+                android:text="@string/loyalty_target_silver"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 app:layout_constraintBottom_toTopOf="@id/progress_indicator"
                 app:layout_constraintEnd_toEndOf="@id/progress_indicator" />
