@@ -119,4 +119,11 @@
     <string name="merchant_type">Merchant Type</string>
     <string name="register">Register</string>
     <string name="click_to_upload_a_photo">Click to upload a photo</string>
+    <string name="filter">Filter</string>
+    <string name="semua_transaksi">Semua Transaksi</string>
+    <string name="transaksi_masuk">Transaksi Masuk</string>
+    <string name="transaksi_keluar">Transaksi keluar</string>
+    <string name="total_transactions">Total Transactions</string>
+    <string name="tidak_ada_transaksi">Tidak ada transaksi</string>
+    <string name="select_date_range">Select Date Range</string>
 </resources>

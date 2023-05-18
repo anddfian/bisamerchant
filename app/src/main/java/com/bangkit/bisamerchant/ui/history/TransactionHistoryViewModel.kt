@@ -1,18 +1,16 @@
-package com.bangkit.bisamerchant.ui.home
+package com.bangkit.bisamerchant.ui.history
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.bangkit.bisamerchant.data.TransactionRepository
-import com.bangkit.bisamerchant.data.response.Payment
 import com.bangkit.bisamerchant.data.response.Transaction
 import com.google.firebase.firestore.ListenerRegistration
-import kotlinx.coroutines.launch
 
-class TransactionViewModel(
+class TransactionHistoryViewModel(
     private val repository: TransactionRepository
 ) : ViewModel() {
+
     private val _transactions = MutableLiveData<List<Transaction>>()
     val transactions: LiveData<List<Transaction>> get() = _transactions
 
@@ -20,16 +18,17 @@ class TransactionViewModel(
     val message: LiveData<String> get() = _message
 
     private var listenerRegistration: ListenerRegistration? = null
+    private val _totalAmountTransaction = MutableLiveData<Long>()
 
-    private val _totalAmountTransactionToday = MutableLiveData<Long>()
-    val totalAmountTransactionToday: LiveData<Long> get() = _totalAmountTransactionToday
+    val totalAmountTransaction: LiveData<Long> get() = _totalAmountTransaction
 
-    fun observeTransactionsToday() {
-        listenerRegistration = repository.observeTransactionsToday { transactions ->
+    fun observeTransactions() {
+        listenerRegistration = repository.observeTransactions { transactions ->
             _transactions.value = transactions
-            _totalAmountTransactionToday.value = repository.getTotalAmountTransactions(transactions)
+            _totalAmountTransaction.value = repository.getTotalAmountTransactions(transactions)
         }
     }
+
     fun stopObserving() {
         repository.stopObserving()
     }
@@ -37,14 +36,5 @@ class TransactionViewModel(
     override fun onCleared() {
         super.onCleared()
         repository.stopObserving()
-    }
-
-
-    fun addTransaction(
-        payment: Payment
-    ) {
-        viewModelScope.launch {
-            _message.value = repository.addTransaction(payment)
-        }
     }
 }

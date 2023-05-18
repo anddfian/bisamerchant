@@ -52,7 +52,7 @@ class DetailTransactionActivity : AppCompatActivity() {
                     payerId.text = transaction.payerId
                     transactionId.text = transaction.id
                     tvInvoiceDate.text = transaction.timestamp?.let {
-                        Utils.simpleDateFormat(it, "EEE, d MMM yyyy")
+                        Utils.simpleDateFormat(it, "EEE, d MMM yyyy – HH:mm")
                     }
                     totalAmount.text =
                         this@DetailTransactionActivity.getString(

@@ -6,70 +6,122 @@
     android:layout_height="match_parent"
     tools:context=".ui.history.TransactionHistoryActivity">
 
-    <include
-        android:id="@+id/transaction_toolbar"
-        layout="@layout/total_transaction" />
-
-    <ScrollView
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/top_app_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:paddingEnd="16dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIconTint="@color/white"
+            app:titleTextColor="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/transaction_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/border_bottom"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/transaction_toolbar">
+        app:layout_constraintTop_toBottomOf="@id/top_app_bar_container">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <TextView
+            android:id="@+id/tv_daily_transactions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_alignParentTop="true"
+            android:text="@string/total_transactions"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
-            <include layout="@layout/transaction_out_card" />
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_daily_transactions"
+            android:text="@string/semua_transaksi"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
-            <include layout="@layout/transaction_in_card" />
+        <TextView
+            android:id="@+id/tv_rupiah"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_date"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/rupiah"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
-            <include layout="@layout/transaction_out_card" />
+        <TextView
+            android:id="@+id/tv_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_date"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@id/tv_rupiah"
+            android:text="@string/money_zero"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
-            <include layout="@layout/transaction_out_card" />
+    </RelativeLayout>
 
-            <include layout="@layout/transaction_in_card" />
-
-            <include layout="@layout/transaction_in_card" />
-
-            <include layout="@layout/transaction_out_card" />
-
-            <include layout="@layout/transaction_in_card" />
-
-            <include layout="@layout/transaction_in_card" />
-
-            <include layout="@layout/transaction_out_card" />
-
-            <include layout="@layout/transaction_out_card" />
-
-            <include layout="@layout/transaction_in_card" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="100dp" />
-        </LinearLayout>
-    </ScrollView>
-
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_transactions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/md_theme_light_surface"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="224dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transaction_toolbar"
+        tools:listitem="@layout/transaction_card" />
 
-        <Button
-            android:id="@+id/btn_filter"
-            style="@style/Widget.Material3.Button.TextButton.Icon"
+    <TextView
+        android:id="@+id/tv_no_transactions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="24dp"
+        android:gravity="center"
+        android:text="@string/tidak_ada_transaksi"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/btn_filter"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/md_theme_light_surface"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/filter" />
+
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Filter"
-            app:icon="@drawable/filter" />
-    </FrameLayout>
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            android:textColor="?attr/colorPrimary"
+            android:text="@string/filter" />
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

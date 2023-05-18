@@ -37,12 +37,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_sort">
 
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rb_newest"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="Newest" />
 
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rb_oldest"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Oldest" />
     </RadioGroup>
@@ -59,88 +62,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radio_sort" />
 
-    <LinearLayout
-        android:id="@+id/ll_choose_date"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_date_range"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_filter"
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"
-        android:orientation="horizontal"
+        android:hint="@string/select_date_range"
+        app:boxBackgroundMode="outline"
+        app:endIconDrawable="@drawable/ic_date_picker_24"
+        app:endIconMode="custom"
+        app:helperText="MM/DD/YYYY"
+        app:helperTextEnabled="true"
+        app:hintEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_filter">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_start_date"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_date_range"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Start Date"
-            app:endIconDrawable="@drawable/ic_date_picker_24"
-            app:endIconMode="custom"
-            app:helperText="MM/DD/YYYY"
-            app:helperTextEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_login_illustration">
+            android:clickable="true"
+            android:focusable="false"
+            android:inputType="date" />
 
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="date" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <View
-            android:layout_width="16dp"
-            android:layout_height="match_parent" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="End Date"
-            app:endIconDrawable="@drawable/ic_date_picker_24"
-            app:endIconMode="custom"
-            app:helperText="MM/DD/YYYY"
-            app:helperTextEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_login_illustration">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="date" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <RadioGroup
         android:id="@+id/radio_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ll_choose_date"
+        android:layout_below="@+id/til_date_range"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_choose_date">
+        app:layout_constraintTop_toBottomOf="@+id/til_date_range">
 
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rb_all"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Semua Transaksi" />
+            android:checked="true"
+            android:text="@string/semua_transaksi" />
 
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rb_in"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Transaksi Masuk" />
+            android:text="@string/transaksi_masuk" />
 
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rb_out"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Transaksi keluar" />
+            android:text="@string/transaksi_keluar" />
     </RadioGroup>
 
     <Button

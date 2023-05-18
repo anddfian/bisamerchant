@@ -1,7 +1,6 @@
 package com.bangkit.bisamerchant.ui.home
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,6 @@ import com.bangkit.bisamerchant.databinding.FragmentTransactionBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
-import com.bangkit.bisamerchant.ui.history.TransactionHistoryActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
 
@@ -37,7 +35,6 @@ class TransactionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val transactionViewModel = initTransactionViewModel()
         updateUI(transactionViewModel)
-        initClickListener()
     }
 
     private fun initTransactionViewModel(): TransactionViewModel {
@@ -45,12 +42,6 @@ class TransactionFragment : Fragment() {
         val factory = ViewModelTransactionFactory.getInstance(pref)
         val transactionViewModel: TransactionViewModel by viewModels { factory }
         return transactionViewModel
-    }
-
-    private fun initClickListener() {
-        binding.btnHistory.setOnClickListener {
-            startActivity(Intent(activity, TransactionHistoryActivity::class.java))
-        }
     }
 
     private fun updateUI(
