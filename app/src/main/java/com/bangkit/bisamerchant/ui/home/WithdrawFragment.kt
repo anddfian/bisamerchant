@@ -1,19 +1,30 @@
 package com.bangkit.bisamerchant.ui.home
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.fragment.app.viewModels
 import com.bangkit.bisamerchant.databinding.FragmentWithdrawBinding
+import com.bangkit.bisamerchant.helper.MerchantPreferences
+import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
 import com.bangkit.bisamerchant.ui.pin.PinActivity
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
 
 class WithdrawFragment : Fragment() {
 
     private var _binding: FragmentWithdrawBinding? = null
     private val binding get() = _binding!!
+    private var balance: Long? = 0L
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -24,10 +35,18 @@ class WithdrawFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initClickListener()
-        updateUI()
+        val merchantViewModel = initMerchantViewModel()
+        updateUI(merchantViewModel)
     }
 
-    private fun updateUI() {
+    private fun initMerchantViewModel(): MerchantViewModel {
+        val pref = MerchantPreferences.getInstance(requireContext().dataStore)
+        val factory = ViewModelMerchantFactory.getInstance(pref)
+        val merchantViewModel: MerchantViewModel by viewModels { factory }
+        return merchantViewModel
+    }
+
+    private fun updateUI(merchantViewModel: MerchantViewModel) {
         val bankItems = arrayOf(
             "BCA - Bank Central Asia",
             "Mandiri",
@@ -67,11 +86,43 @@ class WithdrawFragment : Fragment() {
             "Bank Kaltimtara",
         )
         (binding.edWithdrawBank as? MaterialAutoCompleteTextView)?.setSimpleItems(bankItems)
+        merchantViewModel.observeMerchantActive()
+        merchantViewModel.merchant.observe(viewLifecycleOwner) { merchant ->
+            balance = merchant.balance
+        }
     }
 
     private fun initClickListener() {
         binding.withdrawButton.setOnClickListener {
-            startActivity(Intent(activity, PinActivity::class.java))
+            val amount = binding.edWithdrawAmount.editableText.toString()
+            val bank = binding.edWithdrawBank.editableText.toString()
+            val number = binding.edAccountNumber.editableText.toString()
+            val amountInt: Int = try {
+                amount.toInt()
+            } catch (e: NumberFormatException) {
+                0
+            }
+            if (amount.isEmpty()) {
+                Toast.makeText(requireContext(), "Amount is required!", Toast.LENGTH_SHORT).show()
+            } else if (amountInt < 10000) {
+                Toast.makeText(requireContext(), "Amount must more than equal to 10000!", Toast.LENGTH_SHORT).show()
+            } else if (bank.isEmpty()) {
+                Toast.makeText(requireContext(), "Bank Name is required!", Toast.LENGTH_SHORT).show()
+            } else if (number.isEmpty()) {
+                Toast.makeText(requireContext(), "Account Number is required!", Toast.LENGTH_SHORT).show()
+            } else if (number.length < 9) {
+                Toast.makeText(requireContext(), "Account Number must more than 8!", Toast.LENGTH_SHORT).show()
+            } else {
+                if (balance!! < amount.toLong()) {
+                    Toast.makeText(requireContext(), "Balance not enough", Toast.LENGTH_SHORT).show()
+                } else {
+                    val intent = Intent(activity, PinActivity::class.java)
+                    intent.putExtra("amount", amount)
+                    intent.putExtra("bankInst", bank)
+                    intent.putExtra("bankAccountNo", number)
+                    startActivity(intent)
+                }
+            }
         }
     }
 
