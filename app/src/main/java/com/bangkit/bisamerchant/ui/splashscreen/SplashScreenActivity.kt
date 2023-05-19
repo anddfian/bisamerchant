@@ -2,9 +2,9 @@ package com.bangkit.bisamerchant.ui.splashscreen
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.bangkit.bisamerchant.databinding.ActivitySplashScreenBinding
 import com.bangkit.bisamerchant.services.Auth
@@ -43,11 +43,11 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun startSplashScreen() {
-        CoroutineScope(Dispatchers.Default).launch {
-            delay(threeSecond)
+        val isLogged = Auth.isLogged()
+        if (isLogged) {
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(threeSecond)
 
-            val isLogged = Auth.isLogged()
-            if(isLogged) {
                 Merchant.checkMerchantExists(
                     onSuccess = { exists ->
                         if (exists) {
@@ -55,20 +55,27 @@ class SplashScreenActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         } else {
-                            val intent = Intent(this@SplashScreenActivity, MerchantRegisterActivity::class.java)
+                            val intent = Intent(
+                                this@SplashScreenActivity,
+                                MerchantRegisterActivity::class.java
+                            )
                             startActivity(intent)
                             finish()
                         }
                     },
                     onFailure = { exception ->
-                        Toast.makeText(this@SplashScreenActivity, exception.localizedMessage, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@SplashScreenActivity,
+                            exception.localizedMessage,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 )
-            } else {
-                val intent = Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
-                startActivity(intent)
-                finish()
             }
+        } else {
+            val intent = Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 }
