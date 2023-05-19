@@ -49,40 +49,27 @@ object Merchant {
                 val storageRef = storage.reference
                 val imageRef = storageRef.child("merchant/logo/$docId.jpg")
 
-                imageRef.metadata
-                    .addOnSuccessListener { metadata ->
-                        val fileSizeBytes = metadata.sizeBytes
-                        val fileSizeMB = fileSizeBytes / (1024 * 1024)
-
-                        if (fileSizeMB <= 5) {
-                            val uploadTask = imageRef.putFile(photo)
-                            uploadTask
-                                .addOnSuccessListener { taskSnapshot ->
-                                    taskSnapshot.storage.downloadUrl
-                                        .addOnSuccessListener { downloadUrl ->
-                                            merchantCollection.document(docId).update("merchantLogo", downloadUrl)
-                                                .addOnCompleteListener { task ->
-                                                    if (task.isSuccessful) {
-                                                        Toast.makeText(context, "Register merchant successful", Toast.LENGTH_SHORT).show()
-                                                        val intent = Intent(context, HomeActivity::class.java)
-                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                        context.startActivity(intent)
-                                                    }
-                                                }
-                                                .addOnFailureListener { error ->
-                                                    Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-                                                }
-                                                .addOnFailureListener { error ->
-                                                    Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-                                                }
+                val uploadTask = imageRef.putFile(photo)
+                uploadTask
+                    .addOnSuccessListener { taskSnapshot ->
+                        taskSnapshot.storage.downloadUrl
+                            .addOnSuccessListener { downloadUrl ->
+                                merchantCollection.document(docId).update("merchantLogo", downloadUrl)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(context, "Register merchant successful", Toast.LENGTH_SHORT).show()
+                                            val intent = Intent(context, HomeActivity::class.java)
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            context.startActivity(intent)
                                         }
-                                }
-                                .addOnFailureListener { error ->
-                                    Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-                                }
-                        } else {
-                            Toast.makeText(context, "Image size larger than 5MB", Toast.LENGTH_SHORT).show()
-                        }
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+                                    }
+                            }
                     }
                     .addOnFailureListener { error ->
                         Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
