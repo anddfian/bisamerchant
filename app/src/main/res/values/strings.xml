@@ -58,7 +58,7 @@
     <string name="icon_transaction_out">Icon Transaction Out</string>
     <string name="qr_image">QR Image</string>
     <string name="email_example">bisastore@store.id</string>
-    <string name="location_example">Samarinda</string>
+    <string name="address_example">Samarinda</string>
     <string name="bronze_merchant">Bronze Merchant</string>
     <string name="silver_merchant">Silver Merchant</string>
     <string name="gold_merchant">Gold Merchant</string>
@@ -115,7 +115,7 @@
     <string name="uang_tidak_cukup">Uang tidak cukup</string>
     <string name="merchant_name">Merchant Name</string>
     <string name="max_5mb">Max. 5MB</string>
-    <string name="merchant_location">Merchant Location</string>
+    <string name="merchant_address">Merchant Address</string>
     <string name="merchant_type">Merchant Type</string>
     <string name="register">Register</string>
     <string name="click_to_upload_a_photo">Click to upload a photo</string>
