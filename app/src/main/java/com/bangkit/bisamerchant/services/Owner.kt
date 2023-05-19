@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
-import com.bangkit.bisamerchant.utils.AESUtil
+import com.bangkit.bisamerchant.helper.AESUtil
 import com.google.firebase.firestore.FirebaseFirestore
 
 object Owner {

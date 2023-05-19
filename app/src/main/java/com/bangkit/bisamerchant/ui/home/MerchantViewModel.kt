@@ -23,6 +23,10 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
         repository.stopObserving()
     }
 
+    fun deleteMerchant() {
+        repository.deleteMerchant()
+    }
+
     override fun onCleared() {
         super.onCleared()
         repository.stopObserving()

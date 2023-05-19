@@ -34,11 +34,11 @@
             android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_merchant_image"
+                android:id="@+id/iv_merchant_logo"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginVertical="24dp"
-                android:src="@drawable/placeholder"
+                android:src="@drawable/upload"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -51,17 +51,17 @@
                 android:paddingHorizontal="16dp"
                 android:text="@string/bisa_store"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                app:layout_constraintEnd_toEndOf="@id/iv_merchant_image"
-                app:layout_constraintStart_toStartOf="@id/iv_merchant_image"
-                app:layout_constraintTop_toBottomOf="@id/iv_merchant_image" />
+                app:layout_constraintEnd_toEndOf="@id/iv_merchant_logo"
+                app:layout_constraintStart_toStartOf="@id/iv_merchant_logo"
+                app:layout_constraintTop_toBottomOf="@id/iv_merchant_logo" />
 
             <TextView
-                android:id="@+id/tv_merchant_location"
+                android:id="@+id/tv_merchant_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:drawablePadding="4dp"
-                android:text="@string/location_example"
+                android:text="@string/address_example"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 app:drawableStartCompat="@drawable/ic_location_24"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -79,7 +79,7 @@
                 app:drawableStartCompat="@drawable/ic_email_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_merchant_location" />
+                app:layout_constraintTop_toBottomOf="@id/tv_merchant_address" />
 
             <TextView
                 android:id="@+id/tv_merchant_type"

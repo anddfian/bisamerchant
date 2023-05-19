@@ -16,6 +16,7 @@ import com.bangkit.bisamerchant.databinding.ActivityProfileBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
 import com.bangkit.bisamerchant.ui.home.MerchantViewModel
+import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -58,7 +59,7 @@ class ProfileActivity : AppCompatActivity() {
         merchantViewModel.merchant.observe(this) { merchant ->
             binding.apply {
                 tvMerchantName.text = merchant.merchantName
-                tvMerchantLocation.text = merchant.merchantAddress
+                tvMerchantAddress.text = merchant.merchantAddress
                 tvMerchantEmail.text = merchant.email
                 tvMerchantType.text = merchant.merchantType
                 when (merchant.transactionCount) {
@@ -86,6 +87,10 @@ class ProfileActivity : AppCompatActivity() {
                     }
                 }
             }
+            Glide.with(binding.root)
+                .load(merchant.merchantLogo)
+                .placeholder(R.drawable.ic_loading_24)
+                .into(binding.ivMerchantLogo)
         }
     }
 

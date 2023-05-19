@@ -6,6 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".ui.setting.SettingActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/top_app_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:paddingEnd="16dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIconTint="@color/white"
+            app:titleTextColor="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.cardview.widget.CardView
         android:layout_marginVertical="1dp"
         android:id="@+id/cv_setting1"
@@ -13,7 +32,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/top_app_bar_container">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -155,6 +174,7 @@
 
     <TextView
         style="@style/TextAppearance.Material3.BodySmall"
+        android:id="@+id/tv_version_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
