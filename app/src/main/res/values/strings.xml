@@ -133,4 +133,12 @@
     <string name="sort">Sort</string>
     <string name="simpan">Simpan</string>
     <string name="enter">Enter</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="pin">PIN</string>
+    <string name="syarat_amp_ketentuan"><![CDATA[Syarat & Ketentuan]]></string>
+    <string name="serta">serta</string>
+    <string name="kebijakan_privasi">Kebijakan Privasi</string>
+    <string name="kami">kami</string>
+    <string name="login">Login</string>
 </resources>
