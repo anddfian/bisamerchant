@@ -141,4 +141,5 @@
     <string name="kebijakan_privasi">Kebijakan Privasi</string>
     <string name="kami">kami</string>
     <string name="login">Login</string>
+    <string name="reset_password">Reset Password</string>
 </resources>
