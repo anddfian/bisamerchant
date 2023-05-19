@@ -22,7 +22,7 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     ) { result: ActivityResult ->
         if (result.data != null) {
             selectedImageUri = result.data!!.data
-            binding.ivRegistUpload.setImageURI(selectedImageUri)
+            binding.ivMerchantLogo.setImageURI(selectedImageUri)
         }
     }
 
@@ -94,23 +94,25 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.iv_regist_upload -> {
+            R.id.iv_merchant_logo -> {
                 val resultIntent = Intent(Intent.ACTION_GET_CONTENT)
                 resultIntent.type = "image/*"
                 resultLauncher.launch(resultIntent)
             }
             R.id.btn_register_merchant -> {
                 val name = binding.tilRegistMerchantName.editText?.text.toString()
-                val location = binding.tilRegistMerchantLocation.editText?.text.toString()
+                val address = binding.tilRegistMerchantAddress.editText?.text.toString()
                 val type = binding.tilRegistMerchantType.editText?.text.toString()
                 if (selectedImageUri == null) {
                     Toast.makeText(this@MerchantRegisterActivity, "Photo is required!", Toast.LENGTH_SHORT).show()
                 } else if (name.isEmpty()) {
                     Toast.makeText(this@MerchantRegisterActivity, "Name is required!", Toast.LENGTH_SHORT).show()
-                } else if (location.isEmpty()) {
-                    Toast.makeText(this@MerchantRegisterActivity, "Location is required!", Toast.LENGTH_SHORT).show()
+                } else if (address.isEmpty()) {
+                    Toast.makeText(this@MerchantRegisterActivity, "Address is required!", Toast.LENGTH_SHORT).show()
+                } else if (type.isEmpty()) {
+                    Toast.makeText(this@MerchantRegisterActivity, "Type is required!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Merchant.addMerchant(this@MerchantRegisterActivity, selectedImageUri!!, name, location, type)
+                    Merchant.addMerchant(this@MerchantRegisterActivity, selectedImageUri!!, name, address, type)
                 }
             }
         }
@@ -122,7 +124,7 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupClickListeners() {
-        binding.ivRegistUpload.setOnClickListener(this)
+        binding.ivMerchantLogo.setOnClickListener(this)
         binding.btnRegisterMerchant.setOnClickListener(this)
     }
 }
