@@ -2,9 +2,11 @@ package com.bangkit.bisamerchant.ui.setting
 
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -33,8 +35,22 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.data?.data != null) {
-            selectedImageUri = result.data!!.data
-            binding.ivMerchantLogo.setImageURI(selectedImageUri)
+            var fileSize: Long = -1
+            val cursor: Cursor? = contentResolver.query(result.data!!.data!!, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
+                    if (sizeIndex != -1) {
+                        fileSize = it.getLong(sizeIndex) / (1024 * 1024)
+                    }
+                }
+            }
+            if (fileSize > 5) {
+                Toast.makeText(this@MerchantSettingActivity, "Image size larger than 5MB", Toast.LENGTH_SHORT).show()
+            } else {
+                selectedImageUri = result.data!!.data
+                binding.ivMerchantLogo.setImageURI(selectedImageUri)
+            }
         }
     }
 
