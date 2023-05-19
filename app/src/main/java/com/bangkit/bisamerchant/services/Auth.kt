@@ -10,6 +10,8 @@ import com.bangkit.bisamerchant.ui.home.HomeActivity
 import com.bangkit.bisamerchant.ui.login.LoginActivity
 import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import java.lang.Exception
 
 object Auth {
     private var auth = FirebaseAuth.getInstance()
@@ -19,39 +21,68 @@ object Auth {
         return currentUser != null
     }
 
+    private fun checkOwnerExists(email: String, onSuccess: (Boolean) -> Unit, onFailure: (Exception) -> Unit) {
+        val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
+        merchantCollection
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val exists = !querySnapshot.isEmpty
+                onSuccess(exists)
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+
     fun login(activity: Activity, context: Context, email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Merchant.checkMerchantExists(
-                        onSuccess = { exists ->
-                            Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-                            if (exists) {
-                                val intent = Intent(context, HomeActivity::class.java)
-                                context.startActivity(intent)
-                                activity.finish()
-                            } else {
-                                val intent = Intent(
-                                    context,
-                                    MerchantRegisterActivity::class.java
+        checkOwnerExists(email,
+            onSuccess = { exists ->
+                if (exists) {
+                    auth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Merchant.checkMerchantExists(
+                                    onSuccess = { exists ->
+                                        Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                        if (exists) {
+                                            val intent = Intent(context, HomeActivity::class.java)
+                                            context.startActivity(intent)
+                                            activity.finish()
+                                        } else {
+                                            val intent = Intent(
+                                                context,
+                                                MerchantRegisterActivity::class.java
+                                            )
+                                            context.startActivity(intent)
+                                            activity.finish()
+                                        }
+                                    },
+                                    onFailure = { exception ->
+                                        Toast.makeText(
+                                            context,
+                                            exception.localizedMessage,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 )
-                                context.startActivity(intent)
-                                activity.finish()
                             }
-                        },
-                        onFailure = { exception ->
-                            Toast.makeText(
-                                context,
-                                exception.localizedMessage,
-                                Toast.LENGTH_SHORT
-                            ).show()
                         }
-                    )
+                        .addOnFailureListener { error ->
+                            Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(context, "Account not exists!", Toast.LENGTH_SHORT).show()
                 }
+            },
+            onFailure = { exception ->
+                Toast.makeText(
+                    context,
+                    exception.localizedMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-            .addOnFailureListener { error ->
-                Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-            }
+        )
     }
 
     fun resetPasswordEmail(context: Context, email: String) {
