@@ -40,7 +40,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Click to upload a photo"
+        android:text="@string/click_to_upload_a_photo"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/iv_merchant_logo"
         app:layout_constraintStart_toStartOf="@+id/iv_merchant_logo"
@@ -50,7 +50,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Max. 5MB"
+        android:text="@string/max_5mb"
         app:layout_constraintEnd_toEndOf="@+id/textView"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
-        android:hint="Merchant Name"
+        android:hint="@string/merchant_name"
         app:helperText="Enter Merchant Name"
         app:helperTextEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Merchant Address"
+        android:hint="@string/merchant_address"
         app:helperText="Enter Merchant Address"
         app:helperTextEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Merchant Type"
+        android:hint="@string/merchant_type"
         app:helperText="Search Merchant Type"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         app:layout_constraintEnd_toEndOf="parent"
@@ -111,8 +111,8 @@
             android:id="@+id/ed_merchant_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none"
-            />
+            android:inputType="text"
+            tools:ignore="LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -121,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Simpan"
+        android:text="@string/simpan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
