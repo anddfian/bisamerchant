@@ -50,22 +50,27 @@ object Merchant {
                 val imageRef = storageRef.child("merchant/logo/$docId.jpg")
 
                 val uploadTask = imageRef.putFile(photo)
-                uploadTask.addOnSuccessListener { taskSnapshot ->
-                    taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUrl ->
-                        merchantCollection.document(docId).update("merchantLogo", downloadUrl)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Toast.makeText(context, "Register merchant successful", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(context, HomeActivity::class.java)
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    context.startActivity(intent)
-                                }
-                            }
+                uploadTask
+                    .addOnSuccessListener { taskSnapshot ->
+                        taskSnapshot.storage.downloadUrl
+                            .addOnSuccessListener { downloadUrl ->
+                                merchantCollection.document(docId).update("merchantLogo", downloadUrl)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(context, "Register merchant successful", Toast.LENGTH_SHORT).show()
+                                            val intent = Intent(context, HomeActivity::class.java)
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            context.startActivity(intent)
+                                        }
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+                                    }
                             .addOnFailureListener { error ->
                                 Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
                             }
+                        }
                     }
-                }
                     .addOnFailureListener { error ->
                         Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -78,38 +83,40 @@ object Merchant {
     fun updateMerchant(activity: Activity, context: Context, photo: Uri?, name: String, address: String, type: String) {
         val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
         val email = Auth.getEmail()
-        val docMerchant =
-            merchantCollection.whereEqualTo("email", email).whereEqualTo("merchantActive", true)
+        val docMerchant = merchantCollection.whereEqualTo("email", email).whereEqualTo("merchantActive", true)
 
         if (photo != null) {
             docMerchant.get()
                 .addOnSuccessListener { querySnapshot ->
                     for (document in querySnapshot) {
-                        val docId = merchantCollection.document(document.id)
+                        val merchantDoc = merchantCollection.document(document.id)
                         val storageRef = storage.reference
-                        var imageRef = storageRef.child("merchant/logo/$docId.jpg")
+                        val docId = document.id
+                        val imageRef = storageRef.child("merchant/logo/$docId.jpg")
                         imageRef.delete()
                             .addOnSuccessListener {
-                                imageRef = storageRef.child("merchant/logo/$docId.jpg")
-
                                 val uploadTask = imageRef.putFile(photo)
                                 uploadTask
                                     .addOnSuccessListener { taskSnapshot ->
-                                        taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUrl ->
-                                            val data = mapOf(
-                                                "merchantName" to name,
-                                                "merchantLogo" to downloadUrl.toString(),
-                                                "merchantAddress" to address,
-                                                "merchantType" to type,
-                                            )
-                                            docId.update(data)
-                                                .addOnSuccessListener {
-                                                    Toast.makeText(context, "Update merchant successful", Toast.LENGTH_SHORT).show()
-                                                    activity.finish()
-                                                }
-                                                .addOnFailureListener { error ->
-                                                    Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-                                                }
+                                        taskSnapshot.storage.downloadUrl
+                                            .addOnSuccessListener { downloadUrl ->
+                                                val data = mapOf(
+                                                    "merchantName" to name,
+                                                    "merchantLogo" to downloadUrl.toString(),
+                                                    "merchantAddress" to address,
+                                                    "merchantType" to type,
+                                                )
+                                                merchantDoc.update(data)
+                                                    .addOnSuccessListener {
+                                                        Toast.makeText(context, "Update merchant successful", Toast.LENGTH_SHORT).show()
+                                                        activity.finish()
+                                                    }
+                                                    .addOnFailureListener { error ->
+                                                        Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+                                                    }
+                                            .addOnFailureListener { error ->
+                                                Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+                                            }
                                         }
                                     }
                                     .addOnFailureListener { error ->
