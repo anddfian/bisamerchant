@@ -1,4 +1,4 @@
-package com.bangkit.bisamerchant.ui.home
+package com.bangkit.bisamerchant.ui.history
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -15,8 +15,8 @@ import com.bangkit.bisamerchant.databinding.TransactionCardBinding
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.ui.invoice.DetailTransactionActivity
 
-class TransactionAdapter(private val listTransaction: ArrayList<Transaction>) :
-    RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
+class TransactionHistoryAdapter(private val listTransaction: ArrayList<Transaction>) :
+    RecyclerView.Adapter<TransactionHistoryAdapter.ViewHolder>() {
 
     private var _binding: TransactionCardBinding? = null
     private val binding get() = _binding!!
@@ -44,13 +44,13 @@ class TransactionAdapter(private val listTransaction: ArrayList<Transaction>) :
                         holder.ivTransactionImage.context, R.drawable.ic_arrow_bottom_left_24
                     )
                 )
-                tvAmount.text = holder.tvAmount.context.getString(
-                    R.string.rp, Utils.currencyFormat(transaction.amount)
-                )
                 tvAmount.setTextColor(
                     ContextCompat.getColor(
                         holder.tvAmount.context, R.color.Success
                     )
+                )
+                tvAmount.text = holder.tvAmount.context.getString(
+                    R.string.rp, Utils.currencyFormat(transaction.amount)
                 )
                 tvTransactionTitle.text = holder.tvTransactionTitle.context.getString(
                     R.string.cash_in
@@ -76,7 +76,7 @@ class TransactionAdapter(private val listTransaction: ArrayList<Transaction>) :
                     )
             }
             tvTransactionSupport.text =
-                transaction.timestamp?.let { Utils.simpleDateFormat(it, "HH:mm") }
+                transaction.timestamp?.let { Utils.simpleDateFormat(it, "EEE, d MMM yyyy – HH:mm") }
         }
 
     }

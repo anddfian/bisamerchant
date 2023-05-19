@@ -30,7 +30,6 @@ class TransactionViewModel(
             _totalAmountTransactionToday.value = repository.getTotalAmountTransactions(transactions)
         }
     }
-
     fun stopObserving() {
         repository.stopObserving()
     }

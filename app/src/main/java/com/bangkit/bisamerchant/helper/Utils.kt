@@ -8,6 +8,7 @@ import com.google.zxing.qrcode.QRCodeWriter
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.EnumMap
 import java.util.Locale
@@ -25,10 +26,14 @@ object Utils {
     }
 
     fun getTodayTimestamp(): Long {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-        val dateString = dateFormat.format(Date())
-        val dateParsed = dateFormat.parse(dateString)
-        return dateParsed.time / 1000
+        val today = Calendar.getInstance()
+        today.apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        return today.timeInMillis
     }
 
     fun simpleDateFormat(date: Long, format: String): String? {

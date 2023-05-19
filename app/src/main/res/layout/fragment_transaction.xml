@@ -56,20 +56,13 @@
                 android:text="@string/money_zero"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
-            <Button
-                android:id="@+id/btn_history"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="@string/see_all" />
-
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_transactions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingBottom="16dp"
             tools:listitem="@layout/transaction_card" />
 
         <TextView
