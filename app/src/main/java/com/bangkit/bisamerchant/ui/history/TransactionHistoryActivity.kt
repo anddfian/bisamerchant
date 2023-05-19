@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
@@ -20,9 +21,11 @@ import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
 
@@ -34,16 +37,19 @@ class TransactionHistoryActivity : AppCompatActivity() {
     private var _filterBottomSheetBinding: FilterBottomSheetBinding? = null
     private val filterBottomSheetBinding get() = _filterBottomSheetBinding!!
 
+    private var _bottomSheetDialog: BottomSheetDialog? = null
+    private val bottomSheetDialog get() = _bottomSheetDialog!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityTransactionHistoryBinding.inflate(layoutInflater)
-        _filterBottomSheetBinding = FilterBottomSheetBinding.inflate(layoutInflater)
 
+        setupFilterBottomSheet()
         setContentView(binding.root)
 
-        val transactionHistory = initTransactionHistoryViewModel()
-        updateUI(transactionHistory)
-        initClickListener()
+        val transactionHistoryViewModel = initTransactionHistoryViewModel()
+        updateUI(transactionHistoryViewModel)
+        initClickListener(transactionHistoryViewModel)
         initTopAppBar()
     }
 
@@ -67,35 +73,107 @@ class TransactionHistoryActivity : AppCompatActivity() {
         }
     }
 
-    private fun initClickListener() {
+    private fun setupFilterBottomSheet() {
+        _filterBottomSheetBinding = FilterBottomSheetBinding.inflate(layoutInflater)
+        _bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(filterBottomSheetBinding.root)
+    }
+
+    private fun initClickListener(transactionHistoryViewModel: TransactionHistoryViewModel) {
+        var startDate: Long? = null
+        var endDate: Long? = null
+        var trxType: String? = null
+        var queryDirection: Query.Direction = Query.Direction.DESCENDING
+
         binding.btnFilter.setOnClickListener {
-            datePickerHandler()
+            val radioFilter: RadioGroup = filterBottomSheetBinding.radioFilter
+            radioFilter.setOnCheckedChangeListener { _, checkedId ->
+                trxType = when (checkedId) {
+                    R.id.rb_transaction_in -> {
+                        "PAYMENT"
+                    }
+
+                    R.id.rb_transaction_out -> {
+                        "MERCHANT_WITHDRAW"
+                    }
+
+                    else -> {
+                        null
+                    }
+                }
+            }
+
+            val radioSort: RadioGroup = filterBottomSheetBinding.radioSort
+            radioSort.setOnCheckedChangeListener { _, checkedId ->
+                when (checkedId) {
+                    R.id.rb_newest -> {
+                        queryDirection = Query.Direction.DESCENDING
+                    }
+
+                    R.id.rb_oldest -> {
+                        queryDirection = Query.Direction.ASCENDING
+                    }
+                }
+            }
+
+            datePickerHandler { startDatePicked, endDatePicked ->
+                startDate = startDatePicked
+                endDate = endDatePicked
+            }
+
+            filterBottomSheetBinding.btnApply.setOnClickListener {
+                applyFilter(
+                    transactionHistoryViewModel, queryDirection, startDate, endDate, trxType
+                )
+            }
         }
     }
 
-    private fun datePickerHandler() {
-        val bottomSheetDialog = BottomSheetDialog(this)
-        bottomSheetDialog.setContentView(filterBottomSheetBinding.root)
-
+    private fun datePickerHandler(callback: (Long?, Long?) -> Unit) {
         filterBottomSheetBinding.etDateRange.setOnClickListener {
-            val datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker()
-            val materialDatePicker = datePickerBuilder.build()
 
-            materialDatePicker.addOnPositiveButtonClickListener { selection ->
-                val startDate = selection.first
-                val endDate = selection.second
+            val datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker().build()
+
+            datePickerBuilder.addOnPositiveButtonClickListener { selection ->
+
+                // UTC+0 -> WIB = -25200s
+                val startDate = selection.first - 25200000
+                val endDate = selection.second - 25200000
 
                 val selectedDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                val formattedStartDate = selectedDateFormat.format(Date(startDate ?: 0L))
-                val formattedEndDate = selectedDateFormat.format(Date(endDate ?: 0L))
+                selectedDateFormat.timeZone = TimeZone.getDefault()
 
-                filterBottomSheetBinding.etDateRange.setText("$formattedStartDate - $formattedEndDate")
+                val formattedStartDate = selectedDateFormat.format(Date(startDate))
+                val formattedEndDate = selectedDateFormat.format(Date(endDate))
+
+                filterBottomSheetBinding.etDateRange.setText(
+                    getString(
+                        R.string.date_range_picked, formattedStartDate, formattedEndDate
+                    )
+                )
+
+                callback(startDate, endDate)
             }
 
-            materialDatePicker.show(supportFragmentManager, DATE_PICKER_TAG)
+            datePickerBuilder.show(supportFragmentManager, DATE_PICKER_TAG)
         }
 
         bottomSheetDialog.show()
+    }
+
+    private fun applyFilter(
+        transactionHistoryViewModel: TransactionHistoryViewModel,
+        queryDirection: Query.Direction,
+        startDate: Long?,
+        endDate: Long?,
+        trxType: String?
+    ) {
+        transactionHistoryViewModel.observeTransactionsWithFilter(
+            queryDirection = queryDirection,
+            startDate = startDate,
+            endDate = endDate,
+            trxType = trxType
+        )
     }
 
     private fun initTransactionHistoryViewModel(): TransactionHistoryViewModel {
@@ -115,8 +193,10 @@ class TransactionHistoryActivity : AppCompatActivity() {
         transactionHistory.transactions.observe(this) { transactions ->
             if (transactions.isNotEmpty()) {
                 setTransactionsData(transactions)
+                binding.rvTransactions.visibility = View.VISIBLE
                 binding.tvNoTransactions.visibility = View.GONE
             } else {
+                binding.rvTransactions.visibility = View.GONE
                 binding.tvNoTransactions.visibility = View.VISIBLE
             }
         }
@@ -142,7 +222,9 @@ class TransactionHistoryActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        _filterBottomSheetBinding = null
+        if (_binding == null) {
+            _filterBottomSheetBinding = null
+        }
     }
 
     companion object {

@@ -84,13 +84,17 @@
 
     <TextView
         android:id="@+id/tv_no_transactions"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="24dp"
         android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/transaction_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/btn_filter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/tidak_ada_transaksi"
-        android:visibility="gone" />
+        android:visibility="gone"
+         />
 
     <LinearLayout
         android:id="@+id/btn_filter"
@@ -98,6 +102,7 @@
         android:layout_height="40dp"
         android:background="@color/md_theme_light_surface"
         android:gravity="center"
+        android:elevation="5dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

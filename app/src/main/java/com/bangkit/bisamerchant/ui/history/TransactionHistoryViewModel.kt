@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.bangkit.bisamerchant.data.TransactionRepository
 import com.bangkit.bisamerchant.data.response.Transaction
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 
 class TransactionHistoryViewModel(
     private val repository: TransactionRepository
@@ -13,9 +14,6 @@ class TransactionHistoryViewModel(
 
     private val _transactions = MutableLiveData<List<Transaction>>()
     val transactions: LiveData<List<Transaction>> get() = _transactions
-
-    private val _message = MutableLiveData<String>()
-    val message: LiveData<String> get() = _message
 
     private var listenerRegistration: ListenerRegistration? = null
     private val _totalAmountTransaction = MutableLiveData<Long>()
@@ -26,6 +24,61 @@ class TransactionHistoryViewModel(
         listenerRegistration = repository.observeTransactions { transactions ->
             _transactions.value = transactions
             _totalAmountTransaction.value = repository.getTotalAmountTransactions(transactions)
+        }
+    }
+
+    fun observeTransactionsWithFilter(
+        startDate: Long?,
+        endDate: Long?,
+        queryDirection: Query.Direction,
+        trxType: String?,
+    ) {
+        listenerRegistration = when {
+            trxType != null && startDate != null && endDate != null -> {
+                repository.observeTransactionsWithFilter(
+                    queryDirection = queryDirection,
+                    startDate = startDate,
+                    endDate = endDate,
+                    trxType = trxType
+                ) { transactions ->
+                    _transactions.value = transactions
+                    _totalAmountTransaction.value =
+                        repository.getTotalAmountTransactions(transactions)
+                }
+            }
+
+            trxType == null && startDate != null && endDate != null -> {
+                repository.observeTransactionsWithFilter(
+                    queryDirection = queryDirection,
+                    startDate = startDate,
+                    endDate = endDate
+                ) { transactions ->
+                    _transactions.value = transactions
+                    _totalAmountTransaction.value =
+                        repository.getTotalAmountTransactions(transactions)
+                }
+            }
+
+            trxType != null && startDate == null && endDate == null -> {
+                repository.observeTransactionsWithFilter(
+                    queryDirection = queryDirection,
+                    trxType = trxType
+                ) { transactions ->
+                    _transactions.value = transactions
+                    _totalAmountTransaction.value =
+                        repository.getTotalAmountTransactions(transactions)
+                }
+            }
+
+            else -> {
+                repository.observeTransactionsWithFilter(
+                    queryDirection = queryDirection
+                ) { transactions ->
+                    _transactions.value = transactions
+                    _totalAmountTransaction.value =
+                        repository.getTotalAmountTransactions(transactions)
+                }
+            }
         }
     }
 

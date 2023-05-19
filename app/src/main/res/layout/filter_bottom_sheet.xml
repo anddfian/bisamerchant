@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:text="Sort"
+        android:text="@string/sort"
         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bs_handle" />
@@ -41,13 +41,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Newest" />
+            android:text="@string/newest" />
 
         <RadioButton
             android:id="@+id/rb_oldest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Oldest" />
+            android:text="@string/oldest" />
     </RadioGroup>
 
     <TextView
@@ -57,7 +57,7 @@
         android:layout_below="@+id/radio_sort"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:text="Filter"
+        android:text="@string/filter"
         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radio_sort" />
@@ -72,7 +72,7 @@
         app:boxBackgroundMode="outline"
         app:endIconDrawable="@drawable/ic_date_picker_24"
         app:endIconMode="custom"
-        app:helperText="MM/DD/YYYY"
+        app:helperText="DD/MM/YYYY"
         app:helperTextEnabled="true"
         app:hintEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -108,13 +108,13 @@
             android:text="@string/semua_transaksi" />
 
         <RadioButton
-            android:id="@+id/rb_in"
+            android:id="@+id/rb_transaction_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/transaksi_masuk" />
 
         <RadioButton
-            android:id="@+id/rb_out"
+            android:id="@+id/rb_transaction_out"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/transaksi_keluar" />
@@ -126,7 +126,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Apply"
+        android:text="@string/apply"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

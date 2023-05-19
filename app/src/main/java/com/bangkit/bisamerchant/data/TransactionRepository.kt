@@ -126,6 +126,98 @@ class TransactionRepository(
         return listenerRegistration as ListenerRegistration
     }
 
+    fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction,
+        callback: (List<Transaction>) -> Unit,
+    ): ListenerRegistration {
+        val merchantId = runBlocking { pref.getMerchantId().first() }
+        val query = db.collection("transaction")
+            .whereEqualTo("merchantId", merchantId)
+            .orderBy("timestamp", queryDirection)
+
+        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+            querySnapshot?.let {
+                val transactions = processTransactionQuerySnapshot(it)
+                callback(transactions)
+            }
+        }
+
+        return listenerRegistration as ListenerRegistration
+    }
+
+    fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction,
+        trxType: String,
+        callback: (List<Transaction>) -> Unit,
+    ): ListenerRegistration {
+        val merchantId = runBlocking { pref.getMerchantId().first() }
+        val query = db.collection("transaction")
+            .whereEqualTo("merchantId", merchantId)
+            .whereEqualTo("trxType", trxType)
+            .orderBy("timestamp", queryDirection)
+
+        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+            querySnapshot?.let {
+                val transactions = processTransactionQuerySnapshot(it)
+                callback(transactions)
+            }
+        }
+
+        return listenerRegistration as ListenerRegistration
+    }
+
+    fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction,
+        startDate: Long,
+        endDate: Long,
+        callback: (List<Transaction>) -> Unit,
+    ): ListenerRegistration {
+        val dayMidnight = 86399000L
+        val endDateNew = endDate + dayMidnight
+        val merchantId = runBlocking { pref.getMerchantId().first() }
+        val query = db.collection("transaction")
+            .whereEqualTo("merchantId", merchantId)
+            .whereGreaterThanOrEqualTo("timestamp", startDate)
+            .whereLessThanOrEqualTo("timestamp", endDateNew)
+            .orderBy("timestamp", queryDirection)
+
+        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+            querySnapshot?.let {
+                val transactions = processTransactionQuerySnapshot(it)
+                callback(transactions)
+            }
+        }
+
+        return listenerRegistration as ListenerRegistration
+    }
+
+    fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction,
+        startDate: Long,
+        endDate: Long,
+        trxType: String,
+        callback: (List<Transaction>) -> Unit,
+    ): ListenerRegistration {
+        val dayMidnight = 86399000L
+        val endDateNew = endDate + dayMidnight
+        val merchantId = runBlocking { pref.getMerchantId().first() }
+        val query = db.collection("transaction")
+            .whereEqualTo("merchantId", merchantId)
+            .whereGreaterThanOrEqualTo("timestamp", startDate)
+            .whereLessThanOrEqualTo("timestamp", endDateNew)
+            .whereEqualTo("trxType", trxType)
+            .orderBy("timestamp", queryDirection)
+
+        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+            querySnapshot?.let {
+                val transactions = processTransactionQuerySnapshot(it)
+                callback(transactions)
+            }
+        }
+
+        return listenerRegistration as ListenerRegistration
+    }
+
     suspend fun getTransactionById(id: String): DocumentSnapshot = withContext(Dispatchers.IO) {
         return@withContext db.collection("transaction").document(id).get().await()
     }
