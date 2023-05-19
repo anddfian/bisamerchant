@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="32dp"
-        android:hint="Name"
+        android:hint="@string/name"
         app:helperText="Enter Name"
         app:helperTextEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Email"
+        android:hint="@string/email"
         app:helperText="Enter Email"
         app:helperTextEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="PIN"
+        android:hint="@string/pin"
         app:endIconMode="password_toggle"
         app:helperText="Enter PIN"
         app:helperTextEnabled="true"
@@ -96,7 +96,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:maxLength="6"
+            android:inputType="numberPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,7 +125,7 @@
             android:id="@+id/tv_term"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Syarat &amp; Ketentuan"
+            android:text="@string/syarat_amp_ketentuan"
             android:textColor="@color/md_theme_light_primary" />
 
         <View
@@ -134,7 +135,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="serta" />
+            android:text="@string/serta" />
 
         <View
             android:layout_width="4dp"
@@ -144,7 +145,7 @@
             android:id="@+id/tv_policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kebijakan Privasi"
+            android:text="@string/kebijakan_privasi"
             android:textColor="@color/md_theme_light_primary" />
 
         <View
@@ -154,7 +155,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="kami" />
+            android:text="@string/kami" />
     </LinearLayout>
 
 
@@ -163,7 +164,7 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/login"
         app:layout_constraintBottom_toTopOf="@+id/btn_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -174,7 +175,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Register"
+        android:text="@string/register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

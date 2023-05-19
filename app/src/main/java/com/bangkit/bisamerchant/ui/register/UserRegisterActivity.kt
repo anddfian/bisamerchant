@@ -1,10 +1,12 @@
 package com.bangkit.bisamerchant.ui.register
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityUserRegisterBinding
 import com.bangkit.bisamerchant.services.Auth
@@ -23,6 +25,7 @@ class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
         setupClickListeners()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onClick(v: View) {
         when(v.id) {
             R.id.tv_term -> {

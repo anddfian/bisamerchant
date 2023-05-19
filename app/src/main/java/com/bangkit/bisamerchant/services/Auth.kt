@@ -3,7 +3,9 @@ package com.bangkit.bisamerchant.services
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.bangkit.bisamerchant.ui.home.HomeActivity
 import com.bangkit.bisamerchant.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -52,6 +54,7 @@ object Auth {
         activity.finish()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun register(context: Context, name: String, email: String, password: String, pin: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
