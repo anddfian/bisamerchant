@@ -36,10 +36,10 @@ object Utils {
         return today.timeInMillis
     }
 
-    fun simpleDateFormat(date: Long, format: String): String? {
-        val dateFormatted = Date(date)
+    fun simpleDateFormat(date: Long?, format: String): String? {
+        val dateFormatted = date?.let { Date(it) }
         val formatter = SimpleDateFormat(format, Locale.getDefault())
-        return formatter.format(dateFormatted)
+        return dateFormatted?.let { formatter.format(it) }
     }
 
     fun generateQRCode(
