@@ -1,9 +1,11 @@
 package com.bangkit.bisamerchant.ui.register
 
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -20,9 +22,23 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
-        if (result.data != null) {
-            selectedImageUri = result.data!!.data
-            binding.ivMerchantLogo.setImageURI(selectedImageUri)
+        if (result.data?.data != null) {
+            var fileSize: Long = -1
+            val cursor: Cursor? = contentResolver.query(result.data!!.data!!, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
+                    if (sizeIndex != -1) {
+                        fileSize = it.getLong(sizeIndex) / (1024 * 1024)
+                    }
+                }
+            }
+            if (fileSize > 5) {
+                Toast.makeText(this@MerchantRegisterActivity, "Image size larger than 5MB", Toast.LENGTH_SHORT).show()
+            } else {
+                selectedImageUri = result.data!!.data
+                binding.ivMerchantLogo.setImageURI(selectedImageUri)
+            }
         }
     }
 
