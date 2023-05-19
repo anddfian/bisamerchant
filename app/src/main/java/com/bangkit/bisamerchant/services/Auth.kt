@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.bangkit.bisamerchant.ui.home.HomeActivity
 import com.bangkit.bisamerchant.ui.login.LoginActivity
+import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
 import com.google.firebase.auth.FirebaseAuth
 
 object Auth {
@@ -22,10 +23,30 @@ object Auth {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(context, HomeActivity::class.java)
-                    context.startActivity(intent)
-                    activity.finish()
+                    Merchant.checkMerchantExists(
+                        onSuccess = { exists ->
+                            Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                            if (exists) {
+                                val intent = Intent(context, HomeActivity::class.java)
+                                context.startActivity(intent)
+                                activity.finish()
+                            } else {
+                                val intent = Intent(
+                                    context,
+                                    MerchantRegisterActivity::class.java
+                                )
+                                context.startActivity(intent)
+                                activity.finish()
+                            }
+                        },
+                        onFailure = { exception ->
+                            Toast.makeText(
+                                context,
+                                exception.localizedMessage,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    )
                 }
             }
             .addOnFailureListener { error ->
