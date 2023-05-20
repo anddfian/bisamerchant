@@ -2,8 +2,12 @@ package com.bangkit.bisamerchant.ui.pin
 
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -13,10 +17,11 @@ import com.bangkit.bisamerchant.services.Merchant.updateBalanceMerchant
 import com.bangkit.bisamerchant.services.Owner
 
 
-class PinActivity : AppCompatActivity(), View.OnClickListener {
+class PinActivity : AppCompatActivity(), View.OnClickListener, TextWatcher {
     private var _binding: ActivityPinBinding? = null
     private val binding get() = _binding!!
-    private var times = 3
+    private val editTextArray: ArrayList<EditText> = ArrayList(NUM_OF_DIGITS)
+    private var numTemp: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         _binding = ActivityPinBinding.inflate(layoutInflater)
@@ -25,6 +30,17 @@ class PinActivity : AppCompatActivity(), View.OnClickListener {
 
         initTopAppBar()
         initClickListener()
+
+        val layout: LinearLayout = findViewById(R.id.codeLayout)
+        for (index in 0 until (layout.childCount)) {
+            val view: View = layout.getChildAt(index)
+            if (view is EditText) {
+                editTextArray.add(index, view)
+                editTextArray[index].addTextChangedListener(this)
+            }
+        }
+
+        editTextArray[0].requestFocus() //After the views are initialized we focus on the first view
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -89,5 +105,44 @@ class PinActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    companion object {
+        const val NUM_OF_DIGITS = 6
+    }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        numTemp = s.toString()
+    }
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+    }
+
+    override fun afterTextChanged(s: Editable?) {
+        (0 until editTextArray.size)
+            .forEach { i ->
+                if (s === editTextArray[i].editableText) {
+
+                    if (s != null) {
+                        if (s.isBlank()) {
+                            return
+                        }
+                    }
+                    if (s != null) {
+                        if (s.length >= 2) {//if more than 1 char
+                            val newTemp = s.toString().substring(s.length - 1, s.length)
+                            if (newTemp != numTemp) {
+                                editTextArray[i].setText(newTemp)
+                            } else {
+                                editTextArray[i].setText(s.toString().substring(0, s.length - 1))
+                            }
+                        } else if (i != editTextArray.size - 1) { //not last char
+                            editTextArray[i + 1].requestFocus()
+                            editTextArray[i + 1].setSelection(editTextArray[i + 1].length())
+                            return
+                        }
+                    }
+                }
+            }
     }
 }
