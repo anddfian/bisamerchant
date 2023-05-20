@@ -146,4 +146,6 @@
     <string name="cs_content">Jika Anda memiliki masalah dengan akun BISA Merchant Anda, biarkan Kami membantu Anda</string>
     <string name="cs_btn_close">Tutup</string>
     <string name="cs_btn_call">Hubungi Customer Servce</string>
+    <string name="active">Active</string>
+    <string name="tambah_merchant">Tambah Merchant</string>
 </resources>

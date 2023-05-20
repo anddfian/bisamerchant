@@ -34,34 +34,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/transaction_out_card" />
+            <include layout="@layout/transaction_card" />
 
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
-            <include layout="@layout/notification_transaction_in_card" />
-
+            <include layout="@layout/transaction_card" />
 
         </LinearLayout>
     </ScrollView>
