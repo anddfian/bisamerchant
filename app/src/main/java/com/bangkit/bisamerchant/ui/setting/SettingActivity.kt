@@ -1,10 +1,13 @@
 package com.bangkit.bisamerchant.ui.setting
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
@@ -43,18 +46,23 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
             R.id.cv_setting1 -> {
                 startActivity(Intent(this@SettingActivity, MerchantSettingActivity::class.java))
             }
+
             R.id.cv_setting2 -> {
                 startActivity(Intent(this@SettingActivity, TermConditionActivity::class.java))
             }
+
             R.id.cv_setting3 -> {
                 startActivity(Intent(this@SettingActivity, PrivacyPolicyActivity::class.java))
             }
+
             R.id.cv_setting4 -> {
                 startActivity(Intent(this@SettingActivity, FaqActivity::class.java))
             }
+
             R.id.cv_setting5 -> {
-                TODO("QR-039")
+                showDialog()
             }
+
             R.id.btn_logout -> {
                 merchantViewModel.deleteMerchant()
                 Auth.logout(this, this@SettingActivity)
@@ -68,6 +76,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
                 onBackPressedDispatcher.onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -88,12 +97,35 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupClickListeners() {
-        binding.btnLogout.setOnClickListener(this)
-        binding.cvSetting1.setOnClickListener(this)
-        binding.cvSetting2.setOnClickListener(this)
-        binding.cvSetting3.setOnClickListener(this)
-        binding.cvSetting4.setOnClickListener(this)
-        binding.cvSetting5.setOnClickListener(this)
+        binding.apply {
+            cvSetting1.setOnClickListener(this@SettingActivity)
+            cvSetting2.setOnClickListener(this@SettingActivity)
+            cvSetting3.setOnClickListener(this@SettingActivity)
+            cvSetting4.setOnClickListener(this@SettingActivity)
+            cvSetting5.setOnClickListener(this@SettingActivity)
+            btnLogout.setOnClickListener(this@SettingActivity)
+        }
+    }
+
+    private fun showDialog() {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.cs_dialog)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val buttonCall = dialog.findViewById<View>(R.id.btn_cs_call)
+        val buttonClose = dialog.findViewById<View>(R.id.btn_cs_close)
+
+        buttonCall.setOnClickListener {
+            Toast.makeText(this, "Menghubungi Customer Service", Toast.LENGTH_SHORT).show()
+            val phoneNumber = "+62 812 3456 7890"
+            val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phoneNumber"))
+            intent.setPackage("com.whatsapp")
+            startActivity(intent)
+        }
+        buttonClose.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     private fun initMerchantViewModel(): MerchantViewModel {
