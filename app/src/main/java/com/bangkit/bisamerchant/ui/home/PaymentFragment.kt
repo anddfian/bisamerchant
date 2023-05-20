@@ -181,11 +181,6 @@ class PaymentFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        _binding?.paymentContainer?.minimumHeight = 0
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         scannedAmount = null

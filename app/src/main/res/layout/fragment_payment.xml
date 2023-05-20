@@ -8,146 +8,155 @@
     android:background="@color/md_theme_light_surface"
     tools:context=".ui.home.PaymentFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/switch_qr_container"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border_bottom"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/iv_ic_qr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/icon_qr"
-                android:src="@drawable/ic_payment_24" />
-
-            <TextView
-                android:id="@+id/tv_qr_dynamic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@id/iv_ic_qr"
-                android:text="@string/qr_title_text"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-            <TextView
-                android:id="@+id/tv_qr_dynamic_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_qr_dynamic"
-                android:layout_toEndOf="@id/iv_ic_qr"
-                android:text="@string/qr_label_text"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/switch_qr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:checked="false" />
-        </RelativeLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ed_payment_amount_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="@string/amount"
-            android:visibility="gone"
-            app:endIconMode="clear_text"
-            app:errorEnabled="true"
-            app:helperText="@string/enter_amount"
-            app:helperTextEnabled="true"
-            app:layout_constraintTop_toBottomOf="@id/switch_qr_container"
-            app:startIconDrawable="@drawable/ic_rupiah_24">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ed_payment_amount"
+            <RelativeLayout
+                android:id="@+id/switch_qr_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:background="@drawable/border_bottom"
+                android:padding="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/iv_dynamic_qr"
-            android:layout_width="210dp"
-            android:layout_height="210dp"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/qr_image"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ed_payment_amount_layout" />
+                <ImageView
+                    android:id="@+id/iv_ic_qr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/icon_qr"
+                    android:src="@drawable/ic_payment_24" />
 
-        <ImageView
-            android:id="@+id/iv_static_qr"
-            android:layout_width="210dp"
-            android:layout_height="210dp"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/qr_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/switch_qr_container" />
+                <TextView
+                    android:id="@+id/tv_qr_dynamic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@id/iv_ic_qr"
+                    android:text="@string/qr_title_text"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
-        <Button
-            android:id="@+id/btn_scan_qr"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/scan_qr_customer"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_dynamic_qr" />
+                <TextView
+                    android:id="@+id/tv_qr_dynamic_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_qr_dynamic"
+                    android:layout_toEndOf="@id/iv_ic_qr"
+                    android:text="@string/qr_label_text"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
-        <Button
-            android:id="@+id/btn_share_qr"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/share_qr"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_static_qr" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switch_qr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:checked="false" />
+            </RelativeLayout>
 
-        <Button
-            android:id="@+id/btn_create_qr"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/create_qr"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical"
-            app:layout_constraintTop_toBottomOf="@id/iv_dynamic_qr" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ed_payment_amount_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:hint="@string/amount"
+                android:visibility="gone"
+                app:endIconMode="clear_text"
+                app:errorEnabled="true"
+                app:helperText="@string/enter_amount"
+                app:helperTextEnabled="true"
+                app:layout_constraintTop_toBottomOf="@id/switch_qr_container"
+                app:startIconDrawable="@drawable/ic_rupiah_24">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_payment_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/iv_dynamic_qr"
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/qr_image"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ed_payment_amount_layout" />
+
+            <ImageView
+                android:id="@+id/iv_static_qr"
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/qr_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switch_qr_container" />
+
+            <Button
+                android:id="@+id/btn_scan_qr"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="24dp"
+                android:text="@string/scan_qr_customer"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_dynamic_qr" />
+
+            <Button
+                android:id="@+id/btn_share_qr"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="24dp"
+                android:text="@string/share_qr"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_static_qr" />
+
+            <Button
+                android:id="@+id/btn_create_qr"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="24dp"
+                android:text="@string/create_qr"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+                app:layout_constraintTop_toBottomOf="@id/iv_dynamic_qr" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 
 </FrameLayout>

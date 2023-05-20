@@ -75,5 +75,4 @@
             android:text="@string/no_transaction_today"
             android:visibility="gone" />
     </LinearLayout>
-
 </FrameLayout>

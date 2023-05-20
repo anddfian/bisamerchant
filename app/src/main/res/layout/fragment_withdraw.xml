@@ -8,89 +8,95 @@
     android:background="@color/md_theme_light_surface"
     tools:context=".ui.home.WithdrawFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ed_withdraw_amount_layout"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="@string/amount"
-            app:endIconMode="clear_text"
-            app:helperText="@string/enter_amount"
-            app:helperTextEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:startIconDrawable="@drawable/ic_rupiah_24">
+            android:layout_height="wrap_content" >
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ed_withdraw_amount"
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ed_withdraw_amount_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_margin="16dp"
+                android:hint="@string/amount"
+                app:endIconMode="clear_text"
+                app:helperText="@string/enter_amount"
+                app:helperTextEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:startIconDrawable="@drawable/ic_rupiah_24">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ed_withdraw_bank_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_marginHorizontal="16dp"
-            android:hint="@string/bank_name"
-            app:helperText="@string/enter_bank_name"
-            app:helperTextEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ed_withdraw_amount_layout"
-            app:startIconDrawable="@drawable/ic_search_24">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_withdraw_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <AutoCompleteTextView
-                android:id="@+id/ed_withdraw_bank"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ed_withdraw_bank_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                />
+                android:layout_margin="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:hint="@string/bank_name"
+                app:helperText="@string/enter_bank_name"
+                app:helperTextEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ed_withdraw_amount_layout"
+                app:startIconDrawable="@drawable/ic_search_24">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <AutoCompleteTextView
+                    android:id="@+id/ed_withdraw_bank"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ed_withdraw_account_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="@string/account_number"
-            app:endIconMode="clear_text"
-            app:helperText="@string/enter_account_number"
-            app:helperTextEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ed_withdraw_bank_layout"
-            app:startIconDrawable="@drawable/ic_card_24">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ed_account_number"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ed_withdraw_account_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_margin="16dp"
+                android:hint="@string/account_number"
+                app:endIconMode="clear_text"
+                app:helperText="@string/enter_account_number"
+                app:helperTextEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ed_withdraw_bank_layout"
+                app:startIconDrawable="@drawable/ic_card_24">
 
-        <Button
-            android:id="@+id/withdraw_button"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/withdraw"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ed_withdraw_account_layout" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_account_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/withdraw_button"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/withdraw"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ed_withdraw_account_layout" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 </FrameLayout>
