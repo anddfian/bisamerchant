@@ -142,4 +142,8 @@
     <string name="kami">kami</string>
     <string name="login">Login</string>
     <string name="reset_password">Reset Password</string>
+    <string name="cs_title">Tenang akun Anda aman!</string>
+    <string name="cs_content">Jika Anda memiliki masalah dengan akun BISA Merchant Anda, biarkan Kami membantu Anda</string>
+    <string name="cs_btn_close">Tutup</string>
+    <string name="cs_btn_call">Hubungi Customer Servce</string>
 </resources>
