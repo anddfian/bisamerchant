@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -16,6 +17,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
+import com.bangkit.bisamerchant.databinding.FilterBottomSheetBinding
+import com.bangkit.bisamerchant.databinding.MerchantAccountBottomSheetBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
@@ -23,6 +26,7 @@ import com.bangkit.bisamerchant.ui.history.TransactionHistoryActivity
 import com.bangkit.bisamerchant.ui.notification.NotificationActivity
 import com.bangkit.bisamerchant.ui.profile.ProfileActivity
 import com.bangkit.bisamerchant.ui.setting.SettingActivity
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -32,11 +36,19 @@ class HomeActivity : AppCompatActivity() {
     private var _binding: ActivityHomeBinding? = null
     private val binding get() = _binding!!
 
+
+    private var _merchantAccountBottomSheetBinding: MerchantAccountBottomSheetBinding? = null
+    private val merchantAccountBottomSheetBinding get() = _merchantAccountBottomSheetBinding!!
+
+    private var _bottomSheetDialog: BottomSheetDialog? = null
+    private val bottomSheetDialog get() = _bottomSheetDialog!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupFilterBottomSheet()
         val merchantViewModel = initMerchantViewModel()
         Utils.getTodayTimestamp()
         updateUI(merchantViewModel)
@@ -50,6 +62,13 @@ class HomeActivity : AppCompatActivity() {
         val factory = ViewModelMerchantFactory.getInstance(pref)
         val merchantViewModel: MerchantViewModel by viewModels { factory }
         return merchantViewModel
+    }
+
+    private fun setupFilterBottomSheet() {
+        _merchantAccountBottomSheetBinding =
+            MerchantAccountBottomSheetBinding.inflate(layoutInflater)
+        _bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(merchantAccountBottomSheetBinding.root)
     }
 
     private fun updateUI(
@@ -76,6 +95,12 @@ class HomeActivity : AppCompatActivity() {
         binding.btnProfileMerchant.setOnClickListener {
             startActivity(Intent(this@HomeActivity, ProfileActivity::class.java))
         }
+
+        binding.tvMerchantName.setOnClickListener {
+
+            bottomSheetDialog.show()
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
