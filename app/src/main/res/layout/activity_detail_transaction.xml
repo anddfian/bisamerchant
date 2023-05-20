@@ -19,9 +19,9 @@
             android:id="@+id/top_app_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/invoice_app_bar"
             app:navigationIconTint="@color/white"
-            app:titleTextColor="@color/white"
-            app:menu="@menu/invoice_app_bar"/>
+            app:titleTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -169,7 +169,6 @@
                     <TextView
                         android:id="@+id/trx_type"
                         android:gravity="end"
-                        android:text="Withdraw"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
                 </TableRow>
 
@@ -201,19 +200,23 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tl_invoice_detail"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginVertical="32dp"
-                android:stretchColumns="0">
+                android:layout_marginVertical="16dp"
+                android:layout_marginTop="16dp"
+                android:stretchColumns="1">
 
-                <TextView
-                    android:gravity="start"
-                    android:text="Total"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                <TableRow android:layout_marginTop="16dp">
 
-                <TextView
-                    android:id="@+id/total_amount"
-                    android:gravity="end"
-                    android:text="Rp65.000"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                    <TextView
+                        android:gravity="start"
+                        android:text="Total"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                    <TextView
+                        android:id="@+id/total_amount"
+                        android:gravity="end"
+                        android:text="Rp65.000"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                </TableRow>
             </TableLayout>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

@@ -40,6 +40,9 @@ class TransactionHistoryActivity : AppCompatActivity() {
     private var _bottomSheetDialog: BottomSheetDialog? = null
     private val bottomSheetDialog get() = _bottomSheetDialog!!
 
+    private var startDate: Long? = null
+    private var endDate: Long? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityTransactionHistoryBinding.inflate(layoutInflater)
@@ -80,8 +83,6 @@ class TransactionHistoryActivity : AppCompatActivity() {
     }
 
     private fun initClickListener(transactionHistoryViewModel: TransactionHistoryViewModel) {
-        var startDate: Long? = null
-        var endDate: Long? = null
         var trxType: String? = null
         var queryDirection: Query.Direction = Query.Direction.DESCENDING
 
@@ -125,6 +126,7 @@ class TransactionHistoryActivity : AppCompatActivity() {
                 applyFilter(
                     transactionHistoryViewModel, queryDirection, startDate, endDate, trxType
                 )
+                bottomSheetDialog.dismiss()
             }
         }
     }
@@ -198,6 +200,14 @@ class TransactionHistoryActivity : AppCompatActivity() {
             } else {
                 binding.rvTransactions.visibility = View.GONE
                 binding.tvNoTransactions.visibility = View.VISIBLE
+            }
+
+            if (startDate != null) {
+                val formattedStartDate = Utils.simpleDateFormat(startDate, "dd MMM yyyy")
+                val formattedEndDate = Utils.simpleDateFormat(endDate, "dd MMM yyyy")
+                binding.tvDate.text = getString(
+                    R.string.date_range_picked, formattedStartDate, formattedEndDate
+                )
             }
         }
         showRecyclerFollows()

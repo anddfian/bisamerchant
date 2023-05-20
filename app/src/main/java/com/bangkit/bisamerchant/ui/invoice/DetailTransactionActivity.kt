@@ -71,7 +71,7 @@ class DetailTransactionActivity : AppCompatActivity() {
                     accountNo.text = transaction.bankAccountNo.toString()
                     transactionId.text = transaction.id
                     tvInvoiceDate.text = transaction.timestamp?.let {
-                        Utils.simpleDateFormat(it, "EEE, d MMM yyyy")
+                        Utils.simpleDateFormat(it, "EEE, d MMM yyyy – HH:mm")
                     }
                     totalAmount.text =
                         this@DetailTransactionActivity.getString(
