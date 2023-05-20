@@ -64,11 +64,6 @@ class TransactionFragment : Fragment() {
         showRecyclerFollows()
     }
 
-    override fun onResume() {
-        super.onResume()
-        _binding?.transactionContainer?.minimumHeight = 0
-    }
-
     private fun showRecyclerFollows() {
         val layoutManager = LinearLayoutManager(requireContext())
         binding.rvTransactions.layoutManager = layoutManager

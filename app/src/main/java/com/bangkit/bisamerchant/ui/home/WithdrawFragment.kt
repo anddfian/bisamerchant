@@ -126,11 +126,6 @@ class WithdrawFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        _binding?.withdrawContainer?.minimumHeight = 0
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
