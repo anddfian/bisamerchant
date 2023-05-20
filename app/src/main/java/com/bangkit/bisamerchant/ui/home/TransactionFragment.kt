@@ -2,6 +2,7 @@ package com.bangkit.bisamerchant.ui.home
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +18,10 @@ import com.bangkit.bisamerchant.databinding.FragmentTransactionBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
 
 class TransactionFragment : Fragment() {
     private var _binding: FragmentTransactionBinding? = null
@@ -48,7 +51,6 @@ class TransactionFragment : Fragment() {
         transactionViewModel: TransactionViewModel
     ) {
         binding.tvDate.text = Utils.getCurrentDate()
-
         transactionViewModel.observeTransactionsToday()
         transactionViewModel.totalAmountTransactionToday.observe(viewLifecycleOwner) { amount ->
             binding.tvAmountDailyTransactions.text = Utils.currencyFormat(amount)

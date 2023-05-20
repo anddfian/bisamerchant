@@ -14,23 +14,31 @@ import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
+import com.bangkit.bisamerchant.data.response.Merchant
+import com.bangkit.bisamerchant.data.response.Transaction
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
 import com.bangkit.bisamerchant.databinding.FilterBottomSheetBinding
 import com.bangkit.bisamerchant.databinding.MerchantAccountBottomSheetBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
+import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
 import com.bangkit.bisamerchant.ui.history.TransactionHistoryActivity
+import com.bangkit.bisamerchant.ui.history.TransactionHistoryAdapter
 import com.bangkit.bisamerchant.ui.notification.NotificationActivity
 import com.bangkit.bisamerchant.ui.profile.ProfileActivity
+import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
 import com.bangkit.bisamerchant.ui.setting.SettingActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
 
 class HomeActivity : AppCompatActivity() {
     private var _binding: ActivityHomeBinding? = null
@@ -50,8 +58,9 @@ class HomeActivity : AppCompatActivity() {
 
         setupFilterBottomSheet()
         val merchantViewModel = initMerchantViewModel()
-        Utils.getTodayTimestamp()
-        updateUI(merchantViewModel)
+        val transactionViewModel = initTransactionViewModel()
+        transactionViewModel.observeTransactionsToday()
+        updateUI(merchantViewModel, transactionViewModel)
         initTopAppBar()
         initClickListener()
         tabLayoutConnector()
@@ -64,6 +73,13 @@ class HomeActivity : AppCompatActivity() {
         return merchantViewModel
     }
 
+    private fun initTransactionViewModel(): TransactionViewModel {
+        val pref = MerchantPreferences.getInstance(dataStore)
+        val factory = ViewModelTransactionFactory.getInstance(pref)
+        val transactionViewModel: TransactionViewModel by viewModels { factory }
+        return transactionViewModel
+    }
+
     private fun setupFilterBottomSheet() {
         _merchantAccountBottomSheetBinding =
             MerchantAccountBottomSheetBinding.inflate(layoutInflater)
@@ -72,15 +88,22 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateUI(
-        merchantViewModel: MerchantViewModel,
+        merchantViewModel: MerchantViewModel, transactionViewModel: TransactionViewModel
     ) {
         merchantViewModel.observeMerchantActive()
+        merchantViewModel.observeMerchants()
         merchantViewModel.merchant.observe(this) { merchant ->
             binding.apply {
                 tvMerchantName.text = merchant.merchantName
                 tvBalanceAmount.text = Utils.currencyFormat(merchant.balance)
             }
         }
+        merchantViewModel.merchantsList.observe(this) { merchantList ->
+            if (merchantList.isNotEmpty()) {
+                setTransactionsData(merchantViewModel, transactionViewModel, merchantList)
+            }
+        }
+        showRecyclerMerchants()
     }
 
     private fun initTopAppBar() {
@@ -97,10 +120,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.tvMerchantName.setOnClickListener {
-
+            showRecyclerMerchants()
             bottomSheetDialog.show()
         }
-
+        merchantAccountBottomSheetBinding.btnAddMerchant.setOnClickListener {
+            startActivity(Intent(this@HomeActivity, MerchantRegisterActivity::class.java))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -137,9 +162,30 @@ class HomeActivity : AppCompatActivity() {
         supportActionBar?.elevation = 0f
     }
 
+    private fun showRecyclerMerchants() {
+        val layoutManager = LinearLayoutManager(this)
+        merchantAccountBottomSheetBinding.rvMerchantList.layoutManager = layoutManager
+    }
+
+    private fun setTransactionsData(
+        merchantViewModel: MerchantViewModel,
+        transactionViewModel: TransactionViewModel,
+        merchants: List<Merchant>
+    ) {
+        val listMerchants = ArrayList<Merchant>()
+        for (merchant in merchants) {
+            listMerchants.add(merchant)
+        }
+        val adapter = MerchantAccountAdapter(merchantViewModel, transactionViewModel, listMerchants)
+        merchantAccountBottomSheetBinding.rvMerchantList.adapter = adapter
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        if (_binding == null) {
+            _merchantAccountBottomSheetBinding = null
+        }
     }
 
     companion object {

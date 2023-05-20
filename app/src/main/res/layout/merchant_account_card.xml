@@ -46,7 +46,7 @@ app:cardCornerRadius="0dp">
         tools:ignore="RelativeOverlap" />
 
     <RadioButton
-        android:id="@+id/rb_newest"
+        android:id="@+id/rb_active"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

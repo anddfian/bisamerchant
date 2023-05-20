@@ -17,6 +17,7 @@ class MerchantPreferences private constructor(private val dataStore: DataStore<P
         dataStore.edit { preferences ->
             preferences[MERCHANT_ID] = id
         }
+
     }
 
     suspend fun delete() {

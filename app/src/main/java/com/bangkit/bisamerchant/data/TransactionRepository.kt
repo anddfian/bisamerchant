@@ -1,5 +1,6 @@
 package com.bangkit.bisamerchant.data
 
+import android.util.Log
 import com.bangkit.bisamerchant.data.response.DetailTransaction
 import com.bangkit.bisamerchant.data.response.Payment
 import com.bangkit.bisamerchant.data.response.Transaction
@@ -28,6 +29,7 @@ class TransactionRepository(
     ): String? {
         val deferredMessage = CompletableDeferred<String>()
         val transactionDocument = db.collection("transaction")
+        val newTransactionId = transactionDocument.document().id
         val currentBalance = getPayerBalance(payment.payerId)
         if (currentBalance != null) {
             if (currentBalance > payment.amount) {
@@ -36,13 +38,14 @@ class TransactionRepository(
                         "amount" to payment.amount,
                         "merchantId" to payment.merchantId,
                         "payerId" to payment.payerId,
-                        "id" to transactionDocument.document().id,
+                        "id" to newTransactionId,
                         "timestamp" to payment.timestamp,
                         "trxType" to payment.trxType
                     )
 
                     transactionDocument
-                        .add(transaction)
+                        .document(newTransactionId)
+                        .set(transaction)
                         .addOnSuccessListener {
                             deferredMessage.complete("Transaksi berhasil")
                         }

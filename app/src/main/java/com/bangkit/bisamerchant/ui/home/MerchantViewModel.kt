@@ -11,6 +11,9 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
     private val _merchant = MutableLiveData<Merchant>()
     val merchant: LiveData<Merchant> get() = _merchant
 
+    private val _merchantsList = MutableLiveData<List<Merchant>>()
+    val merchantsList: LiveData<List<Merchant>> get() = _merchantsList
+
     private var listenerRegistration: ListenerRegistration? = null
 
     fun observeMerchantActive() {
@@ -19,12 +22,26 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
         }
     }
 
+    fun observeMerchants() {
+        listenerRegistration = repository.observeMerchants { merchants ->
+            _merchantsList.value = merchants
+        }
+    }
+
+    fun changeMerchantStatus(id: String?) {
+        repository.changeMerchantStatus(id)
+    }
+
     fun stopObserving() {
         repository.stopObserving()
     }
 
     fun deleteMerchant() {
         repository.deleteMerchant()
+    }
+
+    fun saveMerchant(id: String) {
+        repository.saveMerchantId(id)
     }
 
     override fun onCleared() {
