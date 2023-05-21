@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bangkit.bisamerchant.data.TransactionRepository
+import com.bangkit.bisamerchant.data.response.MessageNotif
 import com.bangkit.bisamerchant.data.response.Payment
 import com.bangkit.bisamerchant.data.response.Transaction
+import com.bangkit.bisamerchant.helper.Utils
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.launch
 
@@ -19,6 +21,9 @@ class TransactionViewModel(
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
+    private val _messageNotif = MutableLiveData<MessageNotif>()
+    val messageNotif: LiveData<MessageNotif> get() = _messageNotif
+
     private var listenerRegistration: ListenerRegistration? = null
 
     private val _totalAmountTransactionToday = MutableLiveData<Long>()
@@ -28,16 +33,41 @@ class TransactionViewModel(
         viewModelScope.launch {
             listenerRegistration = repository.observeTransactionsToday { transactions ->
                 _transactions.value = transactions
-                _totalAmountTransactionToday.value = repository.getTotalAmountTransactions(transactions)
+                _totalAmountTransactionToday.value =
+                    repository.getTotalAmountTransactions(transactions)
+
+
+                val totalTransaction = getTransactionCount()
+                if (totalTransaction > 0 && transactions.size > totalTransaction) {
+                    if (transactions[0].trxType == "PAYMENT") {
+                        _messageNotif.value = MessageNotif(
+                            "Pembayaran telah berhasil",
+                            "Uang sejumlah Rp${Utils.currencyFormat(transactions[0].amount)} berhasil diterima",
+                            "Pembayaran",
+                        )
+                    } else {
+                        _messageNotif.value = MessageNotif(
+                            "Penarikan telah berhasil",
+                            "Uang sejumlah Rp${Utils.currencyFormat(transactions[0].amount)} berhasil ditarik",
+                            "Tarik Dana",
+                        )
+                    }
+                }
+                saveTransactionCount(transactions.size)
             }
         }
     }
+
     fun stopObserving() {
         repository.stopObserving()
     }
 
-    fun getMerchantId() =
-        repository.getMerchantId()
+    fun getTransactionCount() =
+        repository.getTransactionCount()
+
+    fun saveTransactionCount(count: Int) {
+        repository.saveTransactionCount(count)
+    }
 
     override fun onCleared() {
         super.onCleared()

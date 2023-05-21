@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class ProfileActivity : AppCompatActivity() {
     private var _binding: ActivityProfileBinding? = null

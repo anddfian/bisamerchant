@@ -87,11 +87,6 @@ class TransactionRepository(
         }
     }
 
-    fun stopObserving() {
-        listenerRegistration?.remove()
-        listenerRegistration = null
-    }
-
     private fun processTransactionQuerySnapshot(querySnapshot: QuerySnapshot): List<Transaction> {
         val data = mutableListOf<Transaction>()
 
@@ -115,7 +110,6 @@ class TransactionRepository(
 
     fun observeTransactions(callback: (List<Transaction>) -> Unit): ListenerRegistration {
         val merchantId = runBlocking { pref.getMerchantId().first() }
-
         val query = db.collection("transaction")
             .whereEqualTo("merchantId", merchantId)
             .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -272,6 +266,22 @@ class TransactionRepository(
         runBlocking {
             pref.getMerchantId().first()
         }
+
+    fun getTransactionCount() =
+        runBlocking {
+            pref.getTransactionCount().first()
+        }
+
+    fun saveTransactionCount(count: Int) =
+        runBlocking {
+            pref.saveTransactionCount(count)
+        }
+
+
+    fun stopObserving() {
+        listenerRegistration?.remove()
+        listenerRegistration = null
+    }
 
     companion object {
         @Volatile

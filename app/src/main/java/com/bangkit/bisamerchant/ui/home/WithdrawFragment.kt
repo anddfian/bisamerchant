@@ -18,7 +18,7 @@ import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
 import com.bangkit.bisamerchant.ui.pin.PinActivity
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class WithdrawFragment : Fragment() {
 
