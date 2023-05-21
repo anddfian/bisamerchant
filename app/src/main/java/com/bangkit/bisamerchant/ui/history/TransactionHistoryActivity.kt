@@ -137,10 +137,10 @@ class TransactionHistoryActivity : AppCompatActivity() {
             val datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker().build()
 
             datePickerBuilder.addOnPositiveButtonClickListener { selection ->
-
-                // UTC+0 -> WIB = -25200s
-                val startDate = selection.first - 25200000
-                val endDate = selection.second - 25200000
+                val timeZoneLocal = TimeZone.getDefault()
+                val timeZoneUTCTimeOffset = timeZoneLocal.getOffset(selection.first)
+                val startDate = selection.first - timeZoneUTCTimeOffset
+                val endDate = selection.second - timeZoneUTCTimeOffset
 
                 val selectedDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
                 selectedDateFormat.timeZone = TimeZone.getDefault()
