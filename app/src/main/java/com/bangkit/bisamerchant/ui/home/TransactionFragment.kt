@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.bisamerchant.data.response.Transaction
@@ -17,8 +18,9 @@ import com.bangkit.bisamerchant.databinding.FragmentTransactionBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
+import kotlinx.coroutines.launch
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
 
 class TransactionFragment : Fragment() {
     private var _binding: FragmentTransactionBinding? = null
@@ -47,21 +49,23 @@ class TransactionFragment : Fragment() {
     private fun updateUI(
         transactionViewModel: TransactionViewModel
     ) {
-        binding.tvDate.text = Utils.getCurrentDate()
+        lifecycleScope.launch {
+            transactionViewModel.observeTransactionsToday()
+            binding.tvDate.text = Utils.getCurrentDate()
 
-        transactionViewModel.observeTransactionsToday()
-        transactionViewModel.totalAmountTransactionToday.observe(viewLifecycleOwner) { amount ->
-            binding.tvAmountDailyTransactions.text = Utils.currencyFormat(amount)
-        }
-        transactionViewModel.transactions.observe(viewLifecycleOwner) { transactions ->
-            if (transactions.isNotEmpty()) {
-                setTransactionsData(transactions)
-                binding.tvNoTransactions.visibility = View.GONE
-            } else {
-                binding.tvNoTransactions.visibility = View.VISIBLE
+            transactionViewModel.totalAmountTransactionToday.observe(viewLifecycleOwner) { amount ->
+                binding.tvAmountDailyTransactions.text = Utils.currencyFormat(amount)
             }
+            transactionViewModel.transactions.observe(viewLifecycleOwner) { transactions ->
+                setTransactionsData(transactions)
+                if (transactions.isNotEmpty()) {
+                    binding.tvNoTransactions.visibility = View.GONE
+                } else {
+                    binding.tvNoTransactions.visibility = View.VISIBLE
+                }
+            }
+            showRecyclerFollows()
         }
-        showRecyclerFollows()
     }
 
     private fun showRecyclerFollows() {

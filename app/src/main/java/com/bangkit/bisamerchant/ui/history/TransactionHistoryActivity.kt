@@ -27,7 +27,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
 
 class TransactionHistoryActivity : AppCompatActivity() {
 
@@ -137,10 +137,10 @@ class TransactionHistoryActivity : AppCompatActivity() {
             val datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker().build()
 
             datePickerBuilder.addOnPositiveButtonClickListener { selection ->
-
-                // UTC+0 -> WIB = -25200s
-                val startDate = selection.first - 25200000
-                val endDate = selection.second - 25200000
+                val timeZoneLocal = TimeZone.getDefault()
+                val timeZoneUTCTimeOffset = timeZoneLocal.getOffset(selection.first)
+                val startDate = selection.first - timeZoneUTCTimeOffset
+                val endDate = selection.second - timeZoneUTCTimeOffset
 
                 val selectedDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
                 selectedDateFormat.timeZone = TimeZone.getDefault()
@@ -210,10 +210,10 @@ class TransactionHistoryActivity : AppCompatActivity() {
                 )
             }
         }
-        showRecyclerFollows()
+        showRecyclerHistories()
     }
 
-    private fun showRecyclerFollows() {
+    private fun showRecyclerHistories() {
         val layoutManager = LinearLayoutManager(this)
         binding.rvTransactions.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
@@ -221,11 +221,11 @@ class TransactionHistoryActivity : AppCompatActivity() {
     }
 
     private fun setTransactionsData(transactions: List<Transaction>) {
-        val listFollows = ArrayList<Transaction>()
+        val listHistories = ArrayList<Transaction>()
         for (transaction in transactions) {
-            listFollows.add(transaction)
+            listHistories.add(transaction)
         }
-        val adapter = TransactionHistoryAdapter(listFollows)
+        val adapter = TransactionHistoryAdapter(listHistories)
         binding.rvTransactions.adapter = adapter
     }
 

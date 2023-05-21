@@ -18,7 +18,7 @@ import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
 
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchants")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
 
 class DetailTransactionActivity : AppCompatActivity() {
     private var _binding: ActivityDetailTransactionBinding? = null

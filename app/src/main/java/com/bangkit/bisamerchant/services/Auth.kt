@@ -101,6 +101,7 @@ object Auth {
         auth.signOut()
         Toast.makeText(context, "Logout successful", Toast.LENGTH_SHORT).show()
         val intent = Intent(context, LoginActivity::class.java)
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
         activity.finish()

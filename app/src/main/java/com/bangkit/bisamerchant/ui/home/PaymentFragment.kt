@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
 
 class PaymentFragment : Fragment() {
     private var scannedAmount: Long? = null
@@ -47,12 +47,12 @@ class PaymentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val pref = MerchantPreferences.getInstance(requireContext().dataStore)
         val transactionViewModel = initTransactionViewModel(pref)
-        generateStaticQRCode(pref)
         initClickListener(pref)
-        updateUI(transactionViewModel)
+        updateUI(pref, transactionViewModel)
     }
 
-    private fun updateUI(transactionViewModel: TransactionViewModel) {
+    private fun updateUI(pref: MerchantPreferences, transactionViewModel: TransactionViewModel) {
+        generateStaticQRCode(pref)
         transactionViewModel.message.observe(viewLifecycleOwner) { message ->
             Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
         }
@@ -86,6 +86,7 @@ class PaymentFragment : Fragment() {
                 val intentResult = data?.getStringExtra(Intents.Scan.RESULT)
                 val pref = MerchantPreferences.getInstance(requireContext().dataStore)
                 val merchantId = runBlocking { pref.getMerchantId().first() }
+
                 if (!intentResult.isNullOrEmpty()) {
                     val transactionViewModel = initTransactionViewModel(pref)
                     val listResult = intentResult.split("#")
