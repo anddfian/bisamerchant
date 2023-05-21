@@ -25,14 +25,19 @@ class TransactionViewModel(
     val totalAmountTransactionToday: LiveData<Long> get() = _totalAmountTransactionToday
 
     fun observeTransactionsToday() {
-        listenerRegistration = repository.observeTransactionsToday { transactions ->
-            _transactions.value = transactions
-            _totalAmountTransactionToday.value = repository.getTotalAmountTransactions(transactions)
+        viewModelScope.launch {
+            listenerRegistration = repository.observeTransactionsToday { transactions ->
+                _transactions.value = transactions
+                _totalAmountTransactionToday.value = repository.getTotalAmountTransactions(transactions)
+            }
         }
     }
     fun stopObserving() {
         repository.stopObserving()
     }
+
+    fun getMerchantId() =
+        repository.getMerchantId()
 
     override fun onCleared() {
         super.onCleared()

@@ -68,22 +68,25 @@ class TransactionRepository(
         return@withContext documentSnapshot.getLong("balance")
     }
 
-    fun observeTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration {
-        val merchantId = runBlocking { pref.getMerchantId().first() }
-        val timestampToday = Utils.getTodayTimestamp()
-        val query = db.collection("transaction")
-            .whereEqualTo("merchantId", merchantId)
-            .whereGreaterThanOrEqualTo("timestamp", timestampToday)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+    suspend fun observeTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration {
+        return withContext(Dispatchers.IO) {
+            val merchantId = getMerchantId()
+            Log.d("lkasjdklasjdk", merchantId)
+            val timestampToday = Utils.getTodayTimestamp()
+            val query = db.collection("transaction")
+                .whereEqualTo("merchantId", merchantId)
+                .whereGreaterThanOrEqualTo("timestamp", timestampToday)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
 
-        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-            querySnapshot?.let {
-                val transactions = processTransactionQuerySnapshot(it)
-                callback(transactions)
+            listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+                querySnapshot?.let {
+                    val transactions = processTransactionQuerySnapshot(it)
+                    callback(transactions)
+                }
             }
-        }
 
-        return listenerRegistration as ListenerRegistration
+            return@withContext listenerRegistration as ListenerRegistration
+        }
     }
 
     fun stopObserving() {
@@ -266,6 +269,11 @@ class TransactionRepository(
             }
         }
     }
+
+    fun getMerchantId() =
+        runBlocking {
+            pref.getMerchantId().first()
+        }
 
     companion object {
         @Volatile

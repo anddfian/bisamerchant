@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -14,22 +13,17 @@ import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.data.response.Merchant
-import com.bangkit.bisamerchant.data.response.Transaction
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
-import com.bangkit.bisamerchant.databinding.FilterBottomSheetBinding
 import com.bangkit.bisamerchant.databinding.MerchantAccountBottomSheetBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
 import com.bangkit.bisamerchant.ui.history.TransactionHistoryActivity
-import com.bangkit.bisamerchant.ui.history.TransactionHistoryAdapter
 import com.bangkit.bisamerchant.ui.notification.NotificationActivity
 import com.bangkit.bisamerchant.ui.profile.ProfileActivity
 import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
@@ -176,7 +170,7 @@ class HomeActivity : AppCompatActivity() {
         for (merchant in merchants) {
             listMerchants.add(merchant)
         }
-        val adapter = MerchantAccountAdapter(merchantViewModel, transactionViewModel, listMerchants)
+        val adapter = MerchantAccountAdapter(merchantViewModel, listMerchants)
         merchantAccountBottomSheetBinding.rvMerchantList.adapter = adapter
     }
 
@@ -186,6 +180,7 @@ class HomeActivity : AppCompatActivity() {
         if (_binding == null) {
             _merchantAccountBottomSheetBinding = null
         }
+        bottomSheetDialog.dismiss()
     }
 
     companion object {

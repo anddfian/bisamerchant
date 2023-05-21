@@ -3,9 +3,11 @@ package com.bangkit.bisamerchant.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bangkit.bisamerchant.data.MerchantRepository
 import com.bangkit.bisamerchant.data.response.Merchant
 import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.launch
 
 class MerchantViewModel(private val repository: MerchantRepository) : ViewModel() {
     private val _merchant = MutableLiveData<Merchant>()
@@ -17,14 +19,18 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
     private var listenerRegistration: ListenerRegistration? = null
 
     fun observeMerchantActive() {
-        listenerRegistration = repository.observeMerchantActive { merchant ->
-            _merchant.value = merchant
+        viewModelScope.launch {
+            listenerRegistration = repository.observeMerchantActive { merchant ->
+                _merchant.value = merchant
+            }
         }
     }
 
     fun observeMerchants() {
-        listenerRegistration = repository.observeMerchants { merchants ->
-            _merchantsList.value = merchants
+        viewModelScope.launch {
+            listenerRegistration = repository.observeMerchants { merchants ->
+                _merchantsList.value = merchants
+            }
         }
     }
 
@@ -39,6 +45,9 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
     fun deleteMerchant() {
         repository.deleteMerchant()
     }
+
+    fun getMerchantId() =
+        repository.getMerchantId()
 
     fun saveMerchant(id: String) {
         repository.saveMerchantId(id)
