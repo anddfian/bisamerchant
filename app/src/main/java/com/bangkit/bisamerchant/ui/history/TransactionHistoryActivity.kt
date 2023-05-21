@@ -27,7 +27,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class TransactionHistoryActivity : AppCompatActivity() {
 

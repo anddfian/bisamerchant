@@ -6,9 +6,9 @@ import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.bangkit.bisamerchant.ui.home.HomeActivity
 import com.bangkit.bisamerchant.ui.login.LoginActivity
 import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
+import com.bangkit.bisamerchant.ui.splashscreen.SplashScreenActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.lang.Exception
@@ -46,7 +46,8 @@ object Auth {
                                     onSuccess = { exists ->
                                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                                         if (exists) {
-                                            val intent = Intent(context, HomeActivity::class.java)
+                                            // Arahkan ke SplashScreen dulu buat retrieve data
+                                            val intent = Intent(context, SplashScreenActivity::class.java)
                                             context.startActivity(intent)
                                             activity.finish()
                                         } else {

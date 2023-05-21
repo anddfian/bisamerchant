@@ -25,7 +25,7 @@ import com.bangkit.bisamerchant.ui.home.MerchantViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityMerchantSettingBinding? = null

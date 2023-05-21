@@ -1,6 +1,8 @@
 package com.bangkit.bisamerchant.ui.home
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +20,10 @@ import com.bangkit.bisamerchant.databinding.FragmentTransactionBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
+import com.bangkit.bisamerchant.ui.invoice.DetailTransactionActivity
 import kotlinx.coroutines.launch
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class TransactionFragment : Fragment() {
     private var _binding: FragmentTransactionBinding? = null
@@ -49,10 +52,21 @@ class TransactionFragment : Fragment() {
     private fun updateUI(
         transactionViewModel: TransactionViewModel
     ) {
-        lifecycleScope.launch {
-            transactionViewModel.observeTransactionsToday()
-            binding.tvDate.text = Utils.getCurrentDate()
+        transactionViewModel.observeTransactionsToday()
+        binding.tvDate.text = Utils.getCurrentDate()
 
+        lifecycleScope.launch {
+            transactionViewModel.messageNotif.observe(viewLifecycleOwner) { message ->
+                Utils.sendNotification(
+                    context = requireContext(),
+                    contentIntent = contentIntent(),
+                    channelId = CHANNEL_ID,
+                    channelName = CHANNEL_NAME,
+                    notificationId = NOTIFICATION_ID,
+                    resources = resources,
+                    message = message,
+                )
+            }
             transactionViewModel.totalAmountTransactionToday.observe(viewLifecycleOwner) { amount ->
                 binding.tvAmountDailyTransactions.text = Utils.currencyFormat(amount)
             }
@@ -84,8 +98,25 @@ class TransactionFragment : Fragment() {
         binding.rvTransactions.adapter = adapter
     }
 
+    private fun contentIntent(): PendingIntent {
+        val notificationIntent = Intent(context, DetailTransactionActivity::class.java)
+        notificationIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        return PendingIntent.getActivity(
+            context,
+            0,
+            notificationIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val NOTIFICATION_ID = 1
+        private const val CHANNEL_ID = "Transaksi_masuk"
+        private const val CHANNEL_NAME = "Pembayaran"
     }
 }

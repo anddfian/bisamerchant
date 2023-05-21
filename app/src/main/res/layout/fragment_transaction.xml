@@ -62,7 +62,6 @@
             android:id="@+id/rv_transactions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="16dp"
             tools:listitem="@layout/transaction_card" />
 
         <TextView

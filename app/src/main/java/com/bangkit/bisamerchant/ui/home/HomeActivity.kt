@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -14,27 +13,27 @@ import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.data.response.Merchant
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
-import com.bangkit.bisamerchant.databinding.FilterBottomSheetBinding
 import com.bangkit.bisamerchant.databinding.MerchantAccountBottomSheetBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
 import com.bangkit.bisamerchant.ui.history.TransactionHistoryActivity
-import com.bangkit.bisamerchant.ui.notification.NotificationActivity
 import com.bangkit.bisamerchant.ui.profile.ProfileActivity
 import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
 import com.bangkit.bisamerchant.ui.setting.SettingActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.launch
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class HomeActivity : AppCompatActivity() {
     private var _binding: ActivityHomeBinding? = null
@@ -54,9 +53,7 @@ class HomeActivity : AppCompatActivity() {
 
         setupFilterBottomSheet()
         val merchantViewModel = initMerchantViewModel()
-        val transactionViewModel = initTransactionViewModel()
-        transactionViewModel.observeTransactionsToday()
-        updateUI(merchantViewModel, transactionViewModel)
+        updateUI(merchantViewModel)
         initTopAppBar()
         initClickListener()
         tabLayoutConnector()
@@ -68,7 +65,7 @@ class HomeActivity : AppCompatActivity() {
         val merchantViewModel: MerchantViewModel by viewModels { factory }
         return merchantViewModel
     }
-    
+
     private fun initTransactionViewModel(): TransactionViewModel {
         val pref = MerchantPreferences.getInstance(dataStore)
         val factory = ViewModelTransactionFactory.getInstance(pref)
@@ -84,22 +81,29 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateUI(
-        merchantViewModel: MerchantViewModel, transactionViewModel: TransactionViewModel
+        merchantViewModel: MerchantViewModel,
     ) {
-        merchantViewModel.observeMerchantActive()
-        merchantViewModel.observeMerchants()
-        merchantViewModel.merchant.observe(this) { merchant ->
-            binding.apply {
-                tvMerchantName.text = merchant.merchantName
-                tvBalanceAmount.text = Utils.currencyFormat(merchant.balance)
+        lifecycleScope.launch {
+            launch {
+                merchantViewModel.observeMerchantActive()
+                merchantViewModel.merchant.observe(this@HomeActivity) { merchant ->
+                    binding.apply {
+                        tvMerchantName.text = merchant.merchantName
+                        tvBalanceAmount.text = Utils.currencyFormat(merchant.balance)
+                    }
+                }
             }
-        }
-        merchantViewModel.merchantsList.observe(this) { merchantList ->
-            if (merchantList.isNotEmpty()) {
-                setTransactionsData(merchantViewModel, transactionViewModel, merchantList)
+            launch {
+                merchantViewModel.observeMerchants()
+                merchantViewModel.merchantsList.observe(this@HomeActivity) { merchantList ->
+                    if (merchantList.isNotEmpty()) {
+                        setTransactionsData(merchantViewModel, merchantList)
+                    }
+                }
             }
+
+            showRecyclerMerchants()
         }
-        showRecyclerMerchants()
     }
 
     private fun initTopAppBar() {
@@ -131,11 +135,6 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_notification -> {
-                startActivity(Intent(this@HomeActivity, NotificationActivity::class.java))
-                true
-            }
-
             R.id.action_setting -> {
                 startActivity(Intent(this@HomeActivity, SettingActivity::class.java))
                 true
@@ -165,7 +164,6 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setTransactionsData(
         merchantViewModel: MerchantViewModel,
-        transactionViewModel: TransactionViewModel,
         merchants: List<Merchant>
     ) {
         val listMerchants = ArrayList<Merchant>()

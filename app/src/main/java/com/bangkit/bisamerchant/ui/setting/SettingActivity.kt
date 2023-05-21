@@ -23,7 +23,7 @@ import com.bangkit.bisamerchant.ui.home.MerchantViewModel
 import com.bangkit.bisamerchant.ui.termpolicy.PrivacyPolicyActivity
 import com.bangkit.bisamerchant.ui.termpolicy.TermConditionActivity
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("merchant_id")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class SettingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivitySettingBinding? = null
