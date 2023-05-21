@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -18,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.data.response.Merchant
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
+import com.bangkit.bisamerchant.databinding.FilterBottomSheetBinding
 import com.bangkit.bisamerchant.databinding.MerchantAccountBottomSheetBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
@@ -66,7 +68,7 @@ class HomeActivity : AppCompatActivity() {
         val merchantViewModel: MerchantViewModel by viewModels { factory }
         return merchantViewModel
     }
-
+    
     private fun initTransactionViewModel(): TransactionViewModel {
         val pref = MerchantPreferences.getInstance(dataStore)
         val factory = ViewModelTransactionFactory.getInstance(pref)
