@@ -30,7 +30,7 @@ class MerchantAccountAdapter(
     private var _binding: MerchantAccountCardBinding? = null
     private val binding get() = _binding!!
 
-    private val lifecycleOwner by lazy{
+    private val lifecycleOwner by lazy {
         binding.root.context as? LifecycleOwner
     }
 
@@ -47,14 +47,16 @@ class MerchantAccountAdapter(
         holder.apply {
             merchantCard.setOnClickListener {
                 lifecycleOwner?.lifecycleScope?.launch {
-                    withContext(Dispatchers.IO) {
-                        merchant.id?.let { it1 -> merchantViewModel.saveMerchant(it1) }
-                        merchantViewModel.changeMerchantStatus(merchant.id)
-                    }
+                    if (merchant.id != merchantViewModel.getMerchantId()) {
+                        withContext(Dispatchers.IO) {
+                            merchantViewModel.changeMerchantStatus(merchant.id)
+                        }
 
-                    val intent = Intent(holder.itemView.context, SplashScreenActivity::class.java)
-                    ContextCompat.startActivity(holder.itemView.context, intent, null)
-                    (holder.itemView.context as? Activity)?.finish()
+                        val intent =
+                            Intent(holder.itemView.context, SplashScreenActivity::class.java)
+                        ContextCompat.startActivity(holder.itemView.context, intent, null)
+                        (holder.itemView.context as? Activity)?.finish()
+                    }
                 }
             }
             Glide.with(holder.itemView.context).load(merchant.merchantLogo)

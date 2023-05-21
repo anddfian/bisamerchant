@@ -35,7 +35,9 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
     }
 
     fun changeMerchantStatus(id: String?) {
-        repository.changeMerchantStatus(id)
+        viewModelScope.launch {
+            repository.changeMerchantStatus(id)
+        }
     }
 
     fun stopObserving() {

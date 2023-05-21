@@ -1,6 +1,5 @@
 package com.bangkit.bisamerchant.data
 
-import android.util.Log
 import com.bangkit.bisamerchant.data.response.DetailTransaction
 import com.bangkit.bisamerchant.data.response.Payment
 import com.bangkit.bisamerchant.data.response.Transaction
@@ -71,7 +70,6 @@ class TransactionRepository(
     suspend fun observeTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration {
         return withContext(Dispatchers.IO) {
             val merchantId = getMerchantId()
-            Log.d("lkasjdklasjdk", merchantId)
             val timestampToday = Utils.getTodayTimestamp()
             val query = db.collection("transaction")
                 .whereEqualTo("merchantId", merchantId)

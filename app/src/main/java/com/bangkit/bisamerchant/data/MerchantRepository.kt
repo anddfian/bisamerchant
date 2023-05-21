@@ -120,23 +120,29 @@ class MerchantRepository(
         return data
     }
 
-    fun changeMerchantStatus(id: String?) {
-        val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
-        var merchantNow = ""
-        merchantCollection.whereEqualTo("email", email).get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    querySnapshot.forEach {
-                        val isActive = it.getBoolean("merchantActive")
-                        if (isActive == false && it.id == id) {
-                            merchantCollection.document(it.id).update("merchantActive", it.id == id)
-                        } else if (isActive == true) {
-                            merchantNow = it.id
+    suspend fun changeMerchantStatus(id: String?) {
+        withContext(Dispatchers.IO) {
+            val merchantActiveNow = runBlocking { pref.getMerchantId().first() }
+            if (id != merchantActiveNow) {
+                id?.let { it1 -> saveMerchantId(it1) }
+                val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
+                merchantCollection.whereEqualTo("email", email).get()
+                    .addOnSuccessListener { querySnapshot ->
+                        if (!querySnapshot.isEmpty) {
+                            querySnapshot.forEach {
+                                val isActive = it.getBoolean("merchantActive")
+                                if (isActive == false && it.id == id) {
+                                    merchantCollection.document(it.id)
+                                        .update("merchantActive", it.id == id)
+                                }
+                            }
+                            merchantCollection.document(merchantActiveNow)
+                                .update("merchantActive", false)
                         }
                     }
-                    merchantCollection.document(merchantNow).update("merchantActive", false)
-                }
             }
+
+        }
     }
 
     fun getMerchantId() = runBlocking {
