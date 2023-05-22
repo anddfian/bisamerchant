@@ -3,28 +3,34 @@ package com.bangkit.bisamerchant.ui.register
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityMerchantRegisterBinding
 import com.bangkit.bisamerchant.services.Merchant
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 
 class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityMerchantRegisterBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding
+
     private var selectedImageUri: Uri? = null
+
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.data?.data != null) {
             var fileSize: Long = -1
-            val cursor: Cursor? = contentResolver.query(result.data!!.data!!, null, null, null, null)
+            val cursor: Cursor? =
+                contentResolver.query(result.data!!.data!!, null, null, null, null)
             cursor?.use {
                 if (it.moveToFirst()) {
                     val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
@@ -34,10 +40,19 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             if (fileSize > 5) {
-                Toast.makeText(this@MerchantRegisterActivity, "Image size larger than 5MB", Toast.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding?.root!!,
+                    "Image size larger than 5MB",
+                    Snackbar.LENGTH_SHORT
+                ).setBackgroundTint(
+                    ContextCompat.getColor(
+                        this@MerchantRegisterActivity,
+                        R.color.md_theme_light_error
+                    )
+                ).show()
             } else {
                 selectedImageUri = result.data!!.data
-                binding.ivMerchantLogo.setImageURI(selectedImageUri)
+                binding?.ivMerchantLogo?.setImageURI(selectedImageUri)
             }
         }
     }
@@ -45,10 +60,29 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMerchantRegisterBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
         setupClickListeners()
         updateUI()
+
+        binding?.btnRegisterMerchant?.isEnabled = false
+
+        val textfields = listOf(
+            binding?.tilRegistMerchantName?.editText,
+            binding?.tilRegistMerchantAddress?.editText,
+            binding?.tilRegistMerchantType?.editText,
+        )
+
+        textfields.forEach { it ->
+            it?.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val allFilled = textfields.all { it?.text?.isNotEmpty() ?: false }
+                    binding?.btnRegisterMerchant?.isEnabled = allFilled
+                }
+            })
+        }
     }
 
     private fun updateUI() {
@@ -105,7 +139,7 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
             "Katering"
         )
 
-        (binding.edMerchantType as? MaterialAutoCompleteTextView)?.setSimpleItems(merchantItems)
+        (binding?.edMerchantType as? MaterialAutoCompleteTextView)?.setSimpleItems(merchantItems)
     }
 
     override fun onClick(v: View) {
@@ -115,20 +149,48 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
                 resultIntent.type = "image/*"
                 resultLauncher.launch(resultIntent)
             }
+
             R.id.btn_register_merchant -> {
-                val name = binding.tilRegistMerchantName.editText?.text.toString()
-                val address = binding.tilRegistMerchantAddress.editText?.text.toString()
-                val type = binding.tilRegistMerchantType.editText?.text.toString()
-                if (selectedImageUri == null) {
-                    Toast.makeText(this@MerchantRegisterActivity, "Photo is required!", Toast.LENGTH_SHORT).show()
-                } else if (name.isEmpty()) {
-                    Toast.makeText(this@MerchantRegisterActivity, "Name is required!", Toast.LENGTH_SHORT).show()
-                } else if (address.isEmpty()) {
-                    Toast.makeText(this@MerchantRegisterActivity, "Address is required!", Toast.LENGTH_SHORT).show()
-                } else if (type.isEmpty()) {
-                    Toast.makeText(this@MerchantRegisterActivity, "Type is required!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Merchant.addMerchant(this@MerchantRegisterActivity, selectedImageUri!!, name, address, type)
+                val name = binding?.tilRegistMerchantName?.editText?.text.toString()
+                val address = binding?.tilRegistMerchantAddress?.editText?.text.toString()
+                val type = binding?.tilRegistMerchantType?.editText?.text.toString()
+                when {
+                    selectedImageUri == null -> {
+                        Snackbar.make(
+                            binding?.root!!,
+                            "Photo is required!",
+                            Snackbar.LENGTH_SHORT
+                        ).setBackgroundTint(
+                            ContextCompat.getColor(
+                                this@MerchantRegisterActivity,
+                                R.color.md_theme_light_error
+                            )
+                        ).show()
+                    }
+
+                    name.length > 50 -> {
+                        binding?.tilRegistMerchantName?.error =
+                            "Nama toko tidak boleh lebih dari 50 karakter!"
+                    }
+
+                    address.length > 100 -> {
+                        binding?.tilRegistMerchantAddress?.error =
+                            "Alamat toko tidak boleh lebih dari 100 karakter!"
+                    }
+
+                    type.isEmpty() -> {
+                        binding?.tilRegistMerchantType?.error = "Tipe toko tidak boleh kosong!"
+                    }
+
+                    else -> {
+                        Merchant.addMerchant(
+                            this@MerchantRegisterActivity,
+                            selectedImageUri!!,
+                            name,
+                            address,
+                            type
+                        )
+                    }
                 }
             }
         }
@@ -140,7 +202,7 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupClickListeners() {
-        binding.ivMerchantLogo.setOnClickListener(this)
-        binding.btnRegisterMerchant.setOnClickListener(this)
+        binding?.ivMerchantLogo?.setOnClickListener(this)
+        binding?.btnRegisterMerchant?.setOnClickListener(this)
     }
 }
