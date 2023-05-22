@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -17,7 +16,6 @@ import com.bangkit.bisamerchant.helper.MerchantPreferences
 import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
 
-
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class DetailTransactionActivity : AppCompatActivity() {
@@ -26,7 +24,6 @@ class DetailTransactionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         _binding = ActivityDetailTransactionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -118,7 +115,6 @@ class DetailTransactionActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 
     companion object {
         const val EXTRA_ID = "extra_id"
