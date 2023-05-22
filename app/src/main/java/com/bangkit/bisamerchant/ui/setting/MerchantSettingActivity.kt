@@ -4,15 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -23,20 +25,22 @@ import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
 import com.bangkit.bisamerchant.services.Merchant
 import com.bangkit.bisamerchant.ui.home.MerchantViewModel
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
 
 class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityMerchantSettingBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding
     private var selectedImageUri: Uri? = null
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.data?.data != null) {
             var fileSize: Long = -1
-            val cursor: Cursor? = contentResolver.query(result.data!!.data!!, null, null, null, null)
+            val cursor: Cursor? =
+                contentResolver.query(result.data!!.data!!, null, null, null, null)
             cursor?.use {
                 if (it.moveToFirst()) {
                     val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
@@ -46,10 +50,19 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             if (fileSize > 5) {
-                Toast.makeText(this@MerchantSettingActivity, "Image size larger than 5MB", Toast.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding?.root!!,
+                    "Image size larger than 5MB",
+                    Snackbar.LENGTH_SHORT
+                ).setBackgroundTint(
+                    ContextCompat.getColor(
+                        this@MerchantSettingActivity,
+                        R.color.md_theme_light_error
+                    )
+                ).show()
             } else {
                 selectedImageUri = result.data!!.data
-                binding.ivMerchantLogo.setImageURI(selectedImageUri)
+                binding?.ivMerchantLogo?.setImageURI(selectedImageUri)
             }
         }
     }
@@ -57,12 +70,30 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMerchantSettingBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
         initTopAppBar()
         setupClickListeners()
         val merchantViewModel = initMerchantViewModel()
         updateUI(merchantViewModel)
+        binding?.btnSaveMerchant?.isEnabled = false
+
+        val textfields = listOf(
+            binding?.tilRegistMerchantName?.editText,
+            binding?.tilRegistMerchantAddress?.editText,
+            binding?.tilRegistMerchantType?.editText,
+        )
+
+        textfields.forEach { it ->
+            it?.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val allFilled = textfields.all { it?.text?.isNotEmpty() ?: false }
+                    binding?.btnSaveMerchant?.isEnabled = allFilled
+                }
+            })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -71,6 +102,7 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
                 onBackPressedDispatcher.onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -82,18 +114,35 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
                 resultIntent.type = "image/*"
                 resultLauncher.launch(resultIntent)
             }
+
             R.id.btn_save_merchant -> {
-                val name = binding.tilRegistMerchantName.editText?.text.toString()
-                val address = binding.tilRegistMerchantAddress.editText?.text.toString()
-                val type = binding.tilRegistMerchantType.editText?.text.toString()
-                if (name.isEmpty()) {
-                    Toast.makeText(this@MerchantSettingActivity, "Name is required!", Toast.LENGTH_SHORT).show()
-                } else if (address.isEmpty()) {
-                    Toast.makeText(this@MerchantSettingActivity, "Address is required!", Toast.LENGTH_SHORT).show()
-                } else if (type.isEmpty()) {
-                    Toast.makeText(this@MerchantSettingActivity, "Type is required!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Merchant.updateMerchant(this, this@MerchantSettingActivity, selectedImageUri, name, address, type)
+                val name = binding?.tilRegistMerchantName?.editText?.text.toString()
+                val address = binding?.tilRegistMerchantAddress?.editText?.text.toString()
+                val type = binding?.tilRegistMerchantType?.editText?.text.toString()
+                when {
+                    name.length > 50 -> {
+                        binding?.tilRegistMerchantName?.error =
+                            "Nama toko tidak boleh lebih dari 50 karakter!"
+                    }
+
+                    address.length > 100 -> {
+                        binding?.tilRegistMerchantAddress?.error =
+                            "Alamat toko tidak boleh lebih dari 100 karakter!"
+                    }
+
+                    type.isEmpty() -> {
+                        binding?.tilRegistMerchantType?.error = "Tipe toko tidak boleh kosong!"
+                    }
+
+                    else -> {
+                        Merchant.addMerchant(
+                            this@MerchantSettingActivity,
+                            selectedImageUri!!,
+                            name,
+                            address,
+                            type
+                        )
+                    }
                 }
             }
         }
@@ -105,7 +154,7 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initTopAppBar() {
-        setSupportActionBar(binding.topAppBar)
+        setSupportActionBar(binding?.topAppBar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(true)
@@ -121,8 +170,8 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupClickListeners() {
-        binding.ivMerchantLogo.setOnClickListener(this)
-        binding.btnSaveMerchant.setOnClickListener(this)
+        binding?.ivMerchantLogo?.setOnClickListener(this)
+        binding?.btnSaveMerchant?.setOnClickListener(this)
     }
 
     private fun updateUI(
@@ -130,15 +179,17 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     ) {
         merchantViewModel.observeMerchantActive()
         merchantViewModel.merchant.observe(this) { merchant ->
-            binding.apply {
+            binding?.apply {
                 tilRegistMerchantName.editText?.setText(merchant.merchantName)
                 tilRegistMerchantAddress.editText?.setText(merchant.merchantAddress)
                 tilRegistMerchantType.editText?.setText(merchant.merchantType)
             }
-            Glide.with(binding.root)
-                .load(merchant.merchantLogo)
-                .placeholder(R.drawable.ic_loading_24)
-                .into(binding.ivMerchantLogo)
+            binding?.let {
+                Glide.with(it.root)
+                    .load(merchant.merchantLogo)
+                    .placeholder(R.drawable.ic_loading_24)
+                    .into(binding?.ivMerchantLogo!!)
+            }
         }
         val merchantItems = arrayOf(
             "Restoran",
@@ -192,6 +243,6 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
             "Toko Kain",
             "Katering"
         )
-        (binding.edMerchantType as? MaterialAutoCompleteTextView)?.setSimpleItems(merchantItems)
+        (binding?.edMerchantType as? MaterialAutoCompleteTextView)?.setSimpleItems(merchantItems)
     }
 }
