@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import com.bangkit.bisamerchant.databinding.ActivitySplashScreenBinding
 import com.bangkit.bisamerchant.services.Auth
 import com.bangkit.bisamerchant.services.Merchant
@@ -21,7 +20,6 @@ import kotlinx.coroutines.launch
 class SplashScreenActivity : AppCompatActivity() {
     private var _binding: ActivitySplashScreenBinding? = null
     private val binding get() = _binding!!
-
     private val threeSecond = 3000L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,17 +27,12 @@ class SplashScreenActivity : AppCompatActivity() {
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupNoDarkMode()
         startSplashScreen()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    private fun setupNoDarkMode() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     private fun startSplashScreen() {
