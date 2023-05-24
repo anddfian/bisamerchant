@@ -8,15 +8,22 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
+import androidx.cardview.widget.CardView
 import androidx.core.app.NotificationCompat
+import androidx.core.content.FileProvider
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.data.response.MessageNotif
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -113,6 +120,52 @@ object Utils {
         val notification = mBuilder.build()
         mNotificationManager.notify(notificationId, notification)
     }
+    fun layoutToBitmap(view: CardView): Bitmap {
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
 
+    fun QRSharedBitmap(background: Bitmap, item: Bitmap): Bitmap {
+        val merge = Bitmap.createBitmap(background.width, background.height, Bitmap.Config.ARGB_8888)
+        val scale = Bitmap.createScaledBitmap(item, item.width * 2, item.height * 2, false)
+        val canvas = Canvas(merge)
+        canvas.drawBitmap(background, 0f, 0f, null)
 
+        val x = (background.width - scale.width) / 2
+        val y = (background.height - scale.height) / 2
+        canvas.drawBitmap(scale, x.toFloat(), y.toFloat(), null)
+        return merge
+    }
+
+    fun invoiceSharedBitmap(background: Bitmap, item: Bitmap): Bitmap {
+        val merge = Bitmap.createBitmap(background.width, background.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(merge)
+        canvas.drawBitmap(background, 0f, 0f, null)
+
+        val x = (background.width - item.width) / 2
+        val y = (background.height - item.height) / 2
+        canvas.drawBitmap(item, x.toFloat(), y.toFloat(), null)
+        return merge
+    }
+
+    fun bitmapToTempFile(context: Context, bitmap: Bitmap): Uri? {
+        val cachePath = File(context.cacheDir, "images")
+        cachePath.mkdirs()
+        val file = File(cachePath, "temp_image.png")
+
+        var outputStream: FileOutputStream? = null
+        try {
+            outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        } finally {
+            outputStream?.close()
+        }
+
+        return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+    }
 }

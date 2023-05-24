@@ -1,10 +1,14 @@
 package com.bangkit.bisamerchant.ui.invoice
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
@@ -20,12 +24,12 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("d
 
 class DetailTransactionActivity : AppCompatActivity() {
     private var _binding: ActivityDetailTransactionBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityDetailTransactionBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
         initTopAppBar()
         val detailTransactionViewModel = initDetailTransactionViewModel()
@@ -41,7 +45,7 @@ class DetailTransactionActivity : AppCompatActivity() {
 
         detailTransactionViewModel.transactionn.observe(this) { transaction ->
             if (transaction.trxType == "PAYMENT") {
-                binding.apply {
+                binding?.apply {
                     invoiceContainer.visibility = View.VISIBLE
                     payerIdContainer.visibility = View.VISIBLE
                     trxType.text = getString(R.string.payment)
@@ -58,7 +62,7 @@ class DetailTransactionActivity : AppCompatActivity() {
                         )
                 }
             } else {
-                binding.apply {
+                binding?.apply {
                     invoiceContainer.visibility = View.VISIBLE
                     bankNameContainer.visibility = View.VISIBLE
                     accountNoContainer.visibility = View.VISIBLE
@@ -88,7 +92,7 @@ class DetailTransactionActivity : AppCompatActivity() {
     }
 
     private fun initTopAppBar() {
-        setSupportActionBar(binding.topAppBar)
+        setSupportActionBar(binding?.topAppBar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(true)
@@ -109,12 +113,27 @@ class DetailTransactionActivity : AppCompatActivity() {
             }
 
             R.id.action_share -> {
+                val invoice = binding?.invoiceContainer
+                val bitmap1 = Utils.layoutToBitmap(invoice!!)
+                val bitmap2 : Bitmap = BitmapFactory.decodeResource(resources, R.drawable.invoice_share_background)
+                val mergedBitmap = Utils.invoiceSharedBitmap(bitmap2, bitmap1)
+                val uri = Utils.bitmapToTempFile(this, mergedBitmap)
+                if (uri != null) {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "image/png"
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                    }
+                    startActivity(Intent.createChooser(shareIntent, "Bagikan Gambar"))
+                } else {
+                    Toast.makeText(this, "Gagal membagikan gambar", Toast.LENGTH_SHORT).show()
+                }
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+
 
     companion object {
         const val EXTRA_ID = "extra_id"
