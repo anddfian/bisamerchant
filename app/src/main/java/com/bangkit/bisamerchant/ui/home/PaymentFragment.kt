@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.data.response.Payment
 import com.bangkit.bisamerchant.databinding.FragmentPaymentBinding
 import com.bangkit.bisamerchant.helper.MerchantPreferences
@@ -176,6 +179,23 @@ class PaymentFragment : Fragment() {
                     startQRCodeScanner()
                 } else {
                     Toast.makeText(requireContext(), "Amount cannot be empty", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+        binding.btnShareQr.setOnClickListener{
+            binding.apply {
+                val bitmap1 = (ivStaticQr.drawable as BitmapDrawable).bitmap
+                val bitmap2 : Bitmap = BitmapFactory.decodeResource(resources, R.drawable.qr_share_background)
+                val mergedBitmap = Utils.QRSharedBitmap(bitmap2, bitmap1)
+                val uri = Utils.bitmapToTempFile(requireContext(), mergedBitmap)
+                if (uri != null) {
+                    val intent = Intent(Intent.ACTION_SEND)
+                    intent.type = "image/*"
+                    intent.putExtra(Intent.EXTRA_STREAM, uri)
+                    startActivity(Intent.createChooser(intent, "Share QR Code"))
+                } else {
+                    Toast.makeText(requireContext(), "Failed to share QR Code", Toast.LENGTH_LONG)
                         .show()
                 }
             }
