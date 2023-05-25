@@ -168,4 +168,12 @@ object Utils {
 
         return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     }
+
+    fun truncateString(string: String, maxLength: Int): String {
+        return if (string.length > maxLength) {
+            string.substring(0, maxLength) + "..."
+        } else {
+            string
+        }
+    }
 }

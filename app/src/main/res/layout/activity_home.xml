@@ -164,6 +164,7 @@
             android:layout_toEndOf="@id/tv_rupiah"
             app:icon="@drawable/ic_hide_eye_24"
             app:iconGravity="textStart"
+            android:visibility="gone"
             app:iconTint="?attr/colorOnPrimary"
             app:layout_constraintStart_toEndOf="@id/tv_balance_amount"
             app:layout_constraintTop_toBottomOf="@id/tv_balance_title" />

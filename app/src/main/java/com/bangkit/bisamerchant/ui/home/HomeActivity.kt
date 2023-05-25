@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -45,6 +46,7 @@ class HomeActivity : AppCompatActivity() {
 
     private var _bottomSheetDialog: BottomSheetDialog? = null
     private val bottomSheetDialog get() = _bottomSheetDialog!!
+    private var amount: Long? = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
         val merchantViewModel = initMerchantViewModel()
         updateUI(merchantViewModel)
         initTopAppBar()
-        initClickListener()
+        initClickListener(merchantViewModel)
         tabLayoutConnector()
     }
 
@@ -64,13 +66,6 @@ class HomeActivity : AppCompatActivity() {
         val factory = ViewModelMerchantFactory.getInstance(pref)
         val merchantViewModel: MerchantViewModel by viewModels { factory }
         return merchantViewModel
-    }
-
-    private fun initTransactionViewModel(): TransactionViewModel {
-        val pref = MerchantPreferences.getInstance(dataStore)
-        val factory = ViewModelTransactionFactory.getInstance(pref)
-        val transactionViewModel: TransactionViewModel by viewModels { factory }
-        return transactionViewModel
     }
 
     private fun setupFilterBottomSheet() {
@@ -87,9 +82,21 @@ class HomeActivity : AppCompatActivity() {
             launch {
                 merchantViewModel.observeMerchantActive()
                 merchantViewModel.merchant.observe(this@HomeActivity) { merchant ->
+                    merchantViewModel.getAmountHide()
                     binding.apply {
-                        tvMerchantName.text = merchant.merchantName
-                        tvBalanceAmount.text = Utils.currencyFormat(merchant.balance)
+                        tvMerchantName.text = merchant.merchantName?.let { Utils.truncateString(it, 20) }
+                        amount = merchant.balance
+                        merchantViewModel.isAmountHide.observe(this@HomeActivity) {
+                            if (it) {
+                                btnHideAmount.visibility = View.GONE
+                                btnShowAmount.visibility = View.VISIBLE
+                                tvBalanceAmount.text = Utils.currencyFormat(amount)
+                            } else {
+                                btnHideAmount.visibility = View.VISIBLE
+                                btnShowAmount.visibility = View.GONE
+                                tvBalanceAmount.text = "***"
+                            }
+                        }
                     }
                 }
             }
@@ -101,7 +108,6 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
             }
-
             showRecyclerMerchants()
         }
     }
@@ -111,12 +117,26 @@ class HomeActivity : AppCompatActivity() {
         supportActionBar?.title = ""
     }
 
-    private fun initClickListener() {
+    private fun initClickListener(merchantViewModel: MerchantViewModel) {
         binding.btnHistory.setOnClickListener {
             startActivity(Intent(this@HomeActivity, TransactionHistoryActivity::class.java))
         }
         binding.btnProfileMerchant.setOnClickListener {
             startActivity(Intent(this@HomeActivity, ProfileActivity::class.java))
+        }
+
+        binding.btnShowAmount.setOnClickListener {
+            binding.btnHideAmount.visibility = View.VISIBLE
+            binding.btnShowAmount.visibility = View.GONE
+            binding.tvBalanceAmount.text = "***"
+            merchantViewModel.saveAmountHide(false)
+        }
+
+        binding.btnHideAmount.setOnClickListener {
+            binding.btnHideAmount.visibility = View.GONE
+            binding.btnShowAmount.visibility = View.VISIBLE
+            binding.tvBalanceAmount.text = Utils.currencyFormat(amount)
+            merchantViewModel.saveAmountHide(true)
         }
 
         binding.tvMerchantName.setOnClickListener {

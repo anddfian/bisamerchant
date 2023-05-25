@@ -156,6 +156,16 @@ class MerchantRepository(
         }
     }
 
+    fun saveAmountHide(hide: Boolean) {
+        runBlocking {
+            pref.saveAmountHide(hide)
+        }
+    }
+
+    fun getAmountHide() = runBlocking {
+        pref.getAmountHide().first()
+    }
+
     fun deleteMerchant() {
         runBlocking {
             pref.delete()

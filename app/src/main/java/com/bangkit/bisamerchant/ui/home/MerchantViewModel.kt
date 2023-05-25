@@ -16,6 +16,10 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
     private val _merchantsList = MutableLiveData<List<Merchant>>()
     val merchantsList: LiveData<List<Merchant>> get() = _merchantsList
 
+    private val _isAmountHide = MutableLiveData<Boolean>()
+    val isAmountHide: LiveData<Boolean> get() = _isAmountHide
+
+
     private var listenerRegistration: ListenerRegistration? = null
 
     fun observeMerchantActive() {
@@ -53,6 +57,14 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
 
     fun saveMerchant(id: String) {
         repository.saveMerchantId(id)
+    }
+
+    fun getAmountHide() {
+        _isAmountHide.value = repository.getAmountHide()
+    }
+
+    fun saveAmountHide(hide: Boolean) {
+        repository.saveAmountHide(hide)
     }
 
     override fun onCleared() {
