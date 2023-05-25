@@ -105,7 +105,7 @@ class TransactionFragment : Fragment() {
             context,
             0,
             notificationIntent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_MUTABLE
         )
     }
 
@@ -117,6 +117,6 @@ class TransactionFragment : Fragment() {
     companion object {
         private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "Transaksi_masuk"
-        private const val CHANNEL_NAME = "Pembayaran"
+        private const val CHANNEL_NAME = "Transaksi"
     }
 }

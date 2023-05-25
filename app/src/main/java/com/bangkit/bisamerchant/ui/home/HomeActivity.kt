@@ -90,11 +90,11 @@ class HomeActivity : AppCompatActivity() {
                             if (it) {
                                 btnHideAmount.visibility = View.GONE
                                 btnShowAmount.visibility = View.VISIBLE
-                                tvBalanceAmount.text = Utils.currencyFormat(amount)
+                                tvBalanceAmount.text = "***"
                             } else {
                                 btnHideAmount.visibility = View.VISIBLE
                                 btnShowAmount.visibility = View.GONE
-                                tvBalanceAmount.text = "***"
+                                tvBalanceAmount.text = Utils.currencyFormat(amount)
                             }
                         }
                     }
@@ -128,14 +128,14 @@ class HomeActivity : AppCompatActivity() {
         binding.btnShowAmount.setOnClickListener {
             binding.btnHideAmount.visibility = View.VISIBLE
             binding.btnShowAmount.visibility = View.GONE
-            binding.tvBalanceAmount.text = "***"
+            binding.tvBalanceAmount.text = Utils.currencyFormat(amount)
             merchantViewModel.saveAmountHide(false)
         }
 
         binding.btnHideAmount.setOnClickListener {
             binding.btnHideAmount.visibility = View.GONE
             binding.btnShowAmount.visibility = View.VISIBLE
-            binding.tvBalanceAmount.text = Utils.currencyFormat(amount)
+            binding.tvBalanceAmount.text = "***"
             merchantViewModel.saveAmountHide(true)
         }
 
