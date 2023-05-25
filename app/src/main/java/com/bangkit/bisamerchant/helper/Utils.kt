@@ -102,9 +102,11 @@ object Utils {
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_colorized))
             .setStyle(NotificationCompat.BigTextStyle()).setContentTitle(message.title)
             .setContentText(message.body).setSubText(message.subText)
-            .setAutoCancel(true).setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setDefaults(NotificationCompat.DEFAULT_ALL).setSound(defaultSoundUri)
-            .setContentIntent(contentIntent).setFullScreenIntent(contentIntent, true)
+            .setContentIntent(contentIntent)
+            .setFullScreenIntent(contentIntent, true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -167,5 +169,13 @@ object Utils {
         }
 
         return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+    }
+
+    fun truncateString(string: String, maxLength: Int): String {
+        return if (string.length > maxLength) {
+            string.substring(0, maxLength) + "..."
+        } else {
+            string
+        }
     }
 }

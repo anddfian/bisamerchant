@@ -122,7 +122,8 @@ class MerchantRepository(
 
     suspend fun changeMerchantStatus(id: String?) {
         withContext(Dispatchers.IO) {
-            val merchantActiveNow = runBlocking { pref.getMerchantId().first() }
+            val merchantActiveNow = getMerchantId()
+            deleteMerchant()
             if (id != merchantActiveNow) {
                 id?.let { it1 -> saveMerchantId(it1) }
                 val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
@@ -154,6 +155,16 @@ class MerchantRepository(
         runBlocking {
             pref.saveMerchantId(id)
         }
+    }
+
+    fun saveAmountHide(hide: Boolean) {
+        runBlocking {
+            pref.saveAmountHide(hide)
+        }
+    }
+
+    fun getAmountHide() = runBlocking {
+        pref.getAmountHide().first()
     }
 
     fun deleteMerchant() {
