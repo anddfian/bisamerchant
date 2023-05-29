@@ -1,6 +1,5 @@
 package com.bangkit.bisamerchant.ui.setting
 
-import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
@@ -15,25 +14,24 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityMerchantSettingBinding
-import com.bangkit.bisamerchant.helper.MerchantPreferences
-import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
-import com.bangkit.bisamerchant.services.Merchant
+import com.bangkit.bisamerchant.core.services.Merchant
 import com.bangkit.bisamerchant.ui.home.MerchantViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import dagger.hilt.android.AndroidEntryPoint
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
-
+@AndroidEntryPoint
 class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityMerchantSettingBinding? = null
     private val binding get() = _binding
+
+    private val merchantViewModel: MerchantViewModel by viewModels()
+
     private var selectedImageUri: Uri? = null
+
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
@@ -74,7 +72,7 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
 
         initTopAppBar()
         setupClickListeners()
-        val merchantViewModel = initMerchantViewModel()
+
         updateUI(merchantViewModel)
         binding?.btnSaveMerchant?.isEnabled = false
 
@@ -160,13 +158,6 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
             setDisplayShowTitleEnabled(true)
             title = "Setting Merchant"
         }
-    }
-
-    private fun initMerchantViewModel(): MerchantViewModel {
-        val pref = MerchantPreferences.getInstance(dataStore)
-        val factory = ViewModelMerchantFactory.getInstance(pref)
-        val merchantViewModel: MerchantViewModel by viewModels { factory }
-        return merchantViewModel
     }
 
     private fun setupClickListeners() {

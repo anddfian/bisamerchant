@@ -10,10 +10,12 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityUserRegisterBinding
-import com.bangkit.bisamerchant.services.Auth
+import com.bangkit.bisamerchant.core.services.Auth
 import com.bangkit.bisamerchant.ui.termpolicy.PrivacyPolicyActivity
 import com.bangkit.bisamerchant.ui.termpolicy.TermConditionActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityUserRegisterBinding? = null
     private val binding get() = _binding

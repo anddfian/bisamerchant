@@ -1,7 +1,6 @@
 package com.bangkit.bisamerchant.ui.setting
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,26 +9,21 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivitySettingBinding
-import com.bangkit.bisamerchant.helper.MerchantPreferences
-import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
-import com.bangkit.bisamerchant.services.Auth
+import com.bangkit.bisamerchant.core.services.Auth
 import com.bangkit.bisamerchant.ui.faq.FaqActivity
 import com.bangkit.bisamerchant.ui.home.MerchantViewModel
 import com.bangkit.bisamerchant.ui.termpolicy.PrivacyPolicyActivity
 import com.bangkit.bisamerchant.ui.termpolicy.TermConditionActivity
+import dagger.hilt.android.AndroidEntryPoint
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
-
+@AndroidEntryPoint
 class SettingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivitySettingBinding? = null
     private val binding get() = _binding!!
-    private var _merchantViewModel: MerchantViewModel? = null
-    private val merchantViewModel get() = _merchantViewModel!!
+
+    private val merchantViewModel: MerchantViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +32,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
         initTopAppBar()
         setupClickListeners()
-        _merchantViewModel = initMerchantViewModel()
     }
 
     override fun onClick(v: View) {
@@ -84,7 +77,6 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        _merchantViewModel = null
     }
 
     private fun initTopAppBar() {
@@ -126,12 +118,5 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
             dialog.dismiss()
         }
         dialog.show()
-    }
-
-    private fun initMerchantViewModel(): MerchantViewModel {
-        val pref = MerchantPreferences.getInstance(dataStore)
-        val factory = ViewModelMerchantFactory.getInstance(pref)
-        val merchantViewModel: MerchantViewModel by viewModels { factory }
-        return merchantViewModel
     }
 }

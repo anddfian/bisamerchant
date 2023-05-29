@@ -10,9 +10,9 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.data.response.Transaction
+import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.helper.Utils
 import com.bangkit.bisamerchant.databinding.TransactionCardBinding
-import com.bangkit.bisamerchant.helper.Utils
 import com.bangkit.bisamerchant.ui.invoice.DetailTransactionActivity
 
 class TransactionHistoryAdapter(private val listTransaction: ArrayList<Transaction>) :

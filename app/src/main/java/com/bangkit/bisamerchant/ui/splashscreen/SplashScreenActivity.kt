@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.databinding.ActivitySplashScreenBinding
-import com.bangkit.bisamerchant.services.Auth
-import com.bangkit.bisamerchant.services.Merchant
+import com.bangkit.bisamerchant.core.services.Auth
+import com.bangkit.bisamerchant.core.services.Merchant
 import com.bangkit.bisamerchant.ui.home.HomeActivity
 import com.bangkit.bisamerchant.ui.onboarding.OnboardingActivity
 import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity

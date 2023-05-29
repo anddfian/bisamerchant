@@ -13,10 +13,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityPinBinding
-import com.bangkit.bisamerchant.services.Merchant.updateBalanceMerchant
-import com.bangkit.bisamerchant.services.Owner
+import com.bangkit.bisamerchant.core.services.Merchant.updateBalanceMerchant
+import com.bangkit.bisamerchant.core.services.Owner
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class PinActivity : AppCompatActivity(), View.OnClickListener, TextWatcher {
     private var _binding: ActivityPinBinding? = null
     private val binding get() = _binding!!

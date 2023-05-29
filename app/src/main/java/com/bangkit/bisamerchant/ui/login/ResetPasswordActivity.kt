@@ -5,7 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityResetPasswordBinding
-import com.bangkit.bisamerchant.services.Auth
+import com.bangkit.bisamerchant.core.services.Auth
 
 class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityResetPasswordBinding? = null

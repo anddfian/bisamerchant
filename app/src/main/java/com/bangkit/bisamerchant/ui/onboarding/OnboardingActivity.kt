@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityOnboardingBinding
 import com.bangkit.bisamerchant.ui.login.LoginActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityOnboardingBinding? = null
     private val binding get() = _binding!!

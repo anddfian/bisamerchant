@@ -4,12 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bangkit.bisamerchant.data.MerchantRepository
-import com.bangkit.bisamerchant.data.response.Merchant
+import com.bangkit.bisamerchant.core.data.model.Merchant
+import com.bangkit.bisamerchant.core.domain.usecase.MerchantUseCase
 import com.google.firebase.firestore.ListenerRegistration
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MerchantViewModel(private val repository: MerchantRepository) : ViewModel() {
+@HiltViewModel
+class MerchantViewModel @Inject constructor(private val merchantUseCase: MerchantUseCase) : ViewModel() {
     private val _merchant = MutableLiveData<Merchant>()
     val merchant: LiveData<Merchant> get() = _merchant
 
@@ -24,7 +27,7 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
 
     fun observeMerchantActive() {
         viewModelScope.launch {
-            listenerRegistration = repository.observeMerchantActive { merchant ->
+            listenerRegistration = merchantUseCase.observeMerchantActive { merchant ->
                 _merchant.value = merchant
             }
         }
@@ -32,7 +35,7 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
 
     fun observeMerchants() {
         viewModelScope.launch {
-            listenerRegistration = repository.observeMerchants { merchants ->
+            listenerRegistration = merchantUseCase.observeMerchants { merchants ->
                 _merchantsList.value = merchants
             }
         }
@@ -40,35 +43,35 @@ class MerchantViewModel(private val repository: MerchantRepository) : ViewModel(
 
     fun changeMerchantStatus(id: String?) {
         viewModelScope.launch {
-            repository.changeMerchantStatus(id)
+            merchantUseCase.changeMerchantStatus(id)
         }
     }
 
     fun stopObserving() {
-        repository.stopObserving()
+        merchantUseCase.stopObserving()
     }
 
     fun deleteMerchant() {
-        repository.deleteMerchant()
+        merchantUseCase.deleteMerchant()
     }
 
     fun getMerchantId() =
-        repository.getMerchantId()
+        merchantUseCase.getMerchantId()
 
     fun saveMerchant(id: String) {
-        repository.saveMerchantId(id)
+        merchantUseCase.saveMerchantId(id)
     }
 
     fun getAmountHide() {
-        _isAmountHide.value = repository.getAmountHide()
+        _isAmountHide.value = merchantUseCase.getAmountHide()
     }
 
     fun saveAmountHide(hide: Boolean) {
-        repository.saveAmountHide(hide)
+        merchantUseCase.saveAmountHide(hide)
     }
 
     override fun onCleared() {
         super.onCleared()
-        repository.stopObserving()
+        merchantUseCase.stopObserving()
     }
 }

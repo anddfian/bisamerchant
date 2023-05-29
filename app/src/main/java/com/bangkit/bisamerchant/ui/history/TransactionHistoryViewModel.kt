@@ -3,8 +3,8 @@ package com.bangkit.bisamerchant.ui.history
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bangkit.bisamerchant.data.TransactionRepository
-import com.bangkit.bisamerchant.data.response.Transaction
+import com.bangkit.bisamerchant.core.data.TransactionRepository
+import com.bangkit.bisamerchant.core.data.model.Transaction
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 

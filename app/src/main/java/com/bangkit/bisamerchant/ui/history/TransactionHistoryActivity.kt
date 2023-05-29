@@ -1,38 +1,33 @@
 package com.bangkit.bisamerchant.ui.history
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.data.response.Transaction
+import com.bangkit.bisamerchant.core.data.model.Transaction
 import com.bangkit.bisamerchant.databinding.ActivityTransactionHistoryBinding
 import com.bangkit.bisamerchant.databinding.FilterBottomSheetBinding
-import com.bangkit.bisamerchant.helper.MerchantPreferences
-import com.bangkit.bisamerchant.helper.Utils
-import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
+import com.bangkit.bisamerchant.core.helper.Utils
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.firestore.Query
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
-
+@AndroidEntryPoint
 class TransactionHistoryActivity : AppCompatActivity() {
-
     private var _binding: ActivityTransactionHistoryBinding? = null
     private val binding get() = _binding!!
+
+    private val transactionHistoryViewModel: TransactionHistoryViewModel by viewModels()
 
     private var _filterBottomSheetBinding: FilterBottomSheetBinding? = null
     private val filterBottomSheetBinding get() = _filterBottomSheetBinding!!
@@ -50,7 +45,6 @@ class TransactionHistoryActivity : AppCompatActivity() {
         setupFilterBottomSheet()
         setContentView(binding.root)
 
-        val transactionHistoryViewModel = initTransactionHistoryViewModel()
         updateUI(transactionHistoryViewModel)
         initClickListener(transactionHistoryViewModel)
         initTopAppBar()
@@ -176,13 +170,6 @@ class TransactionHistoryActivity : AppCompatActivity() {
             endDate = endDate,
             trxType = trxType
         )
-    }
-
-    private fun initTransactionHistoryViewModel(): TransactionHistoryViewModel {
-        val pref = MerchantPreferences.getInstance(dataStore)
-        val factory = ViewModelTransactionFactory.getInstance(pref)
-        val transactionHistory: TransactionHistoryViewModel by viewModels { factory }
-        return transactionHistory
     }
 
     private fun updateUI(

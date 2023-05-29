@@ -11,10 +11,10 @@ import androidx.constraintlayout.widget.Group
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityFaqBinding
 import com.google.android.material.card.MaterialCardView
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FaqActivity : AppCompatActivity() {
-
     private var _binding: ActivityFaqBinding? = null
     private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {

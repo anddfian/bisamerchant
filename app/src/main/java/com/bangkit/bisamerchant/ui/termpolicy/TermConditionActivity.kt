@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.webkit.WebViewClient
 import com.bangkit.bisamerchant.databinding.ActivityTermConditionBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TermConditionActivity : AppCompatActivity() {
     private var _binding: ActivityTermConditionBinding? = null
     private val binding get() = _binding!!

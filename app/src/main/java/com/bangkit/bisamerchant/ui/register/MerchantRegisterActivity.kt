@@ -14,10 +14,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityMerchantRegisterBinding
-import com.bangkit.bisamerchant.services.Merchant
+import com.bangkit.bisamerchant.core.services.Merchant
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityMerchantRegisterBinding? = null
     private val binding get() = _binding
