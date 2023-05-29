@@ -8,9 +8,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityLoginBinding
-import com.bangkit.bisamerchant.services.Auth
+import com.bangkit.bisamerchant.core.services.Auth
 import com.bangkit.bisamerchant.ui.register.UserRegisterActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityLoginBinding? = null
     private val binding get() = _binding

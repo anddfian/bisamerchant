@@ -4,16 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bangkit.bisamerchant.data.TransactionRepository
-import com.bangkit.bisamerchant.data.response.MessageNotif
-import com.bangkit.bisamerchant.data.response.Payment
-import com.bangkit.bisamerchant.data.response.Transaction
-import com.bangkit.bisamerchant.helper.Utils
+import com.bangkit.bisamerchant.core.data.model.MessageNotif
+import com.bangkit.bisamerchant.core.data.model.Payment
+import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.usecase.TransactionUseCase
+import com.bangkit.bisamerchant.core.helper.Utils
 import com.google.firebase.firestore.ListenerRegistration
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TransactionViewModel(
-    private val repository: TransactionRepository
+@HiltViewModel
+class TransactionViewModel @Inject constructor(
+    private val transactionUseCase: TransactionUseCase
 ) : ViewModel() {
     private val _transactions = MutableLiveData<List<Transaction>>()
     val transactions: LiveData<List<Transaction>> get() = _transactions
@@ -31,10 +34,10 @@ class TransactionViewModel(
 
     fun observeTransactionsToday() {
         viewModelScope.launch {
-            listenerRegistration = repository.observeTransactionsToday { transactions ->
+            listenerRegistration = transactionUseCase.observeTransactionsToday { transactions ->
                 _transactions.value = transactions
                 _totalAmountTransactionToday.value =
-                    repository.getTotalAmountTransactions(transactions)
+                    transactionUseCase.getTotalAmountTransactions(transactions)
 
 
                 val totalTransaction = getTransactionCount()
@@ -59,19 +62,19 @@ class TransactionViewModel(
     }
 
     fun stopObserving() {
-        repository.stopObserving()
+        transactionUseCase.stopObserving()
     }
 
     fun getTransactionCount() =
-        repository.getTransactionCount()
+        transactionUseCase.getTransactionCount()
 
     fun saveTransactionCount(count: Int) {
-        repository.saveTransactionCount(count)
+        transactionUseCase.saveTransactionCount(count)
     }
 
     override fun onCleared() {
         super.onCleared()
-        repository.stopObserving()
+        transactionUseCase.stopObserving()
     }
 
 
@@ -79,7 +82,7 @@ class TransactionViewModel(
         payment: Payment
     ) {
         viewModelScope.launch {
-            _message.value = repository.addTransaction(payment)
+            _message.value = transactionUseCase.addTransaction(payment)
         }
     }
 }

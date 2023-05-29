@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.webkit.WebViewClient
 import com.bangkit.bisamerchant.databinding.ActivityPrivacyPolicyBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PrivacyPolicyActivity : AppCompatActivity() {
     private var _binding: ActivityPrivacyPolicyBinding? = null
     private val binding get() = _binding!!

@@ -1,6 +1,5 @@
 package com.bangkit.bisamerchant.ui.invoice
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,20 +10,17 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityDetailTransactionBinding
-import com.bangkit.bisamerchant.helper.MerchantPreferences
-import com.bangkit.bisamerchant.helper.Utils
-import com.bangkit.bisamerchant.helper.ViewModelTransactionFactory
+import com.bangkit.bisamerchant.core.helper.Utils
+import dagger.hilt.android.AndroidEntryPoint
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
-
+@AndroidEntryPoint
 class DetailTransactionActivity : AppCompatActivity() {
     private var _binding: ActivityDetailTransactionBinding? = null
     private val binding get() = _binding
+
+    private val detailTransactionViewModel: DetailTransactionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +28,6 @@ class DetailTransactionActivity : AppCompatActivity() {
         setContentView(binding?.root)
 
         initTopAppBar()
-        val detailTransactionViewModel = initDetailTransactionViewModel()
         updateUI(detailTransactionViewModel)
     }
 
@@ -82,13 +77,6 @@ class DetailTransactionActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun initDetailTransactionViewModel(): DetailTransactionViewModel {
-        val pref = MerchantPreferences.getInstance(dataStore)
-        val factory = ViewModelTransactionFactory.getInstance(pref)
-        val transactionViewModel: DetailTransactionViewModel by viewModels { factory }
-        return transactionViewModel
     }
 
     private fun initTopAppBar() {

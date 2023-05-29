@@ -1,37 +1,33 @@
 package com.bangkit.bisamerchant.ui.profile
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityProfileBinding
-import com.bangkit.bisamerchant.helper.MerchantPreferences
-import com.bangkit.bisamerchant.helper.ViewModelMerchantFactory
 import com.bangkit.bisamerchant.ui.home.MerchantViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
-
+@AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
     private var _binding: ActivityProfileBinding? = null
     private val binding get() = _binding!!
+
+    private val merchantViewModel: MerchantViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initTopAppBar()
-        val merchantViewModel = initMerchantViewModel()
         updateUI(merchantViewModel)
         tabLayoutConnector()
     }
@@ -43,13 +39,6 @@ class ProfileActivity : AppCompatActivity() {
             setDisplayShowTitleEnabled(true)
             title = "Profile"
         }
-    }
-
-    private fun initMerchantViewModel(): MerchantViewModel {
-        val pref = MerchantPreferences.getInstance(dataStore)
-        val factory = ViewModelMerchantFactory.getInstance(pref)
-        val merchantViewModel: MerchantViewModel by viewModels { factory }
-        return merchantViewModel
     }
 
     private fun updateUI(
