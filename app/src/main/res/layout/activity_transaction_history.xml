@@ -27,12 +27,30 @@
     <RelativeLayout
         android:id="@+id/transaction_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="@drawable/border_bottom"
-        android:padding="16dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@id/rv_transactions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_app_bar_container">
+
+        <Button
+            android:id="@+id/btn_filter"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:paddingHorizontal="16dp"
+            android:text="@string/filter"
+            android:textColor="@color/md_theme_light_onPrimary"
+            app:icon="@drawable/ic_filter_24dp"
+            app:iconTint="@color/md_theme_light_onPrimary"
+            app:strokeColor="@color/md_theme_light_onPrimary" />
 
         <TextView
             android:id="@+id/tv_daily_transactions"
@@ -40,7 +58,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:text="@string/total_transactions"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="?attr/colorOnPrimary" />
 
         <TextView
             android:id="@+id/tv_date"
@@ -48,7 +67,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_daily_transactions"
             android:text="@string/semua_transaksi"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textColor="?attr/colorOnPrimary" />
 
         <TextView
             android:id="@+id/tv_rupiah"
@@ -58,7 +78,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="4dp"
             android:text="@string/rupiah"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textColor="?attr/colorOnPrimary" />
 
         <TextView
             android:id="@+id/tv_amount"
@@ -68,7 +89,8 @@
             android:layout_marginTop="16dp"
             android:layout_toEndOf="@id/tv_rupiah"
             android:text="@string/money_zero"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:textColor="?attr/colorOnPrimary" />
 
     </RelativeLayout>
 
@@ -76,7 +98,6 @@
         android:id="@+id/rv_transactions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="224dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/transaction_toolbar"
@@ -88,45 +109,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/transaction_toolbar"
-        app:layout_constraintBottom_toTopOf="@id/btn_filter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/tidak_ada_transaksi"
         android:visibility="gone"
-         />
-
-    <LinearLayout
-        android:id="@+id/btn_filter"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/md_theme_light_surface"
-        android:gravity="center"
-        android:elevation="5dp"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:clickable="true"
-        android:focusable="true">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/filter" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-            android:textColor="?attr/colorPrimary"
-            android:text="@string/filter" />
-
-    </LinearLayout>
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/transaction_toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
