@@ -38,7 +38,7 @@ class DetailTransactionActivity : AppCompatActivity() {
             detailTransactionViewModel.getTransactionById(id)
         }
 
-        detailTransactionViewModel.transactionn.observe(this) { transaction ->
+        detailTransactionViewModel.transaction.observe(this) { transaction ->
             if (transaction.trxType == "PAYMENT") {
                 binding?.apply {
                     invoiceContainer.visibility = View.VISIBLE

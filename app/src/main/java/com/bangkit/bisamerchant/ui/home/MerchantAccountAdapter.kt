@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.bangkit.bisamerchant.core.data.model.Merchant
+import com.bangkit.bisamerchant.core.domain.model.Merchant
 import com.bangkit.bisamerchant.databinding.MerchantAccountCardBinding
 import com.bangkit.bisamerchant.ui.splashscreen.SplashScreenActivity
 import com.bumptech.glide.Glide

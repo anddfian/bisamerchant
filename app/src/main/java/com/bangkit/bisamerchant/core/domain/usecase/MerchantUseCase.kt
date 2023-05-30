@@ -1,6 +1,6 @@
 package com.bangkit.bisamerchant.core.domain.usecase
 
-import com.bangkit.bisamerchant.core.data.model.Merchant
+import com.bangkit.bisamerchant.core.domain.model.Merchant
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 

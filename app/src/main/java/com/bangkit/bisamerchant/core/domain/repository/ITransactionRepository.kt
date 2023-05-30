@@ -1,12 +1,13 @@
 package com.bangkit.bisamerchant.core.domain.repository
 
-import com.bangkit.bisamerchant.core.data.model.DetailTransaction
-import com.bangkit.bisamerchant.core.data.model.Payment
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.model.DetailTransaction
+import com.bangkit.bisamerchant.core.domain.model.Payment
+import com.bangkit.bisamerchant.core.domain.model.Transaction
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+
 interface ITransactionRepository {
     suspend fun addTransaction(payment: Payment): String?
 
@@ -18,29 +19,11 @@ interface ITransactionRepository {
 
     fun observeTransactions(callback: (List<Transaction>) -> Unit): ListenerRegistration
 
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration
-
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        trxType: String,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration
-
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration
-
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        trxType: String,
+    suspend fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction?,
+        startDate: Long?,
+        endDate: Long?,
+        trxType: String?,
         callback: (List<Transaction>) -> Unit,
     ): ListenerRegistration
 

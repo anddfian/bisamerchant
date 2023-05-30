@@ -1,6 +1,6 @@
 package com.bangkit.bisamerchant.core.data
 
-import com.bangkit.bisamerchant.core.data.model.Merchant
+import com.bangkit.bisamerchant.core.domain.model.Merchant
 import com.bangkit.bisamerchant.core.domain.repository.IMerchantRepository
 import com.bangkit.bisamerchant.core.helper.SharedPreferences
 import com.google.firebase.auth.FirebaseAuth

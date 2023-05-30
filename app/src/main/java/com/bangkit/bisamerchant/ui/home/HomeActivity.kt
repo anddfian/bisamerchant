@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.core.data.model.Merchant
+import com.bangkit.bisamerchant.core.domain.model.Merchant
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
 import com.bangkit.bisamerchant.databinding.MerchantAccountBottomSheetBinding
 import com.bangkit.bisamerchant.core.helper.Utils
