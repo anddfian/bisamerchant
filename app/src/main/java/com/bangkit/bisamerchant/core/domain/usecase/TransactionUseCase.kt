@@ -1,8 +1,8 @@
 package com.bangkit.bisamerchant.core.domain.usecase
 
-import com.bangkit.bisamerchant.core.data.model.DetailTransaction
-import com.bangkit.bisamerchant.core.data.model.Payment
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.model.DetailTransaction
+import com.bangkit.bisamerchant.core.domain.model.Payment
+import com.bangkit.bisamerchant.core.domain.model.Transaction
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -14,32 +14,13 @@ interface TransactionUseCase {
     suspend fun observeTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration
     fun processTransactionQuerySnapshot(querySnapshot: QuerySnapshot): List<Transaction>
     fun observeTransactions(callback: (List<Transaction>) -> Unit): ListenerRegistration
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
+    suspend fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction?,
+        startDate: Long?,
+        endDate: Long?,
+        trxType: String?,
         callback: (List<Transaction>) -> Unit,
     ): ListenerRegistration
-
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        trxType: String,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration
-
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration
-
-    fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        trxType: String,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration
-
     suspend fun getTransactionById(id: String): DocumentSnapshot
     fun processTransactionDocumentSnapshot(documentSnapshot: DocumentSnapshot): DetailTransaction
     fun getTotalAmountTransactions(listTransactions: List<Transaction>): Long

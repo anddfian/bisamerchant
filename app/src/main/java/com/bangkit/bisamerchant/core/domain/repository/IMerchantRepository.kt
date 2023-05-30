@@ -1,10 +1,9 @@
 package com.bangkit.bisamerchant.core.domain.repository
 
-import com.bangkit.bisamerchant.core.data.model.Merchant
+import com.bangkit.bisamerchant.core.domain.model.Merchant
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 interface IMerchantRepository {
-
     suspend fun observeMerchantActive(callback: (Merchant) -> Unit): ListenerRegistration
 
     suspend fun observeMerchants(callback: (List<Merchant>) -> Unit): ListenerRegistration

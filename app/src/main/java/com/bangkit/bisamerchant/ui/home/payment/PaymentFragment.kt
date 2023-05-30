@@ -18,7 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.core.data.model.Payment
+import com.bangkit.bisamerchant.core.domain.model.Payment
 import com.bangkit.bisamerchant.core.helper.SharedPreferences
 import com.bangkit.bisamerchant.core.helper.Utils
 import com.bangkit.bisamerchant.databinding.FragmentPaymentBinding

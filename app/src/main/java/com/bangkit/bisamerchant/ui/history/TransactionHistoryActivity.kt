@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.model.Transaction
 import com.bangkit.bisamerchant.databinding.ActivityTransactionHistoryBinding
 import com.bangkit.bisamerchant.databinding.FilterBottomSheetBinding
 import com.bangkit.bisamerchant.core.helper.Utils

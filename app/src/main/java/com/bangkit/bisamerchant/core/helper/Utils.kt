@@ -16,7 +16,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.core.data.model.MessageNotif
+import com.bangkit.bisamerchant.core.domain.model.MessageNotif
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException

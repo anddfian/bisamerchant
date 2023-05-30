@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bangkit.bisamerchant.core.data.model.MessageNotif
-import com.bangkit.bisamerchant.core.data.model.Payment
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.model.MessageNotif
+import com.bangkit.bisamerchant.core.domain.model.Payment
+import com.bangkit.bisamerchant.core.domain.model.Transaction
 import com.bangkit.bisamerchant.core.domain.usecase.TransactionUseCase
 import com.bangkit.bisamerchant.core.helper.Utils
 import com.google.firebase.firestore.ListenerRegistration

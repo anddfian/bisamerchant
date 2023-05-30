@@ -3,13 +3,18 @@ package com.bangkit.bisamerchant.ui.history
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bangkit.bisamerchant.core.data.TransactionRepository
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import androidx.lifecycle.viewModelScope
+import com.bangkit.bisamerchant.core.domain.model.Transaction
+import com.bangkit.bisamerchant.core.domain.usecase.TransactionUseCase
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TransactionHistoryViewModel(
-    private val repository: TransactionRepository
+@HiltViewModel
+class TransactionHistoryViewModel @Inject constructor(
+    private val transactionUseCase: TransactionUseCase
 ) : ViewModel() {
 
     private val _transactions = MutableLiveData<List<Transaction>>()
@@ -21,73 +26,39 @@ class TransactionHistoryViewModel(
     val totalAmountTransaction: LiveData<Long> get() = _totalAmountTransaction
 
     fun observeTransactions() {
-        listenerRegistration = repository.observeTransactions { transactions ->
+        listenerRegistration = transactionUseCase.observeTransactions { transactions ->
             _transactions.value = transactions
-            _totalAmountTransaction.value = repository.getTotalAmountTransactions(transactions)
+            _totalAmountTransaction.value =
+                transactionUseCase.getTotalAmountTransactions(transactions)
         }
     }
 
     fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction?,
         startDate: Long?,
         endDate: Long?,
-        queryDirection: Query.Direction,
         trxType: String?,
     ) {
-        listenerRegistration = when {
-            trxType != null && startDate != null && endDate != null -> {
-                repository.observeTransactionsWithFilter(
-                    queryDirection = queryDirection,
-                    startDate = startDate,
-                    endDate = endDate,
-                    trxType = trxType
-                ) { transactions ->
-                    _transactions.value = transactions
-                    _totalAmountTransaction.value =
-                        repository.getTotalAmountTransactions(transactions)
-                }
-            }
-
-            trxType == null && startDate != null && endDate != null -> {
-                repository.observeTransactionsWithFilter(
-                    queryDirection = queryDirection,
-                    startDate = startDate,
-                    endDate = endDate
-                ) { transactions ->
-                    _transactions.value = transactions
-                    _totalAmountTransaction.value =
-                        repository.getTotalAmountTransactions(transactions)
-                }
-            }
-
-            trxType != null && startDate == null && endDate == null -> {
-                repository.observeTransactionsWithFilter(
-                    queryDirection = queryDirection,
-                    trxType = trxType
-                ) { transactions ->
-                    _transactions.value = transactions
-                    _totalAmountTransaction.value =
-                        repository.getTotalAmountTransactions(transactions)
-                }
-            }
-
-            else -> {
-                repository.observeTransactionsWithFilter(
-                    queryDirection = queryDirection
-                ) { transactions ->
-                    _transactions.value = transactions
-                    _totalAmountTransaction.value =
-                        repository.getTotalAmountTransactions(transactions)
-                }
+        viewModelScope.launch {
+            listenerRegistration = transactionUseCase.observeTransactionsWithFilter(
+                queryDirection = queryDirection,
+                startDate = startDate,
+                endDate = endDate,
+                trxType = trxType,
+            ) { transactions ->
+                _transactions.value = transactions
+                _totalAmountTransaction.value =
+                    transactionUseCase.getTotalAmountTransactions(transactions)
             }
         }
     }
 
     fun stopObserving() {
-        repository.stopObserving()
+        transactionUseCase.stopObserving()
     }
 
     override fun onCleared() {
         super.onCleared()
-        repository.stopObserving()
+        transactionUseCase.stopObserving()
     }
 }

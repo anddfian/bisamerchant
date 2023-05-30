@@ -1,8 +1,8 @@
 package com.bangkit.bisamerchant.core.data
 
-import com.bangkit.bisamerchant.core.data.model.DetailTransaction
-import com.bangkit.bisamerchant.core.data.model.Payment
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.model.DetailTransaction
+import com.bangkit.bisamerchant.core.domain.model.Payment
+import com.bangkit.bisamerchant.core.domain.model.Transaction
 import com.bangkit.bisamerchant.core.domain.repository.ITransactionRepository
 import com.bangkit.bisamerchant.core.helper.SharedPreferences
 import com.bangkit.bisamerchant.core.helper.Utils
@@ -46,13 +46,10 @@ class TransactionRepository @Inject constructor(
                         "trxType" to payment.trxType
                     )
 
-                    transactionDocument
-                        .document(newTransactionId)
-                        .set(transaction)
+                    transactionDocument.document(newTransactionId).set(transaction)
                         .addOnSuccessListener {
                             deferredMessage.complete("Transaksi berhasil")
-                        }
-                        .addOnFailureListener { e ->
+                        }.addOnFailureListener { e ->
                             deferredMessage.completeExceptionally(e)
                         }
                 }
@@ -75,8 +72,7 @@ class TransactionRepository @Inject constructor(
         return withContext(Dispatchers.IO) {
             val merchantId = getMerchantId()
             val timestampToday = Utils.getTodayTimestamp()
-            val query = db.collection("transaction")
-                .whereEqualTo("merchantId", merchantId)
+            val query = db.collection("transaction").whereEqualTo("merchantId", merchantId)
                 .whereGreaterThanOrEqualTo("timestamp", timestampToday)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
 
@@ -114,8 +110,7 @@ class TransactionRepository @Inject constructor(
 
     override fun observeTransactions(callback: (List<Transaction>) -> Unit): ListenerRegistration {
         val merchantId = runBlocking { pref.getMerchantId().first() }
-        val query = db.collection("transaction")
-            .whereEqualTo("merchantId", merchantId)
+        val query = db.collection("transaction").whereEqualTo("merchantId", merchantId)
             .orderBy("timestamp", Query.Direction.DESCENDING)
 
         listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
@@ -128,94 +123,43 @@ class TransactionRepository @Inject constructor(
         return listenerRegistration as ListenerRegistration
     }
 
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        callback: (List<Transaction>) -> Unit,
+    override suspend fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction?,
+        startDate: Long?,
+        endDate: Long?,
+        trxType: String?,
+        callback: (List<Transaction>) -> Unit
     ): ListenerRegistration {
-        val merchantId = runBlocking { pref.getMerchantId().first() }
-        val query = db.collection("transaction")
-            .whereEqualTo("merchantId", merchantId)
-            .orderBy("timestamp", queryDirection)
+        val direction = queryDirection ?: Query.Direction.ASCENDING
+        val merchantId = getMerchantId()
+        val start = startDate ?: 0
 
-        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-            querySnapshot?.let {
-                val transactions = processTransactionQuerySnapshot(it)
-                callback(transactions)
-            }
-        }
-
-        return listenerRegistration as ListenerRegistration
-    }
-
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        trxType: String,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration {
-        val merchantId = runBlocking { pref.getMerchantId().first() }
-        val query = db.collection("transaction")
-            .whereEqualTo("merchantId", merchantId)
-            .whereEqualTo("trxType", trxType)
-            .orderBy("timestamp", queryDirection)
-
-        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-            querySnapshot?.let {
-                val transactions = processTransactionQuerySnapshot(it)
-                callback(transactions)
-            }
-        }
-
-        return listenerRegistration as ListenerRegistration
-    }
-
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration {
         val dayMidnight = 86399000L
-        val endDateNew = endDate + dayMidnight
-        val merchantId = runBlocking { pref.getMerchantId().first() }
-        val query = db.collection("transaction")
-            .whereEqualTo("merchantId", merchantId)
-            .whereGreaterThanOrEqualTo("timestamp", startDate)
-            .whereLessThanOrEqualTo("timestamp", endDateNew)
-            .orderBy("timestamp", queryDirection)
+        val end = endDate?.plus(dayMidnight) ?: Utils.getTodayTimestamp().plus(dayMidnight)
+        withContext(Dispatchers.IO) {
+            val query = if (trxType != null) {
+                db.collection("transaction")
+                    .whereEqualTo("merchantId", merchantId)
+                    .whereEqualTo("trxType", trxType)
+                    .whereGreaterThanOrEqualTo("timestamp", start)
+                    .whereLessThanOrEqualTo("timestamp", end)
+                    .orderBy("timestamp", direction)
+            } else {
+                db.collection("transaction")
+                    .whereEqualTo("merchantId", merchantId)
+                    .whereGreaterThanOrEqualTo("timestamp", start)
+                    .whereLessThanOrEqualTo("timestamp", end)
+                    .orderBy("timestamp", direction)
+            }
 
-        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-            querySnapshot?.let {
-                val transactions = processTransactionQuerySnapshot(it)
-                callback(transactions)
+            listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
+                querySnapshot?.let {
+                    val transactions = processTransactionQuerySnapshot(it)
+                    callback(transactions)
+                }
             }
         }
 
-        return listenerRegistration as ListenerRegistration
-    }
-
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        trxType: String,
-        callback: (List<Transaction>) -> Unit,
-    ): ListenerRegistration {
-        val dayMidnight = 86399000L
-        val endDateNew = endDate + dayMidnight
-        val merchantId = runBlocking { pref.getMerchantId().first() }
-        val query = db.collection("transaction")
-            .whereEqualTo("merchantId", merchantId)
-            .whereGreaterThanOrEqualTo("timestamp", startDate)
-            .whereLessThanOrEqualTo("timestamp", endDateNew)
-            .whereEqualTo("trxType", trxType)
-            .orderBy("timestamp", queryDirection)
-
-        listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-            querySnapshot?.let {
-                val transactions = processTransactionQuerySnapshot(it)
-                callback(transactions)
-            }
-        }
 
         return listenerRegistration as ListenerRegistration
     }
@@ -267,20 +211,17 @@ class TransactionRepository @Inject constructor(
         }
     }
 
-    override fun getMerchantId() =
-        runBlocking {
-            pref.getMerchantId().first()
-        }
+    override fun getMerchantId() = runBlocking {
+        pref.getMerchantId().first()
+    }
 
-    override fun getTransactionCount() =
-        runBlocking {
-            pref.getTransactionCount().first()
-        }
+    override fun getTransactionCount() = runBlocking {
+        pref.getTransactionCount().first()
+    }
 
-    override fun saveTransactionCount(count: Int) =
-        runBlocking {
-            pref.saveTransactionCount(count)
-        }
+    override fun saveTransactionCount(count: Int) = runBlocking {
+        pref.saveTransactionCount(count)
+    }
 
 
     override fun stopObserving() {

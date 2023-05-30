@@ -10,7 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.model.Transaction
 import com.bangkit.bisamerchant.core.helper.Utils
 import com.bangkit.bisamerchant.databinding.TransactionCardBinding
 import com.bangkit.bisamerchant.ui.invoice.DetailTransactionActivity

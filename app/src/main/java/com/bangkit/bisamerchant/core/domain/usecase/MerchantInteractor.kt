@@ -1,6 +1,6 @@
 package com.bangkit.bisamerchant.core.domain.usecase
 
-import com.bangkit.bisamerchant.core.data.model.Merchant
+import com.bangkit.bisamerchant.core.domain.model.Merchant
 import com.bangkit.bisamerchant.core.domain.repository.IMerchantRepository
 import com.google.firebase.firestore.QuerySnapshot
 import javax.inject.Inject
