@@ -178,4 +178,9 @@ object Utils {
             string
         }
     }
+
+    fun isValidQR(inputString: String): Boolean {
+        val regexPattern = Regex(pattern = "^DANA#CPM#[A-Za-z0-9 ]+$")
+        return regexPattern.matches(inputString)
+    }
 }

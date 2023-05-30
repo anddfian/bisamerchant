@@ -55,6 +55,13 @@ class PaymentFragment : Fragment() {
         transactionViewModel.message.observe(viewLifecycleOwner) { message ->
             Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
         }
+        transactionViewModel.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun startQRCodeScanner() {
@@ -81,19 +88,27 @@ class PaymentFragment : Fragment() {
                 val merchantId = runBlocking { pref.getMerchantId().first() }
 
                 if (!intentResult.isNullOrEmpty()) {
-                    val listResult = intentResult.split("#")
-                    scannedAmount?.let {
-                        Payment(
-                            amount = it,
-                            merchantId = merchantId,
-                            payerId = listResult[2],
-                            timestamp = System.currentTimeMillis(),
-                            trxType = "PAYMENT"
-                        )
-                    }?.let {
-                        transactionViewModel.addTransaction(
-                            it
-                        )
+                    if (Utils.isValidQR(intentResult)) {
+                        val listResult = intentResult.split("#")
+                        scannedAmount?.let {
+                            Payment(
+                                amount = it,
+                                merchantId = merchantId,
+                                payerId = listResult[2],
+                                timestamp = System.currentTimeMillis(),
+                                trxType = "PAYMENT"
+                            )
+                        }?.let {
+                            transactionViewModel.addTransaction(
+                                it
+                            )
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.kode_tidak_valid),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -144,6 +159,7 @@ class PaymentFragment : Fragment() {
                     ivDynamicQr.visibility = View.GONE
                     edPaymentAmountLayout.visibility = View.GONE
                     edPaymentAmountLayout.visibility = View.GONE
+                    btnShareQrDynamic.visibility = View.GONE
                     btnScanQr.visibility = View.GONE
                     btnCreateQr.visibility = View.GONE
                 }
@@ -155,6 +171,7 @@ class PaymentFragment : Fragment() {
                 if (binding.edPaymentAmount.text?.isNotEmpty() == true) {
                     generateDynamicQRCode(binding.edPaymentAmount.text.toString(), pref)
                     ivDynamicQr.visibility = View.VISIBLE
+                    btnShareQrDynamic.visibility = View.VISIBLE
                 } else {
                     Toast.makeText(requireContext(), "Amount cannot be empty", Toast.LENGTH_LONG)
                         .show()
@@ -172,10 +189,28 @@ class PaymentFragment : Fragment() {
                 }
             }
         }
-        binding.btnShareQr.setOnClickListener{
+        binding.btnShareQr.setOnClickListener {
             binding.apply {
                 val bitmap1 = (ivStaticQr.drawable as BitmapDrawable).bitmap
-                val bitmap2 : Bitmap =
+                val bitmap2: Bitmap =
+                    BitmapFactory.decodeResource(resources, R.drawable.qr_share_background)
+                val mergedBitmap = Utils.QRSharedBitmap(bitmap2, bitmap1)
+                val uri = Utils.bitmapToTempFile(requireContext(), mergedBitmap)
+                if (uri != null) {
+                    val intent = Intent(Intent.ACTION_SEND)
+                    intent.type = "image/*"
+                    intent.putExtra(Intent.EXTRA_STREAM, uri)
+                    startActivity(Intent.createChooser(intent, "Share QR Code"))
+                } else {
+                    Toast.makeText(requireContext(), "Failed to share QR Code", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+        binding.btnShareQrDynamic.setOnClickListener {
+            binding.apply {
+                val bitmap1 = (ivDynamicQr.drawable as BitmapDrawable).bitmap
+                val bitmap2: Bitmap =
                     BitmapFactory.decodeResource(resources, R.drawable.qr_share_background)
                 val mergedBitmap = Utils.QRSharedBitmap(bitmap2, bitmap1)
                 val uri = Utils.bitmapToTempFile(requireContext(), mergedBitmap)

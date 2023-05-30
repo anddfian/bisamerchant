@@ -49,11 +49,11 @@ class TransactionInteractor @Inject constructor(private val transactionRepositor
         transactionRepository.getTotalAmountTransactions(listTransactions)
 
 
-    override fun getMerchantId() = transactionRepository.getMerchantId()
+    override suspend fun getMerchantId() = transactionRepository.getMerchantId()
 
-    override fun getTransactionCount() = transactionRepository.getTransactionCount()
+    override suspend fun getTransactionCount() = transactionRepository.getTransactionCount()
 
-    override fun saveTransactionCount(count: Int) =
+    override suspend fun saveTransactionCount(count: Int) =
         transactionRepository.saveTransactionCount(count)
 
     override fun stopObserving() = transactionRepository.stopObserving()

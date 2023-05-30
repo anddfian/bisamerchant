@@ -7,9 +7,10 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.flow.Flow
 
 interface ITransactionRepository {
-    suspend fun addTransaction(payment: Payment): String?
+    suspend fun addTransaction(payment: Payment): Flow<String>
 
     suspend fun getPayerBalance(payerId: String): Long?
 
@@ -27,17 +28,17 @@ interface ITransactionRepository {
         callback: (List<Transaction>) -> Unit,
     ): ListenerRegistration
 
-    suspend fun getTransactionById(id: String): DocumentSnapshot
+    suspend fun getTransactionById(id: String): DetailTransaction
 
     fun processTransactionDocumentSnapshot(documentSnapshot: DocumentSnapshot): DetailTransaction
 
     fun getTotalAmountTransactions(listTransactions: List<Transaction>): Long
 
-    fun getMerchantId(): String
+    suspend fun getMerchantId(): String
 
-    fun getTransactionCount(): Int
+    suspend fun getTransactionCount(): Int
 
-    fun saveTransactionCount(count: Int)
+    suspend fun saveTransactionCount(count: Int)
 
     fun stopObserving()
 }

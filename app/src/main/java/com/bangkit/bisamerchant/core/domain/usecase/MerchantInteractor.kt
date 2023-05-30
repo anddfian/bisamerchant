@@ -25,18 +25,18 @@ class MerchantInteractor @Inject constructor(private val merchantRepository: IMe
     override suspend fun changeMerchantStatus(id: String?) =
         merchantRepository.changeMerchantStatus(id)
 
-    override fun getMerchantId() =
+    override suspend fun getMerchantId() =
         merchantRepository.getMerchantId()
 
-    override fun saveMerchantId(id: String) =
+    override suspend fun saveMerchantId(id: String) =
         merchantRepository.saveMerchantId(id)
 
-    override fun saveAmountHide(hide: Boolean) =
+    override suspend fun saveAmountHide(hide: Boolean) =
         merchantRepository.saveAmountHide(hide)
 
-    override fun getAmountHide() =
+    override suspend fun getAmountHide() =
         merchantRepository.getAmountHide()
 
-    override fun deleteMerchant() =
+    override suspend fun deleteMerchant() =
         merchantRepository.deleteMerchant()
 }

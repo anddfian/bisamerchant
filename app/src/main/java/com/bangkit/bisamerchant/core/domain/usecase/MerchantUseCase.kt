@@ -11,9 +11,9 @@ interface MerchantUseCase {
     fun processMerchantActiveQuerySnapshot(querySnapshot: QuerySnapshot): Merchant
     fun processMerchantsQuerySnapshot(querySnapshot: QuerySnapshot): List<Merchant>
     suspend fun changeMerchantStatus(id: String?)
-    fun getMerchantId(): String
-    fun saveMerchantId(id: String)
-    fun saveAmountHide(hide: Boolean)
-    fun getAmountHide(): Boolean
-    fun deleteMerchant()
+    suspend fun getMerchantId(): String
+    suspend fun saveMerchantId(id: String)
+    suspend fun saveAmountHide(hide: Boolean)
+    suspend fun getAmountHide(): Boolean
+    suspend fun deleteMerchant()
 }

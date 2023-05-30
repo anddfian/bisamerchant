@@ -148,4 +148,5 @@
     <string name="cs_btn_call">Hubungi Customer Servce</string>
     <string name="active">Active</string>
     <string name="tambah_merchant">Tambah Merchant</string>
+    <string name="kode_tidak_valid">Kode tidak valid</string>
 </resources>

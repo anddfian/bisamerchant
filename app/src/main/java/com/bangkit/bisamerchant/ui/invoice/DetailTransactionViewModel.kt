@@ -17,8 +17,7 @@ class DetailTransactionViewModel @Inject constructor(private val transactionUseC
 
     fun getTransactionById(id: String) {
         viewModelScope.launch {
-            val documentSnapshot = transactionUseCase.getTransactionById(id)
-            val data = transactionUseCase.processTransactionDocumentSnapshot(documentSnapshot)
+            val data = transactionUseCase.getTransactionById(id)
             _transaction.value = data
         }
     }
