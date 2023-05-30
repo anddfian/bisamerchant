@@ -1,7 +1,7 @@
 package com.bangkit.bisamerchant.core.domain.usecase
 
-import com.bangkit.bisamerchant.core.data.model.Payment
-import com.bangkit.bisamerchant.core.data.model.Transaction
+import com.bangkit.bisamerchant.core.domain.model.Payment
+import com.bangkit.bisamerchant.core.domain.model.Transaction
 import com.bangkit.bisamerchant.core.domain.repository.ITransactionRepository
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
@@ -29,29 +29,11 @@ class TransactionInteractor @Inject constructor(private val transactionRepositor
     override fun observeTransactions(callback: (List<Transaction>) -> Unit) =
         transactionRepository.observeTransactions(callback)
 
-
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction, callback: (List<Transaction>) -> Unit
-    ) = transactionRepository.observeTransactionsWithFilter(queryDirection, callback)
-
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction, trxType: String, callback: (List<Transaction>) -> Unit
-    ) = transactionRepository.observeTransactionsWithFilter(queryDirection, trxType, callback)
-
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        callback: (List<Transaction>) -> Unit
-    ) = transactionRepository.observeTransactionsWithFilter(
-        queryDirection, startDate, endDate, callback
-    )
-
-    override fun observeTransactionsWithFilter(
-        queryDirection: Query.Direction,
-        startDate: Long,
-        endDate: Long,
-        trxType: String,
+    override suspend fun observeTransactionsWithFilter(
+        queryDirection: Query.Direction?,
+        startDate: Long?,
+        endDate: Long?,
+        trxType: String?,
         callback: (List<Transaction>) -> Unit
     ) = transactionRepository.observeTransactionsWithFilter(
         queryDirection, startDate, endDate, trxType, callback
