@@ -16,13 +16,13 @@ interface IMerchantRepository {
 
     suspend fun changeMerchantStatus(id: String?)
 
-    fun getMerchantId(): String
+    suspend fun getMerchantId(): String
 
-    fun saveMerchantId(id: String)
+    suspend fun saveMerchantId(id: String)
 
-    fun saveAmountHide(hide: Boolean)
+    suspend fun saveAmountHide(hide: Boolean)
 
-    fun getAmountHide(): Boolean
+    suspend fun getAmountHide(): Boolean
 
-    fun deleteMerchant()
+    suspend fun deleteMerchant()
 }

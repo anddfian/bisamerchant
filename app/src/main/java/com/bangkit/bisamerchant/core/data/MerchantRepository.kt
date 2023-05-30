@@ -19,7 +19,7 @@ class MerchantRepository @Inject constructor(
     private val pref: SharedPreferences,
     private val db: FirebaseFirestore,
     auth: FirebaseAuth,
-): IMerchantRepository {
+) : IMerchantRepository {
     private val email = auth.currentUser?.email
     private var listenerRegistration: ListenerRegistration? = null
 
@@ -64,7 +64,9 @@ class MerchantRepository @Inject constructor(
         var data = Merchant()
 
         for (document in querySnapshot.documents) {
-            saveMerchantId(document.id)
+            runBlocking {
+                saveMerchantId(document.id)
+            }
             val id = document.id
             val balance = document.getLong("balance")
             val merchantActive = document.getBoolean("merchantActive")
@@ -149,29 +151,31 @@ class MerchantRepository @Inject constructor(
         }
     }
 
-    override fun getMerchantId() = runBlocking {
-        pref.getMerchantId().first()
-    }
+    override suspend fun getMerchantId() =
+        withContext(Dispatchers.IO) {
+            pref.getMerchantId().first()
+        }
 
 
-    override fun saveMerchantId(id: String) {
-        runBlocking {
+    override suspend fun saveMerchantId(id: String) {
+        withContext(Dispatchers.IO) {
             pref.saveMerchantId(id)
         }
     }
 
-    override fun saveAmountHide(hide: Boolean) {
-        runBlocking {
+    override suspend fun saveAmountHide(hide: Boolean) {
+        withContext(Dispatchers.IO) {
             pref.saveAmountHide(hide)
         }
     }
 
-    override fun getAmountHide() = runBlocking {
-        pref.getAmountHide().first()
-    }
+    override suspend fun getAmountHide() =
+        withContext(Dispatchers.IO) {
+            pref.getAmountHide().first()
+        }
 
-    override fun deleteMerchant() {
-        runBlocking {
+    override suspend fun deleteMerchant() {
+        withContext(Dispatchers.IO) {
             pref.delete()
         }
     }
