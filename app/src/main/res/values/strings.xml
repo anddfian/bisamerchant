@@ -149,4 +149,18 @@
     <string name="active">Active</string>
     <string name="tambah_merchant">Tambah Merchant</string>
     <string name="kode_tidak_valid">Kode tidak valid</string>
+    <string name="nomor_rekening">Nomor Rekening</string>
+    <string name="account_no_example">1682955491721</string>
+    <string name="merchant_id_example">2eqwdszxdgerdfgh</string>
+    <string name="id_merchant">ID Merchant</string>
+    <string name="id_customer">ID Customer</string>
+    <string name="payer_id_example">ju89xkia0kxo92u17</string>
+    <string name="nama_bank">Nama Bank</string>
+    <string name="bca">BCA</string>
+    <string name="jenis_transaksi">Jenis Transaksi</string>
+    <string name="id_transaksi">ID Transaksi</string>
+    <string name="_2r6a1wk83jcoufq0ubwd">2R6a1WK83JCOUfQ0UbWd</string>
+    <string name="date_example">01 Mei 2023 - 08:18</string>
+    <string name="total">Total</string>
+    <string name="rp65_000">Rp65.000</string>
 </resources>
