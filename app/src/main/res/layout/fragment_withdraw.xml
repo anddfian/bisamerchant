@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/md_theme_light_surface"
-    tools:context=".ui.home.withdraw.WithdrawFragment">
+    tools:context=".presentation.home.activity.fragment.withdraw.WithdrawFragment">
 
     <ScrollView
         android:layout_width="match_parent"

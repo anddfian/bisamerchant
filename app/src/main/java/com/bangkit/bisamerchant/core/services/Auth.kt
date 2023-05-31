@@ -3,12 +3,10 @@ package com.bangkit.bisamerchant.core.services
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import com.bangkit.bisamerchant.ui.login.LoginActivity
-import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
-import com.bangkit.bisamerchant.ui.splashscreen.SplashScreenActivity
+import com.bangkit.bisamerchant.presentation.login.LoginActivity
+import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.splashscreen.SplashScreenActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.lang.Exception
@@ -21,7 +19,11 @@ object Auth {
         return currentUser != null
     }
 
-    private fun checkOwnerExists(email: String, onSuccess: (Boolean) -> Unit, onFailure: (Exception) -> Unit) {
+    private fun checkOwnerExists(
+        email: String,
+        onSuccess: (Boolean) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
         merchantCollection
             .whereEqualTo("email", email)
@@ -44,10 +46,15 @@ object Auth {
                             if (task.isSuccessful) {
                                 Merchant.checkMerchantExists(
                                     onSuccess = { exists ->
-                                        Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Login successful",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         if (exists) {
                                             // Arahkan ke SplashScreen dulu buat retrieve data
-                                            val intent = Intent(context, SplashScreenActivity::class.java)
+                                            val intent =
+                                                Intent(context, SplashScreenActivity::class.java)
                                             context.startActivity(intent)
                                             activity.finish()
                                         } else {
@@ -70,7 +77,8 @@ object Auth {
                             }
                         }
                         .addOnFailureListener { error ->
-                            Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT)
+                                .show()
                         }
                 } else {
                     Toast.makeText(context, "Account not exists!", Toast.LENGTH_SHORT).show()
@@ -108,7 +116,6 @@ object Auth {
         activity.finish()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun register(context: Context, name: String, email: String, password: String, pin: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.termpolicy.TermConditionActivity">
+    tools:context=".presentation.termpolicy.TermConditionActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/top_app_bar_container"

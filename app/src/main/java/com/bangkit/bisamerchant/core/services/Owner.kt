@@ -5,14 +5,13 @@ import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.bangkit.bisamerchant.ui.register.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
 import com.bangkit.bisamerchant.core.helper.AESUtil
 import com.google.firebase.firestore.FirebaseFirestore
 import java.lang.Exception
 
 object Owner {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun addOwner(context: Context, name: String, email: String, pin: String) {
         val ownerCollection = FirebaseFirestore.getInstance().collection("owner")
         val encryptedPin = AESUtil.encrypt(pin)
@@ -36,7 +35,6 @@ object Owner {
             }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getPinOwner(onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
         val email = Auth.getEmail()
         val ownerCollection = FirebaseFirestore.getInstance().collection("owner")
