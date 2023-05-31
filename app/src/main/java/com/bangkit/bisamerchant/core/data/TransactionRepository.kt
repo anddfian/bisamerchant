@@ -1,5 +1,6 @@
 package com.bangkit.bisamerchant.core.data
 
+import android.util.Log
 import com.bangkit.bisamerchant.core.domain.model.DetailTransaction
 import com.bangkit.bisamerchant.core.domain.model.Payment
 import com.bangkit.bisamerchant.core.domain.model.Transaction
@@ -11,9 +12,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -27,16 +31,14 @@ class TransactionRepository @Inject constructor(
 ) : ITransactionRepository {
     private var listenerRegistration: ListenerRegistration? = null
 
-    override suspend fun addTransaction(
-        payment: Payment
-    ): String? {
-        val deferredMessage = CompletableDeferred<String>()
+    override suspend fun addTransaction(payment: Payment): Flow<String> = flow {
         val transactionDocument = db.collection("transaction")
         val newTransactionId = transactionDocument.document().id
         val currentBalance = getPayerBalance(payment.payerId)
+        Log.d("TransactionRepo", "$currentBalance")
         if (currentBalance != null) {
             if (currentBalance > payment.amount) {
-                withContext(Dispatchers.IO) {
+                try {
                     val transaction = hashMapOf(
                         "amount" to payment.amount,
                         "merchantId" to payment.merchantId,
@@ -45,27 +47,24 @@ class TransactionRepository @Inject constructor(
                         "timestamp" to payment.timestamp,
                         "trxType" to payment.trxType
                     )
-
-                    transactionDocument.document(newTransactionId).set(transaction)
-                        .addOnSuccessListener {
-                            deferredMessage.complete("Transaksi berhasil")
-                        }.addOnFailureListener { e ->
-                            deferredMessage.completeExceptionally(e)
-                        }
+                    transactionDocument.document(newTransactionId).set(transaction).await()
+                    emit("Transaksi berhasil")
+                } catch (e: Exception) {
+                    emit(e.message ?: "Terjadi kesalahan saat menambahkan transaksi")
                 }
+            } else {
+                emit("Saldo tidak mencukupi")
             }
+        } else {
+            emit("User tidak ditemukan")
         }
-
-        return try {
-            deferredMessage.await()
-        } catch (e: Exception) {
-            e.message
-        }
-    }
+    }.catch { e ->
+        emit("Terjadi kesalahan: ${e.message}")
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun getPayerBalance(payerId: String): Long? = withContext(Dispatchers.IO) {
         val documentSnapshot = db.collection("user").document(payerId).get().await()
-        return@withContext documentSnapshot.getLong("balance")
+        documentSnapshot.let { return@withContext documentSnapshot.getLong("balance") }
     }
 
     override suspend fun observeTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration {
@@ -164,9 +163,10 @@ class TransactionRepository @Inject constructor(
         return listenerRegistration as ListenerRegistration
     }
 
-    override suspend fun getTransactionById(id: String): DocumentSnapshot =
+    override suspend fun getTransactionById(id: String) =
         withContext(Dispatchers.IO) {
-            return@withContext db.collection("transaction").document(id).get().await()
+            val query = db.collection("transaction").document(id).get().await()
+            return@withContext processTransactionDocumentSnapshot(query)
         }
 
     override fun processTransactionDocumentSnapshot(documentSnapshot: DocumentSnapshot): DetailTransaction {
@@ -211,18 +211,17 @@ class TransactionRepository @Inject constructor(
         }
     }
 
-    override fun getMerchantId() = runBlocking {
+    override suspend fun getMerchantId() = withContext(Dispatchers.IO) {
         pref.getMerchantId().first()
     }
 
-    override fun getTransactionCount() = runBlocking {
+    override suspend fun getTransactionCount() = withContext(Dispatchers.IO) {
         pref.getTransactionCount().first()
     }
 
-    override fun saveTransactionCount(count: Int) = runBlocking {
+    override suspend fun saveTransactionCount(count: Int) = withContext(Dispatchers.IO) {
         pref.saveTransactionCount(count)
     }
-
 
     override fun stopObserving() {
         listenerRegistration?.remove()

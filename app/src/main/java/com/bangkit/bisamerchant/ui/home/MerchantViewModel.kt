@@ -9,6 +9,7 @@ import com.bangkit.bisamerchant.core.domain.usecase.MerchantUseCase
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,26 +49,38 @@ class MerchantViewModel @Inject constructor(private val merchantUseCase: Merchan
     }
 
     fun stopObserving() {
-        merchantUseCase.stopObserving()
+        viewModelScope.launch {
+            merchantUseCase.stopObserving()
+        }
     }
 
     fun deleteMerchant() {
-        merchantUseCase.deleteMerchant()
+        viewModelScope.launch {
+            merchantUseCase.deleteMerchant()
+        }
     }
 
     fun getMerchantId() =
-        merchantUseCase.getMerchantId()
+        runBlocking {
+            merchantUseCase.getMerchantId()
+        }
 
     fun saveMerchant(id: String) {
-        merchantUseCase.saveMerchantId(id)
+        viewModelScope.launch {
+            merchantUseCase.saveMerchantId(id)
+        }
     }
 
     fun getAmountHide() {
-        _isAmountHide.value = merchantUseCase.getAmountHide()
+        viewModelScope.launch {
+            _isAmountHide.value = merchantUseCase.getAmountHide()
+        }
     }
 
     fun saveAmountHide(hide: Boolean) {
-        merchantUseCase.saveAmountHide(hide)
+        viewModelScope.launch {
+            merchantUseCase.saveAmountHide(hide)
+        }
     }
 
     override fun onCleared() {

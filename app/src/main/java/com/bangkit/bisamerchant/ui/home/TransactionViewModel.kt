@@ -11,6 +11,8 @@ import com.bangkit.bisamerchant.core.domain.usecase.TransactionUseCase
 import com.bangkit.bisamerchant.core.helper.Utils
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +26,9 @@ class TransactionViewModel @Inject constructor(
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
     private val _messageNotif = MutableLiveData<MessageNotif>()
     val messageNotif: LiveData<MessageNotif> get() = _messageNotif
 
@@ -34,13 +39,12 @@ class TransactionViewModel @Inject constructor(
 
     fun observeTransactionsToday() {
         viewModelScope.launch {
+            val totalTransaction = getTransactionCount()
+            val totalTransactionNew = MutableLiveData<Int>()
             listenerRegistration = transactionUseCase.observeTransactionsToday { transactions ->
                 _transactions.value = transactions
                 _totalAmountTransactionToday.value =
                     transactionUseCase.getTotalAmountTransactions(transactions)
-
-
-                val totalTransaction = getTransactionCount()
                 if (totalTransaction > 0 && transactions.size > totalTransaction) {
                     if (transactions[0].trxType == "PAYMENT") {
                         _messageNotif.value = MessageNotif(
@@ -55,9 +59,10 @@ class TransactionViewModel @Inject constructor(
                             "Tarik Dana",
                         )
                     }
+                    totalTransactionNew.value = transactions.size
                 }
-                saveTransactionCount(transactions.size)
             }
+            totalTransactionNew.value?.let { saveTransactionCount(it) }
         }
     }
 
@@ -65,10 +70,10 @@ class TransactionViewModel @Inject constructor(
         transactionUseCase.stopObserving()
     }
 
-    fun getTransactionCount() =
+    suspend fun getTransactionCount() =
         transactionUseCase.getTransactionCount()
 
-    fun saveTransactionCount(count: Int) {
+    suspend fun saveTransactionCount(count: Int) {
         transactionUseCase.saveTransactionCount(count)
     }
 
@@ -82,7 +87,17 @@ class TransactionViewModel @Inject constructor(
         payment: Payment
     ) {
         viewModelScope.launch {
-            _message.value = transactionUseCase.addTransaction(payment)
+            transactionUseCase.addTransaction(payment)
+                .onStart {
+                    _isLoading.value = true
+                }
+                .catch { e ->
+                    _message.value = "Terjadi kesalahan: ${e.message}"
+                }
+                .collect { result ->
+                    _isLoading.value = false
+                    _message.value = result
+                }
         }
     }
 }
