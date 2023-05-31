@@ -1,5 +1,7 @@
 package com.bangkit.bisamerchant.data.home.datasource
 
+import android.util.Log
+import com.bangkit.bisamerchant.data.utils.AESUtil
 import com.bangkit.bisamerchant.data.utils.SharedPreferences
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.Payment
@@ -72,6 +74,24 @@ class HomeDataSource @Inject constructor(
         }
     }
 
+    suspend fun getOwnerPin(): String =
+        withContext(Dispatchers.IO) {
+            try {
+                val querySnapshot = db.collection("owner")
+                    .whereEqualTo("email", auth.currentUser?.email)
+                    .limit(1)
+                    .get()
+                    .await()
+
+                val document = querySnapshot.documents.firstOrNull()
+                val pin = document?.getString("pin")
+                val decryptedPin = AESUtil.decrypt(pin.toString())
+                decryptedPin
+            } catch (e: Exception) {
+                "PIN salah"
+            }
+        }
+
     suspend fun getMerchants(callback: (List<Merchant>) -> Unit): ListenerRegistration {
         return withContext(Dispatchers.IO) {
             val query = db.collection("merchant").whereEqualTo("email", auth.currentUser?.email)
@@ -115,17 +135,31 @@ class HomeDataSource @Inject constructor(
     }
 
     suspend fun postTransaction(payment: Payment): Flow<String> = flow {
+        Log.d("HOMmmmmmmmmmmm", "$payment")
         val transactionDocument = db.collection("transaction")
         val newTransactionId = transactionDocument.document().id
         try {
-            val transaction = hashMapOf(
-                "amount" to payment.amount,
-                "merchantId" to payment.merchantId,
-                "payerId" to payment.payerId,
-                "id" to newTransactionId,
-                "timestamp" to payment.timestamp,
-                "trxType" to payment.trxType
-            )
+            val transaction =
+                if (payment.trxType == "PAYMENT") {
+                    hashMapOf(
+                        "amount" to payment.amount,
+                        "merchantId" to payment.merchantId,
+                        "payerId" to payment.payerId,
+                        "id" to newTransactionId,
+                        "timestamp" to payment.timestamp,
+                        "trxType" to payment.trxType
+                    )
+                } else {
+                    hashMapOf(
+                        "amount" to payment.amount,
+                        "bankAccountNo" to payment.bankAccountNo,
+                        "bankInst" to payment.bankInst,
+                        "merchantId" to payment.merchantId,
+                        "id" to newTransactionId,
+                        "timestamp" to payment.timestamp,
+                        "trxType" to payment.trxType
+                    )
+                }
             transactionDocument.document(newTransactionId).set(transaction).await()
             emit("Transaksi berhasil")
         } catch (e: Exception) {

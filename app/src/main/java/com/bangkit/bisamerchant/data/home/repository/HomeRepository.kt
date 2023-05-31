@@ -43,7 +43,7 @@ class HomeRepository @Inject constructor(
         homeDataSource.deleteMerchant()
 
     override suspend fun postTransaction(payment: Payment): Flow<String> = flow {
-        val currentBalance = homeDataSource.getPayerBalance(payment.payerId)
+        val currentBalance = payment.payerId?.let { homeDataSource.getPayerBalance(it) }
         if (currentBalance != null) {
             if (currentBalance > payment.amount) {
                 homeDataSource.postTransaction(payment)
@@ -57,6 +57,15 @@ class HomeRepository @Inject constructor(
         emit("Terjadi kesalahan: ${e.message}")
     }.flowOn(Dispatchers.IO)
 
+    override suspend fun validateOwnerPin(inputPin: Int): Flow<Boolean> = flow {
+        val pin = homeDataSource.getOwnerPin()
+        if (pin.toInt() == inputPin) {
+            emit(true)
+        } else {
+            emit(false)
+        }
+    }
+
     override suspend fun getTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration =
         homeDataSource.getTransactionsToday(callback)
 
@@ -66,7 +75,6 @@ class HomeRepository @Inject constructor(
 
     override suspend fun getTransactionsCount() =
         homeDataSource.getTransactionsCount()
-
 
     override suspend fun updateTransactionsCount(count: Long) =
         homeDataSource.updateTransactionsCount(count)

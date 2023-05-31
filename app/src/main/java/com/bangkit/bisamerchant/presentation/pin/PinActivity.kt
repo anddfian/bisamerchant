@@ -1,5 +1,6 @@
 package com.bangkit.bisamerchant.presentation.pin
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,12 +8,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityPinBinding
-import com.bangkit.bisamerchant.core.services.Merchant.updateBalanceMerchant
-import com.bangkit.bisamerchant.core.services.Owner
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -113,32 +111,16 @@ class PinActivity : AppCompatActivity(), TextWatcher {
             val pin = pinEntered.toString()
             val hasPinDigits = pinDigits.any { it.isNotEmpty() }
             if (hasPinDigits) {
-                Owner.getPinOwner(onSuccess = { decryptPin ->
-                    if (pin == decryptPin) {
-                        val amount = intent.getStringExtra("amount")
-                        val bankAccountNo = intent.getStringExtra("bankAccountNo")
-                        val bankInst = intent.getStringExtra("bankInst")
-                        if (bankInst != null) {
-                            updateBalanceMerchant(
-                                this,
-                                this@PinActivity,
-                                amount?.toLong() ?: 0L,
-                                bankAccountNo?.toLong() ?: 0L,
-                                bankInst
-                            )
-                        }
-                    } else {
-                        Toast.makeText(this, "Wrong PIN!", Toast.LENGTH_SHORT).show()
-                    }
-                }, onFailure = { exception ->
-                    Toast.makeText(this@PinActivity, exception.localizedMessage, Toast.LENGTH_SHORT)
-                        .show()
-                })
+                val resultIntent = Intent()
+                resultIntent.putExtra(EXTRA_PIN, pin.toInt())
+                setResult(RESULT_OK, resultIntent)
+                finish()
             }
         }
     }
 
     companion object {
         const val NUM_OF_DIGITS = 6
+        const val EXTRA_PIN = "EXTRA_PIN"
     }
 }

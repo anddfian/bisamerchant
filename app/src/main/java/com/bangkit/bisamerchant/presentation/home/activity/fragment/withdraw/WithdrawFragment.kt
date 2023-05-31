@@ -1,14 +1,18 @@
 package com.bangkit.bisamerchant.presentation.home.activity.fragment.withdraw
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bangkit.bisamerchant.databinding.FragmentWithdrawBinding
+import com.bangkit.bisamerchant.domain.home.model.Payment
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.pin.PinActivity
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -20,9 +24,12 @@ class WithdrawFragment : Fragment() {
     private var _binding: FragmentWithdrawBinding? = null
     private val binding get() = _binding!!
 
-    private val merchantViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     private var balance: Long? = 0L
+    private var withdrawAmount = 0L
+    private var withdrawBankInst = ""
+    private var withdrawAccountNumber = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -34,10 +41,10 @@ class WithdrawFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initClickListener()
-        updateUI(merchantViewModel)
+        updateUI(homeViewModel)
     }
 
-    private fun updateUI(merchantViewModel: HomeViewModel) {
+    private fun updateUI(homeViewModel: HomeViewModel) {
         val bankItems = arrayOf(
             "BCA - Bank Central Asia",
             "Mandiri",
@@ -77,10 +84,43 @@ class WithdrawFragment : Fragment() {
             "Bank Kaltimtara",
         )
         (binding.edWithdrawBank as? MaterialAutoCompleteTextView)?.setSimpleItems(bankItems)
-        merchantViewModel.getMerchantActive()
-        merchantViewModel.merchant.observe(viewLifecycleOwner) { merchant ->
+        homeViewModel.getMerchantActive()
+        homeViewModel.merchant.observe(viewLifecycleOwner) { merchant ->
             balance = merchant.balance
         }
+        homeViewModel.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
+        }
+    }
+
+    private val pinActivityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val inputPin = result.data?.getIntExtra("EXTRA_PIN", 0)
+            val merchantId = homeViewModel.getMerchantId()
+            if (inputPin != null) {
+                homeViewModel.validateOwnerPin(inputPin.toInt())
+                homeViewModel.isPinValid.observe(viewLifecycleOwner) {
+                    if (it) {
+                        homeViewModel.postTransaction(
+                            Payment(
+                                amount = withdrawAmount,
+                                bankAccountNo = withdrawAccountNumber,
+                                bankInst = withdrawBankInst,
+                                merchantId = merchantId,
+                                timestamp = System.currentTimeMillis(),
+                                trxType = "MERCHANT_WITHDRAW",
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun initClickListener() {
@@ -102,9 +142,11 @@ class WithdrawFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else if (bank.isEmpty()) {
-                Toast.makeText(requireContext(), "Bank Name is required!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Bank Name is required!", Toast.LENGTH_SHORT)
+                    .show()
             } else if (number.isEmpty()) {
-                Toast.makeText(requireContext(), "Account Number is required!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Account Number is required!", Toast.LENGTH_SHORT)
+                    .show()
             } else if (number.length < 9) {
                 Toast.makeText(
                     requireContext(),
@@ -113,13 +155,14 @@ class WithdrawFragment : Fragment() {
                 ).show()
             } else {
                 if (balance!! < amount.toLong()) {
-                    Toast.makeText(requireContext(), "Balance not enough", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Balance not enough", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     val intent = Intent(activity, PinActivity::class.java)
-                    intent.putExtra("amount", amount)
-                    intent.putExtra("bankInst", bank)
-                    intent.putExtra("bankAccountNo", number)
-                    startActivity(intent)
+                    withdrawAmount = amount.toLong()
+                    withdrawBankInst = bank
+                    withdrawAccountNumber = number.toLong()
+                    pinActivityLauncher.launch(intent)
                 }
             }
         }
