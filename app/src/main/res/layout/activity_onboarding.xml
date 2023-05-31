@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/md_theme_light_primary"
     app:layoutDescription="@xml/activity_onboarding_scene"
-    tools:context=".ui.onboarding.OnboardingActivity">
+    tools:context=".presentation.onboarding.OnboardingActivity">
 
     <ImageView
         android:id="@+id/imageView"

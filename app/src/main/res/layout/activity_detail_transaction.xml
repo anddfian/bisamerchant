@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.notification.NotificationActivity">
+    tools:context=".presentation.notification.NotificationActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/top_app_bar_container"
@@ -62,7 +62,7 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
                 android:drawablePadding="8sp"
-                android:text="Transaksi berhasil"
+                android:text="@string/transaksi_berhasil"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textSize="18sp"
                 app:drawableLeftCompat="@drawable/ic_check_24" />
@@ -76,7 +76,7 @@
                 android:layout_marginVertical="12dp"
                 android:layout_marginStart="16dp"
                 android:gravity="bottom"
-                android:text="01 Mei 2023 - 08:18"
+                android:text="@string/date_example"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -98,13 +98,13 @@
 
                     <TextView
                         android:gravity="start"
-                        android:text="ID Merchant"
+                        android:text="@string/id_merchant"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
                     <TextView
                         android:id="@+id/merchant_id"
                         android:gravity="end"
-                        android:text="2eqwdszxdgerdfgh"
+                        android:text="@string/merchant_id_example"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
                 </TableRow>
 
@@ -115,13 +115,13 @@
 
                     <TextView
                         android:gravity="start"
-                        android:text="Nomor Rekening"
+                        android:text="@string/nomor_rekening"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
                     <TextView
                         android:id="@+id/account_no"
                         android:gravity="end"
-                        android:text="1682955491721"
+                        android:text="@string/account_no_example"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
                 </TableRow>
 
@@ -132,13 +132,13 @@
 
                     <TextView
                         android:gravity="start"
-                        android:text="ID Customer"
+                        android:text="@string/id_customer"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
                     <TextView
                         android:id="@+id/payer_id"
                         android:gravity="end"
-                        android:text="ju89xkia0kxo92u17"
+                        android:text="@string/payer_id_example"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
                 </TableRow>
 
@@ -149,13 +149,13 @@
 
                     <TextView
                         android:gravity="start"
-                        android:text="Nama Bank"
+                        android:text="@string/nama_bank"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
                     <TextView
                         android:id="@+id/bank_name"
                         android:gravity="end"
-                        android:text="BCA"
+                        android:text="@string/bca"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
                 </TableRow>
 
@@ -163,7 +163,7 @@
 
                     <TextView
                         android:gravity="start"
-                        android:text="Jenis Transaksi"
+                        android:text="@string/jenis_transaksi"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
                     <TextView
@@ -176,13 +176,13 @@
 
                     <TextView
                         android:gravity="start"
-                        android:text="ID Transaksi"
+                        android:text="@string/id_transaksi"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
                     <TextView
                         android:id="@+id/transaction_id"
                         android:gravity="end"
-                        android:text="2R6a1WK83JCOUfQ0UbWd"
+                        android:text="@string/_2r6a1wk83jcoufq0ubwd"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
                 </TableRow>
 
@@ -208,13 +208,13 @@
 
                     <TextView
                         android:gravity="start"
-                        android:text="Total"
+                        android:text="@string/total"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
                     <TextView
                         android:id="@+id/total_amount"
                         android:gravity="end"
-                        android:text="Rp65.000"
+                        android:text="@string/rp65_000"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
                 </TableRow>
             </TableLayout>

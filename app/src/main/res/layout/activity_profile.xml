@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.ProfileActivity">
+    tools:context=".presentation.profile.activity.ProfileActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/profile_top_app_bar_container"
