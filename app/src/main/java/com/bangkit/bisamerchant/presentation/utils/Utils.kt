@@ -1,11 +1,22 @@
-package com.bangkit.bisamerchant.core.helper
+package com.bangkit.bisamerchant.presentation.utils
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import androidx.cardview.widget.CardView
+import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
+import com.bangkit.bisamerchant.R
+import com.bangkit.bisamerchant.domain.home.model.MessageNotif
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
@@ -30,17 +41,6 @@ object Utils {
     fun getCurrentDate(): String {
         val simpleDateFormat = SimpleDateFormat("EEE, d MMM yyyy")
         return simpleDateFormat.format(Date())
-    }
-
-    fun getTodayTimestamp(): Long {
-        val today = Calendar.getInstance()
-        today.apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        return today.timeInMillis
     }
 
     fun simpleDateFormat(date: Long?, format: String): String? {
@@ -71,11 +71,44 @@ object Utils {
         return null
     }
 
-    fun layoutToBitmap(view: CardView): Bitmap {
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        view.draw(canvas)
-        return bitmap
+    fun sendNotification(
+        context: Context,
+        contentIntent: PendingIntent,
+        channelId: String,
+        channelName: String,
+        notificationId: Int,
+        resources: Resources,
+        message: MessageNotif
+    ) {
+        val mNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        val mBuilder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_logo_colorized)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_colorized))
+            .setStyle(NotificationCompat.BigTextStyle()).setContentTitle(message.title)
+            .setContentText(message.body).setSubText(message.subText)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL).setSound(defaultSoundUri)
+            .setContentIntent(contentIntent)
+            .setFullScreenIntent(contentIntent, true)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId, channelName, NotificationManager.IMPORTANCE_HIGH
+            )
+            mBuilder.setChannelId(channelId)
+            channel.description = channelName
+            channel.enableVibration(true)
+            channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            mNotificationManager.createNotificationChannel(channel)
+        }
+
+        val notification = mBuilder.build()
+        mNotificationManager.notify(notificationId, notification)
     }
 
     fun QRSharedBitmap(background: Bitmap, item: Bitmap): Bitmap {
@@ -87,17 +120,6 @@ object Utils {
         val x = (background.width - scale.width) / 2
         val y = (background.height - scale.height) / 2
         canvas.drawBitmap(scale, x.toFloat(), y.toFloat(), null)
-        return merge
-    }
-
-    fun invoiceSharedBitmap(background: Bitmap, item: Bitmap): Bitmap {
-        val merge = Bitmap.createBitmap(background.width, background.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(merge)
-        canvas.drawBitmap(background, 0f, 0f, null)
-
-        val x = (background.width - item.width) / 2
-        val y = (background.height - item.height) / 2
-        canvas.drawBitmap(item, x.toFloat(), y.toFloat(), null)
         return merge
     }
 
