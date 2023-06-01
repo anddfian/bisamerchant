@@ -40,12 +40,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
         loginViewModel.message.observe(this) {
             Toast.makeText(this@LoginActivity, it, Toast.LENGTH_SHORT).show()
-            if (it == "Login successful") {
+        }
+        loginViewModel.message.observe(this) {
+            if (loginViewModel.message.value == LOGIN_SUCCESSFUL) {
                 val intent =
                     Intent(this, SplashScreenActivity::class.java)
                 startActivity(intent)
                 finish()
-            } else if (it == "Merchant not found"){
+            } else if (loginViewModel.message.value == MERCHANT_NOT_FOUND){
                 val intent = Intent(
                     this,
                     MerchantRegisterActivity::class.java
@@ -129,5 +131,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         binding?.tbForgotPassword?.setOnClickListener(this)
         binding?.tbCreateAccount?.setOnClickListener(this)
         binding?.btnLogin?.setOnClickListener(this)
+    }
+
+    companion object {
+        private const val MERCHANT_NOT_FOUND = "Merchant not found"
+        private const val LOGIN_SUCCESSFUL = "Login successful"
     }
 }

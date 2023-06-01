@@ -26,9 +26,13 @@ class RegisterDataSource @Inject constructor(
                 "pin" to encryptedPin
             )
             db.collection("owner").add(data).await()
-            emit("Register successful")
+            emit(REGISTER_SUCCESSFUL)
         } catch (e: Exception) {
-            emit(e.localizedMessage ?: "Failed to register")
+            throw Exception(e.localizedMessage ?: "Failed to register")
         }
     }.flowOn(Dispatchers.IO)
+
+    companion object {
+        private const val REGISTER_SUCCESSFUL = "Register successful"
+    }
 }

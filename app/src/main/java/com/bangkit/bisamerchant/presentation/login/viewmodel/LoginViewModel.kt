@@ -30,6 +30,7 @@ class LoginViewModel @Inject constructor(
                 }
                 .catch { e ->
                     _message.value = "${e.message}"
+                    _isLoading.value = false
                 }
                 .collect { result ->
                     _isLoading.value = false

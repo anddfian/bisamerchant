@@ -26,12 +26,17 @@ class LoginDatasource @Inject constructor(
                 .await()
 
             if (!querySnapshot.isEmpty) {
-                emit("Login successful")
+                emit(LOGIN_SUCCESSFUL)
             } else {
-                emit("Merchant not found")
+                throw Exception(MERCHANT_NOT_FOUND)
             }
         } catch (e: Exception) {
-            emit(e.localizedMessage ?: "Failed to login")
+            throw Exception(e.localizedMessage ?: "Failed to login")
         }
     }.flowOn(Dispatchers.IO)
+
+    companion object {
+        private const val MERCHANT_NOT_FOUND = "Merchant not found"
+        private const val LOGIN_SUCCESSFUL = "Login successful"
+    }
 }

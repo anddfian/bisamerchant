@@ -32,13 +32,18 @@ class RegisterViewModel @Inject constructor(
                     _isLoading.value = true
                 }
                 .catch { e ->
+                    _isLoading.value = false
                     _message.value = "${e.message}"
                 }
                 .collect { result ->
                     _isLoading.value = false
                     _message.value = result
-                    _isRegisterSuccess.value = result == "Register successful"
+                    _isRegisterSuccess.value = result == REGISTER_SUCCESSFUL
                 }
         }
+    }
+
+    companion object {
+        private const val REGISTER_SUCCESSFUL = "Register successful"
     }
 }
