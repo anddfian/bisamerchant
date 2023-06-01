@@ -42,6 +42,7 @@ class HomeRepository @Inject constructor(
     override suspend fun deleteMerchant() =
         homeDataSource.deleteMerchant()
 
+
     override suspend fun postTransaction(detailTransaction: DetailTransaction): Flow<String> =
         flow {
 
@@ -60,6 +61,7 @@ class HomeRepository @Inject constructor(
                 } else {
                     emit("Saldo tidak cukup")
                 }
+
             } else {
                 emit("User tidak ditemukan")
             }
