@@ -1,8 +1,8 @@
 package com.bangkit.bisamerchant.data.home.repository
 
 import com.bangkit.bisamerchant.data.home.datasource.HomeDataSource
+import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
-import com.bangkit.bisamerchant.domain.home.model.Payment
 import com.bangkit.bisamerchant.domain.home.model.Transaction
 import com.bangkit.bisamerchant.domain.home.repository.IHomeRepository
 import com.google.firebase.firestore.ListenerRegistration
@@ -42,20 +42,33 @@ class HomeRepository @Inject constructor(
     override suspend fun deleteMerchant() =
         homeDataSource.deleteMerchant()
 
-    override suspend fun postTransaction(payment: Payment): Flow<String> = flow {
-        val currentBalance = payment.payerId?.let { homeDataSource.getPayerBalance(it) }
-        if (currentBalance != null) {
-            if (currentBalance > payment.amount) {
-                homeDataSource.postTransaction(payment)
+
+    override suspend fun postTransaction(detailTransaction: DetailTransaction): Flow<String> =
+        flow {
+
+            val currentBalance = if (detailTransaction.trxType == "PAYMENT") {
+                detailTransaction.payerId?.let { homeDataSource.getPayerBalance(it) }
             } else {
-                emit("Saldo tidak cukup")
+                detailTransaction.merchantId?.let { homeDataSource.getMerchantBalance(it) }
             }
-        } else {
-            emit("User tidak ditemukan")
-        }
-    }.catch { e ->
-        emit("Terjadi kesalahan: ${e.message}")
-    }.flowOn(Dispatchers.IO)
+
+            if (currentBalance != null) {
+                if (currentBalance > detailTransaction.amount) {
+                    val newBalance = currentBalance - detailTransaction.amount
+                    homeDataSource.postTransaction(detailTransaction, newBalance).collect { result ->
+                        emit(result)
+                    }
+                } else {
+                    emit("Saldo tidak cukup")
+                }
+
+            } else {
+                emit("User tidak ditemukan")
+            }
+
+        }.catch { e ->
+            emit("Terjadi kesalahan: ${e.message}")
+        }.flowOn(Dispatchers.IO)
 
     override suspend fun getTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration =
         homeDataSource.getTransactionsToday(callback)

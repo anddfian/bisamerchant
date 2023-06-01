@@ -18,15 +18,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.domain.home.model.Payment
-import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.databinding.FragmentPaymentBinding
+import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
+import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.google.zxing.client.android.Intents
 import com.journeyapps.barcodescanner.CaptureActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class PaymentFragment : Fragment() {
@@ -88,7 +86,7 @@ class PaymentFragment : Fragment() {
                     if (Utils.isValidQR(intentResult)) {
                         val listResult = intentResult.split("#")
                         scannedAmount?.let {
-                            Payment(
+                            DetailTransaction(
                                 amount = it,
                                 merchantId = merchantId,
                                 payerId = listResult[2],

@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bangkit.bisamerchant.core.helper.Utils
+import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.MessageNotif
-import com.bangkit.bisamerchant.domain.home.model.Payment
 import com.bangkit.bisamerchant.domain.home.model.Transaction
-import com.bangkit.bisamerchant.core.helper.Utils
 import com.bangkit.bisamerchant.domain.home.usecase.DeleteMerchant
 import com.bangkit.bisamerchant.domain.home.usecase.GetHideAmount
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantActive
@@ -114,10 +114,10 @@ class HomeViewModel @Inject constructor(
 
 
     fun postTransaction(
-        payment: Payment
+        detailTransaction: DetailTransaction
     ) {
         viewModelScope.launch {
-            postTransaction.execute(payment)
+            postTransaction.execute(detailTransaction)
                 .onStart {
                     _isLoading.value = true
                 }

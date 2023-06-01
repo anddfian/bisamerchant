@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bangkit.bisamerchant.databinding.FragmentWithdrawBinding
+import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.pin.activity.PinActivity
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -98,6 +99,19 @@ class WithdrawFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val isPinValid = result.data?.getBooleanExtra("EXTRA_VALIDATION", false)
             val merchantId = homeViewModel.getMerchantId()
+
+            if (isPinValid == true) {
+                homeViewModel.postTransaction(
+                    DetailTransaction(
+                        amount = withdrawAmount,
+                        bankAccountNo = withdrawAccountNumber,
+                        bankInst = withdrawBankInst,
+                        merchantId = merchantId,
+                        timestamp = System.currentTimeMillis(),
+                        trxType = "MERCHANT_WITHDRAW"
+                    )
+                )
+            }
         }
     }
 
