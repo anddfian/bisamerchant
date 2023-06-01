@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bangkit.bisamerchant.core.helper.Utils
+import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.MessageNotif
-import com.bangkit.bisamerchant.domain.home.model.Payment
 import com.bangkit.bisamerchant.domain.home.model.Transaction
-import com.bangkit.bisamerchant.core.helper.Utils
 import com.bangkit.bisamerchant.domain.home.usecase.DeleteMerchant
 import com.bangkit.bisamerchant.domain.home.usecase.GetHideAmount
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantActive
@@ -21,7 +21,6 @@ import com.bangkit.bisamerchant.domain.home.usecase.PostTransaction
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateHideAmount
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateMerchantStatus
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateTransactionsCount
-import com.bangkit.bisamerchant.domain.pin.usecase.ValidateOwnerPin
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -43,7 +42,6 @@ class HomeViewModel @Inject constructor(
     private val postTransaction: PostTransaction,
     private val updateHideAmount: UpdateHideAmount,
     private val updateMerchantStatus: UpdateMerchantStatus,
-    private val validateOwnerPin: ValidateOwnerPin,
     private val updateTransactionsCount: UpdateTransactionsCount,
 ) : ViewModel() {
     private val _merchant = MutableLiveData<Merchant>()
@@ -62,7 +60,6 @@ class HomeViewModel @Inject constructor(
     val message: LiveData<String> get() = _message
 
     private val _isPinValid = MutableLiveData<Boolean?>()
-    val isPinValid: LiveData<Boolean?> get() = _isPinValid
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -114,10 +111,10 @@ class HomeViewModel @Inject constructor(
 
 
     fun postTransaction(
-        payment: Payment
+        detailTransaction: DetailTransaction
     ) {
         viewModelScope.launch {
-            postTransaction.execute(payment)
+            postTransaction.execute(detailTransaction)
                 .onStart {
                     _isLoading.value = true
                 }

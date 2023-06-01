@@ -1,10 +1,10 @@
 package com.bangkit.bisamerchant.data.home.datasource
 
 import com.bangkit.bisamerchant.data.utils.SharedPreferences
-import com.bangkit.bisamerchant.domain.home.model.Merchant
-import com.bangkit.bisamerchant.domain.home.model.Payment
-import com.bangkit.bisamerchant.domain.home.model.Transaction
 import com.bangkit.bisamerchant.data.utils.Utils
+import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
+import com.bangkit.bisamerchant.domain.home.model.Merchant
+import com.bangkit.bisamerchant.domain.home.model.Transaction
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -114,19 +114,39 @@ class HomeDataSource @Inject constructor(
         }
     }
 
-    suspend fun postTransaction(payment: Payment): Flow<String> = flow {
+    suspend fun postTransaction(
+        detailTransaction: DetailTransaction,
+        newBalance: Long
+    ): Flow<String> = flow {
         val transactionDocument = db.collection("transaction")
+        val merchantDocument = db.collection("merchant")
+
         val newTransactionId = transactionDocument.document().id
         try {
-            val transaction = hashMapOf(
-                "amount" to payment.amount,
-                "merchantId" to payment.merchantId,
-                "payerId" to payment.payerId,
-                "id" to newTransactionId,
-                "timestamp" to payment.timestamp,
-                "trxType" to payment.trxType
-            )
+            val transaction = if (detailTransaction.trxType == "PAYMENT") {
+                hashMapOf(
+                    "amount" to detailTransaction.amount,
+                    "merchantId" to detailTransaction.merchantId,
+                    "payerId" to detailTransaction.payerId,
+                    "id" to newTransactionId,
+                    "timestamp" to detailTransaction.timestamp,
+                    "trxType" to detailTransaction.trxType
+                )
+            } else {
+                hashMapOf(
+                    "amount" to detailTransaction.amount,
+                    "bankAccountNo" to detailTransaction.bankAccountNo,
+                    "bankInst" to detailTransaction.bankInst,
+                    "merchantId" to detailTransaction.merchantId,
+                    "id" to newTransactionId,
+                    "timestamp" to detailTransaction.timestamp,
+                    "trxType" to detailTransaction.trxType
+                )
+            }
+
+
             transactionDocument.document(newTransactionId).set(transaction).await()
+            merchantDocument.document(getMerchantId()).update("balance", newBalance).await()
             emit("Transaksi berhasil")
         } catch (e: Exception) {
             emit(e.message ?: "Terjadi kesalahan saat menambahkan transaksi")
@@ -137,6 +157,11 @@ class HomeDataSource @Inject constructor(
 
     suspend fun getPayerBalance(payerId: String): Long? = withContext(Dispatchers.IO) {
         val documentSnapshot = db.collection("user").document(payerId).get().await()
+        return@withContext documentSnapshot.getLong("balance")
+    }
+
+    suspend fun getMerchantBalance(merchantId: String): Long? = withContext(Dispatchers.IO) {
+        val documentSnapshot = db.collection("merchant").document(merchantId).get().await()
         return@withContext documentSnapshot.getLong("balance")
     }
 

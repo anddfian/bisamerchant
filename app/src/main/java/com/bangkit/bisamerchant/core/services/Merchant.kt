@@ -190,45 +190,4 @@ object Merchant {
             }
         }
     }
-
-    fun updateBalanceMerchant(
-        activity: Activity, context: Context, amount: Long, bankAccountNo: Long, bankInst: String
-    ) {
-        val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
-        val email = Auth.getEmail()
-        val docMerchant =
-            merchantCollection.whereEqualTo("email", email).whereEqualTo("merchantActive", true)
-
-        docMerchant.get().addOnSuccessListener { querySnapshot ->
-            for (document in querySnapshot) {
-                val docId = merchantCollection.document(document.id)
-                docId.get().addOnSuccessListener { doc ->
-                    if (doc != null) {
-                        val data = document.data
-                        val balanceMerchant = data["balance"].toString().toLong()
-                        val newBalance = balanceMerchant - amount
-                        docId.update("balance", newBalance).addOnSuccessListener {
-                            Transaction.addTransaction(
-                                activity,
-                                context,
-                                document.id,
-                                amount,
-                                bankAccountNo,
-                                bankInst
-                            )
-                        }.addOnFailureListener { error ->
-                            Toast.makeText(
-                                context, error.localizedMessage, Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }.addOnFailureListener { error ->
-                    Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }.addOnFailureListener { error ->
-            Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-        }
-    }
 }

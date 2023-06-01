@@ -2,13 +2,10 @@ package com.bangkit.bisamerchant.core.services
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
 import com.bangkit.bisamerchant.core.helper.AESUtil
+import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
 import com.google.firebase.firestore.FirebaseFirestore
-import java.lang.Exception
 
 object Owner {
 
@@ -32,34 +29,6 @@ object Owner {
             }
             .addOnFailureListener { error ->
                 Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    fun getPinOwner(onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
-        val email = Auth.getEmail()
-        val ownerCollection = FirebaseFirestore.getInstance().collection("owner")
-        ownerCollection
-            .whereEqualTo("email", email)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot) {
-                    val ownerDoc = ownerCollection.document(document.id)
-                    ownerDoc.get()
-                        .addOnSuccessListener { doc ->
-                            if (doc != null) {
-                                val data = document.data
-                                val pin = data["pin"]
-                                val decryptedPin = AESUtil.decrypt(pin.toString())
-                                onSuccess(decryptedPin)
-                            }
-                        }
-                        .addOnFailureListener { exception ->
-                            onFailure(exception)
-                        }
-                }
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
             }
     }
 }
