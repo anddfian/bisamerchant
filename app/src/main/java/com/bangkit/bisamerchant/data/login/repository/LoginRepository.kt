@@ -12,4 +12,8 @@ class LoginRepository @Inject constructor(
 
     override suspend fun login(email: String, password: String) =
         loginDatasource.login(email, password)
+
+    override suspend fun resetPassword(email: String) =
+        loginDatasource.resetPassword(email)
+
 }

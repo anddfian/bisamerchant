@@ -1,19 +1,30 @@
-package com.bangkit.bisamerchant.presentation.resetpassword
+package com.bangkit.bisamerchant.presentation.login.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityResetPasswordBinding
-import com.bangkit.bisamerchant.core.services.Auth
+import com.bangkit.bisamerchant.presentation.login.viewmodel.LoginViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityResetPasswordBinding? = null
     private val binding get() = _binding
+
+    private val loginViewModel: LoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+
+        updateUI()
+
 
         binding.apply {
             this?.btnResetPassword?.setOnClickListener(this@ResetPasswordActivity).also {
@@ -33,6 +44,27 @@ class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    private fun updateUI() {
+        loginViewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+        loginViewModel.message.observe(this) {
+            if (it != null) {
+                Toast.makeText(this@ResetPasswordActivity, it, Toast.LENGTH_SHORT)
+                    .show()
+            }
+            if (it == RESET_SUCCESSFUL) {
+                val intent = Intent(this@ResetPasswordActivity, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_reset_password -> {
@@ -43,7 +75,7 @@ class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     else -> {
-                        Auth.resetPasswordEmail(this@ResetPasswordActivity, email)
+                        loginViewModel.resetPassword(email)
                     }
                 }
             }
@@ -53,5 +85,9 @@ class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+        private const val RESET_SUCCESSFUL = "Reset password sent, check your email"
     }
 }
