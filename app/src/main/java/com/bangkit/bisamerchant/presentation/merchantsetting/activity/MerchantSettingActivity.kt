@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -16,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityMerchantSettingBinding
-import com.bangkit.bisamerchant.core.services.Merchant
 import com.bangkit.bisamerchant.presentation.merchantsetting.viewmodel.MerchantSettingViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
@@ -49,13 +49,10 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
             }
             if (fileSize > 5) {
                 Snackbar.make(
-                    binding?.root!!,
-                    "Image size larger than 5MB",
-                    Snackbar.LENGTH_SHORT
+                    binding?.root!!, "Image size larger than 5MB", Snackbar.LENGTH_SHORT
                 ).setBackgroundTint(
                     ContextCompat.getColor(
-                        this@MerchantSettingActivity,
-                        R.color.md_theme_light_error
+                        this@MerchantSettingActivity, R.color.md_theme_light_error
                     )
                 ).show()
             } else {
@@ -73,7 +70,7 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
         initTopAppBar()
         setupClickListeners()
 
-        updateUI(merchantSettingViewModel)
+        updateUI()
         binding?.btnSaveMerchant?.isEnabled = false
 
         val textfields = listOf(
@@ -85,7 +82,11 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
         textfields.forEach { it ->
             it?.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(
+                    s: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val allFilled = textfields.all { it?.text?.isNotEmpty() ?: false }
                     binding?.btnSaveMerchant?.isEnabled = allFilled
@@ -133,12 +134,8 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     else -> {
-                        Merchant.addMerchant(
-                            this@MerchantSettingActivity,
-                            selectedImageUri!!,
-                            name,
-                            address,
-                            type
+                        merchantSettingViewModel.updateMerchantInfo(
+                            name = name, address = address, type = type, newPhoto = selectedImageUri
                         )
                     }
                 }
@@ -165,9 +162,11 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
         binding?.btnSaveMerchant?.setOnClickListener(this)
     }
 
-    private fun updateUI(
-        merchantSettingViewModel: MerchantSettingViewModel,
-    ) {
+    private fun showLoading(isLoading: Boolean) {
+        binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun updateUI() {
         merchantSettingViewModel.getMerchantActive()
         merchantSettingViewModel.merchant.observe(this) { merchant ->
             binding?.apply {
@@ -176,11 +175,15 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
                 tilRegistMerchantType.editText?.setText(merchant.merchantType)
             }
             binding?.let {
-                Glide.with(it.root)
-                    .load(merchant.merchantLogo)
-                    .placeholder(R.drawable.ic_loading_24)
-                    .into(binding?.ivMerchantLogo!!)
+                Glide.with(it.root).load(merchant.merchantLogo)
+                    .placeholder(R.drawable.ic_loading_24).into(binding?.ivMerchantLogo!!)
             }
+        }
+        merchantSettingViewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+        merchantSettingViewModel.message.observe(this) {
+            Toast.makeText(this@MerchantSettingActivity, it, Toast.LENGTH_SHORT).show()
         }
         val merchantItems = arrayOf(
             "Restoran",
