@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.databinding.MerchantAccountCardBinding
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
-import com.bangkit.bisamerchant.presentation.splashscreen.SplashScreenActivity
+import com.bangkit.bisamerchant.presentation.splashscreen.activity.SplashScreenActivity
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
