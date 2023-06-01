@@ -9,6 +9,6 @@ import javax.inject.Singleton
 class SettingRepository @Inject constructor(
     private val settingDataSource: SettingDataSource
 ) : ISettingRepository {
-    override suspend fun deleteMerchant() =
-        settingDataSource.deleteMerchant()
+    override suspend fun logout() =
+        settingDataSource.logout()
 }

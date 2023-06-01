@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import com.bangkit.bisamerchant.presentation.login.LoginActivity
 import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.splashscreen.SplashScreenActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -104,16 +103,6 @@ object Auth {
             .addOnFailureListener { error ->
                 Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
             }
-    }
-
-    fun logout(activity: Activity, context: Context) {
-        auth.signOut()
-        Toast.makeText(context, "Logout successful", Toast.LENGTH_SHORT).show()
-        val intent = Intent(context, LoginActivity::class.java)
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-        activity.finish()
     }
 
     fun register(context: Context, name: String, email: String, password: String, pin: String) {

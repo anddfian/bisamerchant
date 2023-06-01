@@ -11,8 +11,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivitySettingBinding
-import com.bangkit.bisamerchant.core.services.Auth
 import com.bangkit.bisamerchant.presentation.faq.FaqActivity
+import com.bangkit.bisamerchant.presentation.login.LoginActivity
 import com.bangkit.bisamerchant.presentation.merchantsetting.activity.MerchantSettingActivity
 import com.bangkit.bisamerchant.presentation.setting.viewmodel.SettingViewModel
 import com.bangkit.bisamerchant.presentation.termpolicy.PrivacyPolicyActivity
@@ -58,8 +58,12 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.btn_logout -> {
-                settingViewModel.deleteMerchant()
-                Auth.logout(this, this@SettingActivity)
+                settingViewModel.logout()
+
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                this.startActivity(intent)
+                finish()
             }
         }
     }
