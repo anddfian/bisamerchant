@@ -1,5 +1,6 @@
-package com.bangkit.bisamerchant.presentation.pin
+package com.bangkit.bisamerchant.presentation.pin.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,11 +9,11 @@ import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityPinBinding
-import com.bangkit.bisamerchant.core.services.Merchant.updateBalanceMerchant
-import com.bangkit.bisamerchant.core.services.Owner
+import com.bangkit.bisamerchant.presentation.pin.viewmodel.PinViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +22,8 @@ class PinActivity : AppCompatActivity(), TextWatcher {
     private val binding get() = _binding!!
     private val editTextArray: ArrayList<EditText> = ArrayList(NUM_OF_DIGITS)
     private var numTemp: String? = null
+
+    private val pinViewModel: PinViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         _binding = ActivityPinBinding.inflate(layoutInflater)
@@ -38,7 +41,21 @@ class PinActivity : AppCompatActivity(), TextWatcher {
             }
         }
 
-        editTextArray[0].requestFocus() //After the views are initialized we focus on the first view
+        editTextArray[0].requestFocus()
+        updateUI()
+    }
+
+    private fun updateUI() {
+        pinViewModel.isLoading.observe(this@PinActivity) {
+            showLoading(it)
+        }
+        pinViewModel.message.observe(this@PinActivity) {
+            Toast.makeText(
+                this@PinActivity,
+                it,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -64,6 +81,10 @@ class PinActivity : AppCompatActivity(), TextWatcher {
             setDisplayShowTitleEnabled(true)
             title = "PIN Verification"
         }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -100,8 +121,7 @@ class PinActivity : AppCompatActivity(), TextWatcher {
                     editTextArray[i + 1].requestFocus()
                     editTextArray[i + 1].setSelection(editTextArray[i + 1].length())
                     return
-                }
-                else if (i == editTextArray.size - 1) {
+                } else if (i == editTextArray.size - 1) {
                     editTextArray[i].clearFocus()
                     editTextArray[0].requestFocus()
                 }
@@ -112,28 +132,28 @@ class PinActivity : AppCompatActivity(), TextWatcher {
         if (pinEntered.isNotEmpty()) {
             val pin = pinEntered.toString()
             val hasPinDigits = pinDigits.any { it.isNotEmpty() }
-            if (hasPinDigits) {
-                Owner.getPinOwner(onSuccess = { decryptPin ->
-                    if (pin == decryptPin) {
-                        val amount = intent.getStringExtra("amount")
-                        val bankAccountNo = intent.getStringExtra("bankAccountNo")
-                        val bankInst = intent.getStringExtra("bankInst")
-                        if (bankInst != null) {
-                            updateBalanceMerchant(
-                                this,
-                                this@PinActivity,
-                                amount?.toLong() ?: 0L,
-                                bankAccountNo?.toLong() ?: 0L,
-                                bankInst
-                            )
-                        }
-                    } else {
-                        Toast.makeText(this, "Wrong PIN!", Toast.LENGTH_SHORT).show()
+            if (pin.length == 6) {
+                pinViewModel.validateOwnerPin(pin.toInt())
+                pinViewModel.isPinValid.observe(this@PinActivity) {
+                    if (it == false) {
+                        binding.digit1.setText("")
+                        binding.digit2.setText("")
+                        binding.digit3.setText("")
+                        binding.digit4.setText("")
+                        binding.digit5.setText("")
+                        binding.digit6.setText("")
+                        Toast.makeText(
+                            this@PinActivity,
+                            "PIN salah, silakan ulangi",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (it == true) {
+                        val resultIntent = Intent()
+                        resultIntent.putExtra("EXTRA_VALIDATION", true)
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
                     }
-                }, onFailure = { exception ->
-                    Toast.makeText(this@PinActivity, exception.localizedMessage, Toast.LENGTH_SHORT)
-                        .show()
-                })
+                }
             }
         }
     }

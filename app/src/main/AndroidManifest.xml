@@ -22,7 +22,7 @@
             tools:replace="android:screenOrientation"
             android:stateNotNeeded="true"/>
         <activity
-            android:name=".presentation.pin.PinActivity"
+            android:name=".presentation.pin.activity.PinActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
