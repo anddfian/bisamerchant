@@ -6,7 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityOnboardingBinding
-import com.bangkit.bisamerchant.presentation.login.LoginActivity
+import com.bangkit.bisamerchant.presentation.login.activity.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

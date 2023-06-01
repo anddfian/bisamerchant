@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivitySettingBinding
 import com.bangkit.bisamerchant.presentation.faq.FaqActivity
-import com.bangkit.bisamerchant.presentation.login.LoginActivity
+import com.bangkit.bisamerchant.presentation.login.activity.LoginActivity
 import com.bangkit.bisamerchant.presentation.merchantsetting.activity.MerchantSettingActivity
 import com.bangkit.bisamerchant.presentation.setting.viewmodel.SettingViewModel
 import com.bangkit.bisamerchant.presentation.termpolicy.PrivacyPolicyActivity

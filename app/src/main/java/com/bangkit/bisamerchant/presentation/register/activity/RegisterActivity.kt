@@ -40,10 +40,17 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
             binding?.tilRegistPin?.editText
         )
 
-        textfields.forEach{ it ->
+        textfields.forEach { it ->
             it?.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val allFilled = textfields.all { it?.text?.isNotEmpty() ?: false }
                     binding?.btnRegister?.isEnabled = allFilled
@@ -66,18 +73,21 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        when(v.id) {
+        when (v.id) {
             R.id.tv_term -> {
                 val intent = Intent(this@RegisterActivity, TermConditionActivity::class.java)
                 startActivity(intent)
             }
+
             R.id.tv_policy -> {
                 val intent = Intent(this@RegisterActivity, PrivacyPolicyActivity::class.java)
                 startActivity(intent)
             }
+
             R.id.btn_login -> {
                 finish()
             }
+
             R.id.btn_register -> {
                 val name = binding?.tilRegistName?.editText?.text.toString()
                 val email = binding?.tilRegistEmail?.editText?.text.toString()
@@ -87,20 +97,27 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                     name.length > 36 -> {
                         binding?.tilRegistName?.error = "Nama melebihi batas karakter!"
                     }
+
                     !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
                         binding?.tilRegistEmail?.error = "Format email salah!"
                     }
+
                     password.length < 6 -> {
                         binding?.tilRegistPassword?.error = "Password kurang dari 6 digit!"
                     }
+
                     pin.length < 6 -> {
                         binding?.tilRegistPin?.error = "PIN kurang dari 6 digit!"
                     }
+
                     else -> {
                         registerViewModel.registerOwner(name, email, password, pin)
-                        registerViewModel.isRegisterSuccess.observe(this) {isSuccess ->
+                        registerViewModel.isRegisterSuccess.observe(this) { isSuccess ->
                             if (isSuccess) {
-                                val intent = Intent(this@RegisterActivity, MerchantRegisterActivity::class.java)
+                                val intent = Intent(
+                                    this@RegisterActivity,
+                                    MerchantRegisterActivity::class.java
+                                )
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                                 startActivity(intent)
                             }
