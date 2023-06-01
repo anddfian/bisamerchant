@@ -21,7 +21,7 @@ import com.bangkit.bisamerchant.domain.home.usecase.PostTransaction
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateHideAmount
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateMerchantStatus
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateTransactionsCount
-import com.bangkit.bisamerchant.domain.home.usecase.ValidateOwnerPin
+import com.bangkit.bisamerchant.domain.pin.usecase.ValidateOwnerPin
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -61,8 +61,8 @@ class HomeViewModel @Inject constructor(
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
-    private val _isPinValid = MutableLiveData<Boolean>()
-    val isPinValid: LiveData<Boolean> get() = _isPinValid
+    private val _isPinValid = MutableLiveData<Boolean?>()
+    val isPinValid: LiveData<Boolean?> get() = _isPinValid
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -111,21 +111,7 @@ class HomeViewModel @Inject constructor(
         updateTransactionsCount.execute(count)
     }
 
-    fun validateOwnerPin(inputPin: Int) {
-        viewModelScope.launch {
-            validateOwnerPin.execute(inputPin)
-                .onStart {
-                    _isLoading.value = true
-                }
-                .catch { e ->
-                    _message.value = "Terjadi kesalahan: ${e.message}"
-                }
-                .collect { result ->
-                    _isLoading.value = false
-                    _isPinValid.value = result
-                }
-        }
-    }
+
 
     fun postTransaction(
         payment: Payment

@@ -12,9 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bangkit.bisamerchant.databinding.FragmentWithdrawBinding
-import com.bangkit.bisamerchant.domain.home.model.Payment
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
-import com.bangkit.bisamerchant.presentation.pin.PinActivity
+import com.bangkit.bisamerchant.presentation.pin.activity.PinActivity
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -97,25 +96,8 @@ class WithdrawFragment : Fragment() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val inputPin = result.data?.getIntExtra("EXTRA_PIN", 0)
+            val isPinValid = result.data?.getBooleanExtra("EXTRA_VALIDATION", false)
             val merchantId = homeViewModel.getMerchantId()
-            if (inputPin != null) {
-                homeViewModel.validateOwnerPin(inputPin.toInt())
-                homeViewModel.isPinValid.observe(viewLifecycleOwner) {
-                    if (it) {
-                        homeViewModel.postTransaction(
-                            Payment(
-                                amount = withdrawAmount,
-                                bankAccountNo = withdrawAccountNumber,
-                                bankInst = withdrawBankInst,
-                                merchantId = merchantId,
-                                timestamp = System.currentTimeMillis(),
-                                trxType = "MERCHANT_WITHDRAW",
-                            )
-                        )
-                    }
-                }
-            }
         }
     }
 
@@ -137,9 +119,7 @@ class WithdrawFragment : Fragment() {
                 Toast.makeText(requireContext(), "Amount is required!", Toast.LENGTH_SHORT).show()
             } else if (amountInt < 10000) {
                 Toast.makeText(
-                    requireContext(),
-                    "Amount must more than equal to 10000!",
-                    Toast.LENGTH_SHORT
+                    requireContext(), "Amount must more than equal to 10000!", Toast.LENGTH_SHORT
                 ).show()
             } else if (bank.isEmpty()) {
                 Toast.makeText(requireContext(), "Bank Name is required!", Toast.LENGTH_SHORT)
@@ -149,23 +129,26 @@ class WithdrawFragment : Fragment() {
                     .show()
             } else if (number.length < 9) {
                 Toast.makeText(
-                    requireContext(),
-                    "Account Number must more than 8!",
-                    Toast.LENGTH_SHORT
+                    requireContext(), "Account Number must more than 8!", Toast.LENGTH_SHORT
                 ).show()
             } else {
                 if (balance!! < amount.toLong()) {
                     Toast.makeText(requireContext(), "Balance not enough", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    val intent = Intent(activity, PinActivity::class.java)
                     withdrawAmount = amount.toLong()
                     withdrawBankInst = bank
                     withdrawAccountNumber = number.toLong()
-                    pinActivityLauncher.launch(intent)
+                    executePinLauncher()
                 }
             }
         }
+    }
+
+    private fun executePinLauncher(message: String? = null) {
+        val intent = Intent(activity, PinActivity::class.java)
+        intent.putExtra("EXTRA_MESSAGE", message)
+        pinActivityLauncher.launch(intent)
     }
 
     override fun onDestroyView() {

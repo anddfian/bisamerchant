@@ -19,6 +19,5 @@ interface IHomeRepository {
     suspend fun getTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration
     suspend fun getMerchantId(): String
     suspend fun getTransactionsCount(): Long
-    suspend fun validateOwnerPin(inputPin: Int): Flow<Boolean>
     suspend fun updateTransactionsCount(count: Long)
 }

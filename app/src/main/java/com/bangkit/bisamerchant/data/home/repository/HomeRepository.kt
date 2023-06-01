@@ -57,18 +57,8 @@ class HomeRepository @Inject constructor(
         emit("Terjadi kesalahan: ${e.message}")
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun validateOwnerPin(inputPin: Int): Flow<Boolean> = flow {
-        val pin = homeDataSource.getOwnerPin()
-        if (pin.toInt() == inputPin) {
-            emit(true)
-        } else {
-            emit(false)
-        }
-    }
-
     override suspend fun getTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration =
         homeDataSource.getTransactionsToday(callback)
-
 
     override suspend fun getMerchantId() =
         homeDataSource.getMerchantId()
