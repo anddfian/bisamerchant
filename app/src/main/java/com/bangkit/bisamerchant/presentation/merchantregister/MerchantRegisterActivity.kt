@@ -1,4 +1,4 @@
-package com.bangkit.bisamerchant.presentation.register
+package com.bangkit.bisamerchant.presentation.merchantregister
 
 import android.content.Intent
 import android.database.Cursor

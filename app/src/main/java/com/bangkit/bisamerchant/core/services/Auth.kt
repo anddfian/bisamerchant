@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.splashscreen.SplashScreenActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -98,18 +98,6 @@ object Auth {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(context, "Password reset email sent", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .addOnFailureListener { error ->
-                Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    fun register(context: Context, name: String, email: String, password: String, pin: String) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Owner.addOwner(context, name, email, pin)
                 }
             }
             .addOnFailureListener { error ->

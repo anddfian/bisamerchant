@@ -23,7 +23,7 @@ import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.home.adapter.SectionsPagerAdapter
 import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.presentation.profile.activity.ProfileActivity
-import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.setting.activity.SettingActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
@@ -43,6 +43,7 @@ class HomeActivity : AppCompatActivity() {
 
     private var _bottomSheetDialog: BottomSheetDialog? = null
     private val bottomSheetDialog get() = _bottomSheetDialog!!
+
     private var amount: Long? = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +52,9 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupFilterBottomSheet()
-        updateUI(homeViewModel)
+        updateUI()
         initTopAppBar()
-        initClickListener(homeViewModel)
+        initClickListener()
         tabLayoutConnector()
     }
 
@@ -64,9 +65,7 @@ class HomeActivity : AppCompatActivity() {
         bottomSheetDialog.setContentView(merchantAccountBottomSheetBinding.root)
     }
 
-    private fun updateUI(
-        homeViewModel: HomeViewModel,
-    ) {
+    private fun updateUI() {
         lifecycleScope.launch {
             launch {
                 homeViewModel.getMerchantActive()
@@ -88,6 +87,7 @@ class HomeActivity : AppCompatActivity() {
                         }
                     }
                 }
+
             }
             launch {
                 homeViewModel.getMerchants()
@@ -106,10 +106,11 @@ class HomeActivity : AppCompatActivity() {
         supportActionBar?.title = ""
     }
 
-    private fun initClickListener(homeViewModel: HomeViewModel) {
+    private fun initClickListener() {
         binding.btnHistory.setOnClickListener {
             startActivity(Intent(this@HomeActivity, HistoryActivity::class.java))
         }
+
         binding.btnProfileMerchant.setOnClickListener {
             startActivity(Intent(this@HomeActivity, ProfileActivity::class.java))
         }
@@ -132,6 +133,7 @@ class HomeActivity : AppCompatActivity() {
             showRecyclerMerchants()
             bottomSheetDialog.show()
         }
+
         merchantAccountBottomSheetBinding.btnAddMerchant.setOnClickListener {
             startActivity(Intent(this@HomeActivity, MerchantRegisterActivity::class.java))
         }
