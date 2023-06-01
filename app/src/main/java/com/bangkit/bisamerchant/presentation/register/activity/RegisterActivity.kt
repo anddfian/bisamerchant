@@ -1,30 +1,35 @@
-package com.bangkit.bisamerchant.presentation.register
+package com.bangkit.bisamerchant.presentation.register.activity
 
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import androidx.annotation.RequiresApi
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityUserRegisterBinding
-import com.bangkit.bisamerchant.core.services.Auth
+import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.register.viewmodel.RegisterViewModel
 import com.bangkit.bisamerchant.presentation.termpolicy.PrivacyPolicyActivity
 import com.bangkit.bisamerchant.presentation.termpolicy.TermConditionActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
+class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityUserRegisterBinding? = null
     private val binding get() = _binding
+
+    private val registerViewModel: RegisterViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityUserRegisterBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
         setupClickListeners()
+        updateUI()
 
         binding?.btnRegister?.isEnabled = false
 
@@ -47,15 +52,27 @@ class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateUI() {
+        registerViewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+        registerViewModel.message.observe(this) {
+            Toast.makeText(this@RegisterActivity, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
     override fun onClick(v: View) {
         when(v.id) {
             R.id.tv_term -> {
-                val intent = Intent(this@UserRegisterActivity, TermConditionActivity::class.java)
+                val intent = Intent(this@RegisterActivity, TermConditionActivity::class.java)
                 startActivity(intent)
             }
             R.id.tv_policy -> {
-                val intent = Intent(this@UserRegisterActivity, PrivacyPolicyActivity::class.java)
+                val intent = Intent(this@RegisterActivity, PrivacyPolicyActivity::class.java)
                 startActivity(intent)
             }
             R.id.btn_login -> {
@@ -67,7 +84,7 @@ class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
                 val password = binding?.tilRegistPassword?.editText?.text.toString()
                 val pin = binding?.tilRegistPin?.editText?.text.toString()
                 when {
-                    name.length > 48 -> {
+                    name.length > 36 -> {
                         binding?.tilRegistName?.error = "Nama melebihi batas karakter!"
                     }
                     !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
@@ -80,7 +97,14 @@ class UserRegisterActivity : AppCompatActivity(), View.OnClickListener {
                         binding?.tilRegistPin?.error = "PIN kurang dari 6 digit!"
                     }
                     else -> {
-                        Auth.register(this@UserRegisterActivity, name, email, password, pin)
+                        registerViewModel.registerOwner(name, email, password, pin)
+                        registerViewModel.isRegisterSuccess.observe(this) {isSuccess ->
+                            if (isSuccess) {
+                                val intent = Intent(this@RegisterActivity, MerchantRegisterActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)
+                            }
+                        }
                     }
                 }
             }

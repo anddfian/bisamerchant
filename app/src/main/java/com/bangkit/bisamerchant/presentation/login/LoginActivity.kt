@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityLoginBinding
 import com.bangkit.bisamerchant.core.services.Auth
-import com.bangkit.bisamerchant.presentation.register.UserRegisterActivity
+import com.bangkit.bisamerchant.presentation.register.activity.RegisterActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,7 +58,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.tb_create_account -> {
-                val intent = Intent(this@LoginActivity, UserRegisterActivity::class.java)
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
                 startActivity(intent)
             }
 

@@ -10,7 +10,7 @@ import com.bangkit.bisamerchant.core.services.Auth
 import com.bangkit.bisamerchant.core.services.Merchant
 import com.bangkit.bisamerchant.presentation.home.activity.HomeActivity
 import com.bangkit.bisamerchant.presentation.onboarding.OnboardingActivity
-import com.bangkit.bisamerchant.presentation.register.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
