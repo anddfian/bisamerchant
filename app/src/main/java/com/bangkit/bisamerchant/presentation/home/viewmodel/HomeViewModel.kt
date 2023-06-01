@@ -21,6 +21,7 @@ import com.bangkit.bisamerchant.domain.home.usecase.PostTransaction
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateHideAmount
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateMerchantStatus
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateTransactionsCount
+import com.bangkit.bisamerchant.domain.pin.usecase.ValidateOwnerPin
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -42,8 +43,9 @@ class HomeViewModel @Inject constructor(
     private val postTransaction: PostTransaction,
     private val updateHideAmount: UpdateHideAmount,
     private val updateMerchantStatus: UpdateMerchantStatus,
+    private val validateOwnerPin: ValidateOwnerPin,
     private val updateTransactionsCount: UpdateTransactionsCount,
-): ViewModel() {
+) : ViewModel() {
     private val _merchant = MutableLiveData<Merchant>()
     val merchant: LiveData<Merchant> get() = _merchant
 
@@ -58,6 +60,9 @@ class HomeViewModel @Inject constructor(
 
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
+
+    private val _isPinValid = MutableLiveData<Boolean?>()
+    val isPinValid: LiveData<Boolean?> get() = _isPinValid
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -105,6 +110,8 @@ class HomeViewModel @Inject constructor(
     suspend fun updateTransactionCount(count: Long) {
         updateTransactionsCount.execute(count)
     }
+
+
 
     fun postTransaction(
         payment: Payment
