@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityLoginBinding
 import com.bangkit.bisamerchant.presentation.login.viewmodel.LoginViewModel
-import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.register.activity.RegisterActivity
 import com.bangkit.bisamerchant.presentation.resetpassword.ResetPasswordActivity
 import com.bangkit.bisamerchant.presentation.splashscreen.activity.SplashScreenActivity

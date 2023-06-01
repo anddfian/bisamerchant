@@ -146,14 +146,18 @@ class WithdrawFragment : Fragment() {
                     requireContext(), "Account Number must more than 8!", Toast.LENGTH_SHORT
                 ).show()
             } else {
-                if (balance!! < amount.toLong()) {
-                    Toast.makeText(requireContext(), "Balance not enough", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    withdrawAmount = amount.toLong()
-                    withdrawBankInst = bank
-                    withdrawAccountNumber = number.toLong()
-                    executePinLauncher()
+                balance.let {
+                    if (it != null) {
+                        if (it < amount.toLong()) {
+                            Toast.makeText(requireContext(), "Balance not enough", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            withdrawAmount = amount.toLong()
+                            withdrawBankInst = bank
+                            withdrawAccountNumber = number.toLong()
+                            executePinLauncher()
+                        }
+                    }
                 }
             }
         }

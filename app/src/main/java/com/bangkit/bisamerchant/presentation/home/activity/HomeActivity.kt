@@ -23,7 +23,7 @@ import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.home.adapter.SectionsPagerAdapter
 import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.presentation.profile.activity.ProfileActivity
-import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.setting.activity.SettingActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout

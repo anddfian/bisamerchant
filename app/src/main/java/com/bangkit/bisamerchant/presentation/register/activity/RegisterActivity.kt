@@ -10,7 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityUserRegisterBinding
-import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.register.viewmodel.RegisterViewModel
 import com.bangkit.bisamerchant.presentation.termpolicy.PrivacyPolicyActivity
 import com.bangkit.bisamerchant.presentation.termpolicy.TermConditionActivity
