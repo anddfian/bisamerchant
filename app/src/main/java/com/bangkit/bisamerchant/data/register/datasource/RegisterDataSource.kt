@@ -1,6 +1,6 @@
 package com.bangkit.bisamerchant.data.register.datasource
 
-import com.bangkit.bisamerchant.core.helper.AESUtil
+import com.bangkit.bisamerchant.data.utils.AESUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -26,9 +26,13 @@ class RegisterDataSource @Inject constructor(
                 "pin" to encryptedPin
             )
             db.collection("owner").add(data).await()
-            emit("Register successful")
+            emit(REGISTER_SUCCESSFUL)
         } catch (e: Exception) {
-            emit(e.localizedMessage ?: "Failed to register")
+            throw Exception(e.localizedMessage ?: "Failed to register")
         }
     }.flowOn(Dispatchers.IO)
+
+    companion object {
+        private const val REGISTER_SUCCESSFUL = "Register successful"
+    }
 }

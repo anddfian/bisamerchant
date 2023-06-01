@@ -1,4 +1,4 @@
-package com.bangkit.bisamerchant.presentation.login
+package com.bangkit.bisamerchant.presentation.resetpassword
 
 import android.os.Bundle
 import android.view.View

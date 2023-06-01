@@ -1,10 +1,10 @@
-package com.bangkit.bisamerchant.presentation.register.viewmodel
+package com.bangkit.bisamerchant.presentation.login.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bangkit.bisamerchant.domain.register.usecase.RegisterOwner
+import com.bangkit.bisamerchant.domain.login.usecase.Login
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor(
-    private val registerOwner: RegisterOwner
+class LoginViewModel @Inject constructor(
+    private val login: Login,
 ) : ViewModel() {
 
     private val _message = MutableLiveData<String>()
@@ -22,28 +22,20 @@ class RegisterViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private val _isRegisterSuccess = MutableLiveData<Boolean>()
-    val isRegisterSuccess: LiveData<Boolean> get() = _isRegisterSuccess
-
-    fun registerOwner(name: String, email: String, password: String, pin: String) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
-            registerOwner.execute(name, email, password, pin)
+            login.execute(email, password)
                 .onStart {
                     _isLoading.value = true
                 }
                 .catch { e ->
-                    _isLoading.value = false
                     _message.value = "${e.message}"
+                    _isLoading.value = false
                 }
                 .collect { result ->
                     _isLoading.value = false
                     _message.value = result
-                    _isRegisterSuccess.value = result == REGISTER_SUCCESSFUL
                 }
         }
-    }
-
-    companion object {
-        private const val REGISTER_SUCCESSFUL = "Register successful"
     }
 }

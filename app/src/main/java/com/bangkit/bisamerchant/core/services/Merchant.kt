@@ -1,6 +1,5 @@
 package com.bangkit.bisamerchant.core.services
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -9,22 +8,9 @@ import com.bangkit.bisamerchant.presentation.home.activity.HomeActivity
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import java.lang.Exception
 
 object Merchant {
     private val storage = FirebaseStorage.getInstance()
-
-    fun checkMerchantExists(onSuccess: (Boolean) -> Unit, onFailure: (Exception) -> Unit) {
-        val email = Auth.getEmail()
-        val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
-        merchantCollection.whereEqualTo("email", email).get()
-            .addOnSuccessListener { querySnapshot ->
-                val exists = !querySnapshot.isEmpty
-                onSuccess(exists)
-            }.addOnFailureListener { exception ->
-                onFailure(exception)
-            }
-    }
 
     private fun changeMerchantStatus(id: String) {
         val email = Auth.getEmail()
@@ -98,96 +84,5 @@ object Merchant {
             .addOnFailureListener { error ->
                 Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
             }
-    }
-
-    fun updateMerchant(
-        activity: Activity,
-        context: Context,
-        photo: Uri?,
-        name: String,
-        address: String,
-        type: String
-    ) {
-        val merchantCollection = FirebaseFirestore.getInstance().collection("merchant")
-        val email = Auth.getEmail()
-        val docMerchant =
-            merchantCollection.whereEqualTo("email", email).whereEqualTo("merchantActive", true)
-
-        if (photo != null) {
-            docMerchant.get().addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot) {
-                    val merchantDoc = merchantCollection.document(document.id)
-                    val storageRef = storage.reference
-                    val docId = document.id
-                    val imageRef = storageRef.child("merchant/logo/$docId.jpg")
-                    imageRef.delete().addOnSuccessListener {
-                        val uploadTask = imageRef.putFile(photo)
-                        uploadTask.addOnSuccessListener { taskSnapshot ->
-                            taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUrl ->
-                                val data = mapOf(
-                                    "merchantName" to name,
-                                    "merchantLogo" to downloadUrl.toString(),
-                                    "merchantAddress" to address,
-                                    "merchantType" to type,
-                                )
-                                merchantDoc.update(data).addOnSuccessListener {
-                                    Toast.makeText(
-                                        context,
-                                        "Update merchant successful",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    activity.finish()
-                                }.addOnFailureListener { error ->
-                                    Toast.makeText(
-                                        context,
-                                        error.localizedMessage,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }.addOnFailureListener { error ->
-                                    Toast.makeText(
-                                        context,
-                                        error.localizedMessage,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }.addOnFailureListener { error ->
-                            Toast.makeText(
-                                context, error.localizedMessage, Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }.addOnFailureListener { error ->
-                        Toast.makeText(
-                            context, error.localizedMessage, Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }.addOnFailureListener { error ->
-                Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            docMerchant.get().addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot) {
-                    val docId = merchantCollection.document(document.id)
-                    val data = mapOf(
-                        "merchantName" to name,
-                        "merchantAddress" to address,
-                        "merchantType" to type,
-                    )
-                    docId.update(data).addOnSuccessListener {
-                        Toast.makeText(
-                            context, "Update merchant successful", Toast.LENGTH_SHORT
-                        ).show()
-                        activity.finish()
-                    }.addOnFailureListener { error ->
-                        Toast.makeText(
-                            context, error.localizedMessage, Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }.addOnFailureListener { error ->
-                Toast.makeText(context, error.localizedMessage, Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }
