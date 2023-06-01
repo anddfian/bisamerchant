@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bangkit.bisamerchant.core.helper.Utils
+import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.MessageNotif

@@ -53,7 +53,7 @@ class HomeRepository @Inject constructor(
             }
 
             if (currentBalance != null) {
-                if (currentBalance > detailTransaction.amount) {
+                if (currentBalance >= detailTransaction.amount) {
                     val newBalance = currentBalance - detailTransaction.amount
                     homeDataSource.postTransaction(detailTransaction, newBalance).collect { result ->
                         emit(result)

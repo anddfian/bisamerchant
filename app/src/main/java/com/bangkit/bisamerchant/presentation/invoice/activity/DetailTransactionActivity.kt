@@ -12,7 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityDetailTransactionBinding
-import com.bangkit.bisamerchant.core.helper.Utils
+import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.presentation.invoice.viewmodel.DetailTransactionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -103,10 +103,10 @@ class DetailTransactionActivity : AppCompatActivity() {
 
             R.id.action_share -> {
                 val invoice = binding?.invoiceContainer
-                val bitmap1 = Utils.layoutToBitmap(invoice!!)
+                val bitmap1 = invoice?.let { Utils.layoutToBitmap(it) }
                 val bitmap2 : Bitmap = BitmapFactory.decodeResource(resources, R.drawable.invoice_share_background)
-                val mergedBitmap = Utils.invoiceSharedBitmap(bitmap2, bitmap1)
-                val uri = Utils.bitmapToTempFile(this, mergedBitmap)
+                val mergedBitmap = bitmap1?.let { Utils.invoiceSharedBitmap(bitmap2, it) }
+                val uri = mergedBitmap?.let { Utils.bitmapToTempFile(this, it) }
                 if (uri != null) {
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "image/png"

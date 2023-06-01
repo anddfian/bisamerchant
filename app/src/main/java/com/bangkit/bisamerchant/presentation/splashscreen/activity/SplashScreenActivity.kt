@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bangkit.bisamerchant.databinding.ActivitySplashScreenBinding
 import com.bangkit.bisamerchant.presentation.home.activity.HomeActivity
 import com.bangkit.bisamerchant.presentation.onboarding.OnboardingActivity
-import com.bangkit.bisamerchant.presentation.merchantregister.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.splashscreen.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay

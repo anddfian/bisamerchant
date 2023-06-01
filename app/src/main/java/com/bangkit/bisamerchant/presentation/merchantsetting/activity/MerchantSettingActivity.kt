@@ -26,7 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     private var _binding: ActivityMerchantSettingBinding? = null
-    private val binding get() = _binding
+    private val binding get() = _binding!!
 
     private val merchantSettingViewModel: MerchantSettingViewModel by viewModels()
 
@@ -37,8 +37,17 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     ) { result: ActivityResult ->
         if (result.data?.data != null) {
             var fileSize: Long = -1
-            val cursor: Cursor? =
-                contentResolver.query(result.data!!.data!!, null, null, null, null)
+            val cursor: Cursor? = result.data.let { resultData ->
+                resultData?.data?.let { data ->
+                    contentResolver.query(
+                        data,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                }
+            }
             cursor?.use {
                 if (it.moveToFirst()) {
                     val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
@@ -49,15 +58,15 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
             }
             if (fileSize > 5) {
                 Snackbar.make(
-                    binding?.root!!, "Image size larger than 5MB", Snackbar.LENGTH_SHORT
+                    binding.root, "Image size larger than 5MB", Snackbar.LENGTH_SHORT
                 ).setBackgroundTint(
                     ContextCompat.getColor(
                         this@MerchantSettingActivity, R.color.md_theme_light_error
                     )
                 ).show()
             } else {
-                selectedImageUri = result.data!!.data
-                binding?.ivMerchantLogo?.setImageURI(selectedImageUri)
+                selectedImageUri = result.data.let { it?.data }
+                binding.ivMerchantLogo.setImageURI(selectedImageUri)
             }
         }
     }
@@ -65,18 +74,18 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMerchantSettingBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        setContentView(binding.root)
 
         initTopAppBar()
         setupClickListeners()
 
         updateUI()
-        binding?.btnSaveMerchant?.isEnabled = false
+        binding.btnSaveMerchant.isEnabled = false
 
         val textfields = listOf(
-            binding?.tilRegistMerchantName?.editText,
-            binding?.tilRegistMerchantAddress?.editText,
-            binding?.tilRegistMerchantType?.editText,
+            binding.tilRegistMerchantName.editText,
+            binding.tilRegistMerchantAddress.editText,
+            binding.tilRegistMerchantType.editText,
         )
 
         textfields.forEach { it ->
@@ -89,7 +98,7 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val allFilled = textfields.all { it?.text?.isNotEmpty() ?: false }
-                    binding?.btnSaveMerchant?.isEnabled = allFilled
+                    binding.btnSaveMerchant.isEnabled = allFilled
                 }
             })
         }
@@ -115,22 +124,22 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.btn_save_merchant -> {
-                val name = binding?.tilRegistMerchantName?.editText?.text.toString()
-                val address = binding?.tilRegistMerchantAddress?.editText?.text.toString()
-                val type = binding?.tilRegistMerchantType?.editText?.text.toString()
+                val name = binding.tilRegistMerchantName.editText?.text.toString()
+                val address = binding.tilRegistMerchantAddress.editText?.text.toString()
+                val type = binding.tilRegistMerchantType.editText?.text.toString()
                 when {
                     name.length > 50 -> {
-                        binding?.tilRegistMerchantName?.error =
+                        binding.tilRegistMerchantName.error =
                             "Nama toko tidak boleh lebih dari 50 karakter!"
                     }
 
                     address.length > 100 -> {
-                        binding?.tilRegistMerchantAddress?.error =
+                        binding.tilRegistMerchantAddress.error =
                             "Alamat toko tidak boleh lebih dari 100 karakter!"
                     }
 
                     type.isEmpty() -> {
-                        binding?.tilRegistMerchantType?.error = "Tipe toko tidak boleh kosong!"
+                        binding.tilRegistMerchantType.error = "Tipe toko tidak boleh kosong!"
                     }
 
                     else -> {
@@ -149,7 +158,7 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initTopAppBar() {
-        setSupportActionBar(binding?.topAppBar)
+        setSupportActionBar(binding.topAppBar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(true)
@@ -158,25 +167,25 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupClickListeners() {
-        binding?.ivMerchantLogo?.setOnClickListener(this)
-        binding?.btnSaveMerchant?.setOnClickListener(this)
+        binding.ivMerchantLogo.setOnClickListener(this)
+        binding.btnSaveMerchant.setOnClickListener(this)
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun updateUI() {
         merchantSettingViewModel.getMerchantActive()
         merchantSettingViewModel.merchant.observe(this) { merchant ->
-            binding?.apply {
+            binding.apply {
                 tilRegistMerchantName.editText?.setText(merchant.merchantName)
                 tilRegistMerchantAddress.editText?.setText(merchant.merchantAddress)
                 tilRegistMerchantType.editText?.setText(merchant.merchantType)
             }
-            binding?.let {
+            binding.let {
                 Glide.with(it.root).load(merchant.merchantLogo)
-                    .placeholder(R.drawable.ic_loading_24).into(binding?.ivMerchantLogo!!)
+                    .placeholder(R.drawable.ic_loading_24).into(binding.ivMerchantLogo)
             }
         }
         merchantSettingViewModel.isLoading.observe(this) {
@@ -237,6 +246,6 @@ class MerchantSettingActivity : AppCompatActivity(), View.OnClickListener {
             "Toko Kain",
             "Katering"
         )
-        (binding?.edMerchantType as? MaterialAutoCompleteTextView)?.setSimpleItems(merchantItems)
+        (binding.edMerchantType as? MaterialAutoCompleteTextView)?.setSimpleItems(merchantItems)
     }
 }

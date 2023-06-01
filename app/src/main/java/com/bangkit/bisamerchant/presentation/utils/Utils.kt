@@ -27,7 +27,6 @@ import java.io.IOException
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.EnumMap
 import java.util.Locale
@@ -109,6 +108,24 @@ object Utils {
 
         val notification = mBuilder.build()
         mNotificationManager.notify(notificationId, notification)
+    }
+
+    fun layoutToBitmap(view: CardView): Bitmap {
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
+
+    fun invoiceSharedBitmap(background: Bitmap, item: Bitmap): Bitmap {
+        val merge = Bitmap.createBitmap(background.width, background.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(merge)
+        canvas.drawBitmap(background, 0f, 0f, null)
+
+        val x = (background.width - item.width) / 2
+        val y = (background.height - item.height) / 2
+        canvas.drawBitmap(item, x.toFloat(), y.toFloat(), null)
+        return merge
     }
 
     fun QRSharedBitmap(background: Bitmap, item: Bitmap): Bitmap {
