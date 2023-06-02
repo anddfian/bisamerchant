@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,8 +34,18 @@ class LoginDatasource @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
+    fun resetPassword(email: String): Flow<String> = flow {
+        try {
+            auth.sendPasswordResetEmail(email).await()
+            emit(RESET_SUCCESSFUL)
+        } catch (e: Exception) {
+            throw Exception(e.localizedMessage)
+        }
+    }.flowOn(Dispatchers.IO)
+
     companion object {
         private const val MERCHANT_NOT_FOUND = "Merchant not found"
         private const val LOGIN_SUCCESSFUL = "Login successful"
+        private const val RESET_SUCCESSFUL = "Reset password sent, check your email"
     }
 }
