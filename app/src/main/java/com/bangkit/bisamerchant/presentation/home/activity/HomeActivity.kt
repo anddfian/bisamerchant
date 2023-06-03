@@ -1,7 +1,11 @@
 package com.bangkit.bisamerchant.presentation.home.activity
 
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,6 +25,7 @@ import com.bangkit.bisamerchant.presentation.history.activity.HistoryActivity
 import com.bangkit.bisamerchant.presentation.home.adapter.MerchantAccountAdapter
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.home.adapter.SectionsPagerAdapter
+import com.bangkit.bisamerchant.presentation.invoice.activity.DetailTransactionActivity
 import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.presentation.profile.activity.ProfileActivity
 import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
@@ -50,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        triggerNotification()
         setupFilterBottomSheet()
         updateUI()
         initTopAppBar()
@@ -63,6 +68,21 @@ class HomeActivity : AppCompatActivity() {
             MerchantAccountBottomSheetBinding.inflate(layoutInflater)
         _bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setContentView(merchantAccountBottomSheetBinding.root)
+    }
+
+    private fun triggerNotification() {
+        homeViewModel.getTransactionsToday()
+        homeViewModel.messageNotif.observe(this) { message ->
+            Utils.sendNotification(
+                context = this,
+                contentIntent = contentIntent(),
+                channelId = CHANNEL_ID,
+                channelName = CHANNEL_NAME,
+                notificationId = NOTIFICATION_ID,
+                resources = resources,
+                message = message,
+            )
+        }
     }
 
     private fun updateUI() {
@@ -93,7 +113,7 @@ class HomeActivity : AppCompatActivity() {
                 homeViewModel.getMerchants()
                 homeViewModel.merchantsList.observe(this@HomeActivity) { merchantList ->
                     if (merchantList.isNotEmpty()) {
-                        setTransactionsData(homeViewModel, merchantList)
+                        setTransactionsData(merchantList)
                     }
                 }
             }
@@ -174,7 +194,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setTransactionsData(
-        homeViewModel: HomeViewModel,
         merchants: List<Merchant>
     ) {
         val listMerchants = ArrayList<Merchant>()
@@ -194,7 +213,28 @@ class HomeActivity : AppCompatActivity() {
         bottomSheetDialog.dismiss()
     }
 
+    private fun contentIntent(): PendingIntent {
+        val notificationIntent = Intent(this, HistoryActivity::class.java)
+
+        val pendingFlags: Int = if (Build.VERSION.SDK_INT >= 23) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
+        return PendingIntent.getActivity(
+            this,
+            0,
+            notificationIntent,
+            pendingFlags
+        )
+    }
+
     companion object {
+        private const val NOTIFICATION_ID = 1
+        private const val CHANNEL_ID = "Bisa_Channel_01"
+        private const val CHANNEL_NAME = "Bisa Channel"
+
         @StringRes
         private val TAB_TITLES = intArrayOf(
             R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3

@@ -6,5 +6,5 @@ import javax.inject.Inject
 class UpdateTransactionsCount @Inject constructor(private val homeRepository: IHomeRepository){
 
     suspend fun execute(count: Long) =
-        homeRepository.updateTransactionsCount(count)
+        homeRepository.updateTransactionsTodayCount(count)
 }

@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,6 +82,7 @@ class PaymentFragment : Fragment() {
                 val data: Intent? = result.data
                 val intentResult = data?.getStringExtra(Intents.Scan.RESULT)
                 val merchantId = homeViewModel.getMerchantId()
+                Log.d("ScannedAmount", "$scannedAmount")
 
                 if (!intentResult.isNullOrEmpty()) {
                     if (Utils.isValidQR(intentResult)) {

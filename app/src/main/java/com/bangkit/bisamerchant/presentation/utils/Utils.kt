@@ -12,6 +12,7 @@ import android.graphics.Canvas
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.cardview.widget.CardView
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
@@ -86,23 +87,23 @@ object Utils {
 
         val mBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_logo_colorized)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_colorized))
-            .setStyle(NotificationCompat.BigTextStyle()).setContentTitle(message.title)
+            .setContentTitle(message.title)
             .setContentText(message.body).setSubText(message.subText)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_colorized))
+            .setStyle(NotificationCompat.BigTextStyle())
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setDefaults(NotificationCompat.DEFAULT_ALL).setSound(defaultSoundUri)
-            .setContentIntent(contentIntent)
             .setFullScreenIntent(contentIntent, true)
+            .setContentIntent(contentIntent)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId, channelName, NotificationManager.IMPORTANCE_HIGH
             )
-            mBuilder.setChannelId(channelId)
             channel.description = channelName
             channel.enableVibration(true)
-            channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            mBuilder.setChannelId(channelId)
             mNotificationManager.createNotificationChannel(channel)
         }
 

@@ -1,10 +1,10 @@
 package com.bangkit.bisamerchant.presentation.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.MessageNotif
@@ -15,13 +15,14 @@ import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantActive
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantId
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchants
 import com.bangkit.bisamerchant.domain.home.usecase.GetTotalAmountTransactions
-import com.bangkit.bisamerchant.domain.home.usecase.GetTransactionsCount
+import com.bangkit.bisamerchant.domain.home.usecase.GetTransactionsTodayCount
 import com.bangkit.bisamerchant.domain.home.usecase.GetTransactionsToday
 import com.bangkit.bisamerchant.domain.home.usecase.PostTransaction
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateHideAmount
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateMerchantStatus
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateTransactionsCount
 import com.bangkit.bisamerchant.domain.pin.usecase.ValidateOwnerPin
+import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -38,13 +39,12 @@ class HomeViewModel @Inject constructor(
     private val getMerchantId: GetMerchantId,
     private val getMerchants: GetMerchants,
     private val getTotalAmountTransactions: GetTotalAmountTransactions,
-    private val getTransactionsCount: GetTransactionsCount,
+    private val getTransactionsTodayCount: GetTransactionsTodayCount,
     private val getTransactionsToday: GetTransactionsToday,
     private val postTransaction: PostTransaction,
     private val updateHideAmount: UpdateHideAmount,
     private val updateMerchantStatus: UpdateMerchantStatus,
-    private val validateOwnerPin: ValidateOwnerPin,
-    private val updateTransactionsCount: UpdateTransactionsCount,
+    private val updateTransactionsTodayCount: UpdateTransactionsCount,
 ) : ViewModel() {
     private val _merchant = MutableLiveData<Merchant>()
     val merchant: LiveData<Merchant> get() = _merchant
@@ -61,9 +61,6 @@ class HomeViewModel @Inject constructor(
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
-    private val _isPinValid = MutableLiveData<Boolean?>()
-    val isPinValid: LiveData<Boolean?> get() = _isPinValid
-
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
@@ -73,45 +70,63 @@ class HomeViewModel @Inject constructor(
     private val _totalAmountTransactionToday = MutableLiveData<Long>()
     val totalAmountTransactionToday: LiveData<Long> get() = _totalAmountTransactionToday
 
+    val totalTransactionsToday = MutableLiveData<Long?>()
+    val totalTransactionTodayNew = MutableLiveData<Long>()
+
     private var listenerRegistration: ListenerRegistration? = null
 
     fun getTransactionsToday() {
         viewModelScope.launch {
-            val totalTransaction = getTransactionCount()
-            val totalTransactionNew = MutableLiveData<Long>()
+            totalTransactionsToday.value = runBlocking { getTransactionsTodayCount() }
             listenerRegistration = getTransactionsToday.execute { transactions ->
                 _transactions.value = transactions
+                runBlocking { updateTransactionsTodayCount(transactions.size.toLong()) }
                 _totalAmountTransactionToday.value =
                     getTotalAmountTransactions.execute(transactions)
-                if (totalTransaction > 0 && transactions.size > totalTransaction) {
-                    if (transactions[0].trxType == "PAYMENT") {
-                        _messageNotif.value = MessageNotif(
-                            "Pembayaran telah berhasil",
-                            "Uang sejumlah Rp${Utils.currencyFormat(transactions[0].amount)} berhasil diterima",
-                            "Pembayaran",
-                        )
-                    } else {
-                        _messageNotif.value = MessageNotif(
-                            "Penarikan telah berhasil",
-                            "Uang sejumlah Rp${Utils.currencyFormat(transactions[0].amount)} berhasil ditarik",
-                            "Tarik Dana",
-                        )
+                totalTransactionTodayNew.value = transactions.size.toLong()
+                totalTransactionsToday.value.let { transactionsCount ->
+                    totalTransactionTodayNew.value.let { transactionsCountNew ->
+                        if (transactionsCount != null) {
+                            if (transactionsCountNew != null) {
+                                if (transactionsCount > 0) {
+                                    val transactionsCountDifference = transactionsCountNew - transactionsCount
+                                    if (transactionsCountDifference == 1L) {
+                                        if (transactions[0].trxType == "PAYMENT") {
+                                            _messageNotif.value = MessageNotif(
+                                                "Pembayaran telah berhasil",
+                                                "Uang sejumlah Rp${Utils.currencyFormat(transactions[0].amount)} berhasil diterima",
+                                                "Pembayaran",
+                                            )
+                                        } else {
+                                            _messageNotif.value = MessageNotif(
+                                                "Penarikan telah berhasil",
+                                                "Uang sejumlah Rp${Utils.currencyFormat(transactions[0].amount)} berhasil ditarik",
+                                                "Tarik Dana",
+                                            )
+                                        }
+                                    } else if (transactionsCountDifference > 1L) {
+                                        _messageNotif.value = MessageNotif(
+                                            "Beberapa Transaksi Sukses",
+                                            "$transactionsCountDifference transaksi sukses",
+                                            "Transaksi",
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
-                    totalTransactionNew.value = transactions.size.toLong()
                 }
             }
-            totalTransactionNew.value?.let { updateTransactionCount(it) }
+            totalTransactionsToday.value = getTransactionsTodayCount()
         }
     }
 
-    suspend fun getTransactionCount() =
-        getTransactionsCount.execute()
+    suspend fun getTransactionsTodayCount() =
+        getTransactionsTodayCount.execute()
 
-    suspend fun updateTransactionCount(count: Long) {
-        updateTransactionsCount.execute(count)
+    suspend fun updateTransactionsTodayCount(count: Long) {
+        updateTransactionsTodayCount.execute(count)
     }
-
-
 
     fun postTransaction(
         detailTransaction: DetailTransaction

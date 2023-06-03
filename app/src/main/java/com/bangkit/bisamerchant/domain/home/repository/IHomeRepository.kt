@@ -18,6 +18,6 @@ interface IHomeRepository {
     suspend fun postTransaction(detailTransaction: DetailTransaction): Flow<String>
     suspend fun getTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration
     suspend fun getMerchantId(): String
-    suspend fun getTransactionsCount(): Long
-    suspend fun updateTransactionsCount(count: Long)
+    suspend fun getTransactionsTodayCount(): Long
+    suspend fun updateTransactionsTodayCount(count: Long)
 }

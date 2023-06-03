@@ -144,9 +144,12 @@ class HomeDataSource @Inject constructor(
                 )
             }
 
+            if (detailTransaction.trxType == "MERCHANT_WITHDRAW") {
+                merchantDocument.document(getMerchantId()).update("balance", newBalance).await()
+            }
 
             transactionDocument.document(newTransactionId).set(transaction).await()
-            merchantDocument.document(getMerchantId()).update("balance", newBalance).await()
+
             emit("Transaksi berhasil")
         } catch (e: Exception) {
             emit(e.message ?: "Terjadi kesalahan saat menambahkan transaksi")
@@ -257,11 +260,13 @@ class HomeDataSource @Inject constructor(
         pref.getMerchantId().first()
     }
 
-    suspend fun getTransactionsCount(): Long = withContext(Dispatchers.IO) {
-        pref.getTransactionCount().first()
+    suspend fun getTransactionsTodayCount(): Long = withContext(Dispatchers.IO) {
+        pref.getTransactionsTodayCount().first()
     }
 
-    suspend fun updateTransactionsCount(count: Long) = withContext(Dispatchers.IO) {
-        pref.updateTransactionCount(count)
+    suspend fun updateTransactionsTodayCount(count: Long) {
+        withContext(Dispatchers.IO) {
+            pref.updateTransactionsTodayCount(count)
+        }
     }
 }
