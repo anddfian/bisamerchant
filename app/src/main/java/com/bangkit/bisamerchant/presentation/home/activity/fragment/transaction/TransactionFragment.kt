@@ -45,17 +45,6 @@ class TransactionFragment : Fragment() {
         binding.tvDate.text = Utils.getCurrentDate()
 
         lifecycleScope.launch {
-            homeViewModel.messageNotif.observe(viewLifecycleOwner) { message ->
-                Utils.sendNotification(
-                    context = requireContext(),
-                    contentIntent = contentIntent(),
-                    channelId = CHANNEL_ID,
-                    channelName = CHANNEL_NAME,
-                    notificationId = NOTIFICATION_ID,
-                    resources = resources,
-                    message = message,
-                )
-            }
             homeViewModel.totalAmountTransactionToday.observe(viewLifecycleOwner) { amount ->
                 binding.tvAmountDailyTransactions.text = Utils.currencyFormat(amount)
             }
@@ -87,25 +76,8 @@ class TransactionFragment : Fragment() {
         binding.rvTransactions.adapter = adapter
     }
 
-    private fun contentIntent(): PendingIntent {
-        val notificationIntent = Intent(context, DetailTransactionActivity::class.java)
-        notificationIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-        return PendingIntent.getActivity(
-            context,
-            0,
-            notificationIntent,
-            PendingIntent.FLAG_MUTABLE
-        )
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val NOTIFICATION_ID = 1
-        private const val CHANNEL_ID = "Transaksi_masuk"
-        private const val CHANNEL_NAME = "Transaksi"
     }
 }

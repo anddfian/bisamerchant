@@ -1,10 +1,15 @@
 package com.bangkit.bisamerchant.presentation.home.activity
 
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -21,13 +26,16 @@ import com.bangkit.bisamerchant.presentation.history.activity.HistoryActivity
 import com.bangkit.bisamerchant.presentation.home.adapter.MerchantAccountAdapter
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.home.adapter.SectionsPagerAdapter
+import com.bangkit.bisamerchant.presentation.invoice.activity.DetailTransactionActivity
 import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.presentation.profile.activity.ProfileActivity
 import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.setting.activity.SettingActivity
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -51,6 +59,7 @@ class HomeActivity : AppCompatActivity() {
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        pushNotification()
         setupFilterBottomSheet()
         updateUI()
         initTopAppBar()
@@ -63,6 +72,18 @@ class HomeActivity : AppCompatActivity() {
             MerchantAccountBottomSheetBinding.inflate(layoutInflater)
         _bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setContentView(merchantAccountBottomSheetBinding.root)
+    }
+
+    private fun pushNotification() {
+        homeViewModel.getTransactionsToday()
+        homeViewModel.messageNotif.observe(this) { message ->
+            Utils.pushNotification(
+                context = this,
+                contentIntent = contentIntent(),
+                resources = resources,
+                message = message,
+            )
+        }
     }
 
     private fun updateUI() {
@@ -93,7 +114,7 @@ class HomeActivity : AppCompatActivity() {
                 homeViewModel.getMerchants()
                 homeViewModel.merchantsList.observe(this@HomeActivity) { merchantList ->
                     if (merchantList.isNotEmpty()) {
-                        setTransactionsData(homeViewModel, merchantList)
+                        setTransactionsData(merchantList)
                     }
                 }
             }
@@ -174,7 +195,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setTransactionsData(
-        homeViewModel: HomeViewModel,
         merchants: List<Merchant>
     ) {
         val listMerchants = ArrayList<Merchant>()
@@ -192,6 +212,23 @@ class HomeActivity : AppCompatActivity() {
             _merchantAccountBottomSheetBinding = null
         }
         bottomSheetDialog.dismiss()
+    }
+
+    private fun contentIntent(): PendingIntent {
+        val notificationIntent = Intent(this, HistoryActivity::class.java)
+
+        val pendingFlags: Int = if (Build.VERSION.SDK_INT >= 23) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
+        return PendingIntent.getActivity(
+            this,
+            0,
+            notificationIntent,
+            pendingFlags
+        )
     }
 
     companion object {

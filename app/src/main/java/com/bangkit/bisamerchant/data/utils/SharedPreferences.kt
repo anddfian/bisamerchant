@@ -41,6 +41,16 @@ class SharedPreferences constructor(context: Context) {
         }
     }
 
+    fun getTransactionsTodayCount(): Flow<Long> = dataStore.data.map { preferences ->
+        preferences[TOTAL_TRANSACTIONS_TODAY] ?: 0
+    }
+
+    suspend fun updateTransactionsTodayCount(count: Long) {
+        dataStore.edit { preferences ->
+            preferences[TOTAL_TRANSACTIONS_TODAY] = count
+        }
+    }
+
     fun getHideAmount(): Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[IS_AMOUNT_HIDE] ?: false
     }
@@ -54,6 +64,7 @@ class SharedPreferences constructor(context: Context) {
     companion object {
         private val MERCHANT_ID = stringPreferencesKey("merchant_id")
         private val TOTAL_TRANSACTIONS = longPreferencesKey("total_transactions")
+        private val TOTAL_TRANSACTIONS_TODAY = longPreferencesKey("total_transactions_today")
         private val IS_AMOUNT_HIDE = booleanPreferencesKey("is_amount_hide")
 
         @Volatile

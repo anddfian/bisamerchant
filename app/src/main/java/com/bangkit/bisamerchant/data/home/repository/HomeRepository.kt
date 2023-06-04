@@ -76,9 +76,9 @@ class HomeRepository @Inject constructor(
     override suspend fun getMerchantId() =
         homeDataSource.getMerchantId()
 
-    override suspend fun getTransactionsCount() =
-        homeDataSource.getTransactionsCount()
+    override suspend fun getTransactionsTodayCount() =
+        homeDataSource.getTransactionsTodayCount()
 
-    override suspend fun updateTransactionsCount(count: Long) =
-        homeDataSource.updateTransactionsCount(count)
+    override suspend fun updateTransactionsTodayCount(count: Long) =
+        homeDataSource.updateTransactionsTodayCount(count)
 }

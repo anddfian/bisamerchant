@@ -1,6 +1,7 @@
 package com.bangkit.bisamerchant.presentation.splashscreen.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -28,7 +29,16 @@ class SplashScreenActivity : AppCompatActivity() {
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        startNotificationService()
         startSplashScreen()
+    }
+
+    private fun startNotificationService() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            this@SplashScreenActivity.startForegroundService(intent)
+        } else {
+            this@SplashScreenActivity.startService(intent)
+        }
     }
 
     override fun onDestroy() {
@@ -39,7 +49,6 @@ class SplashScreenActivity : AppCompatActivity() {
     private fun startSplashScreen() {
         lifecycleScope.launch {
             delay(threeSecond)
-
             splashViewModel.getMerchantActive()
             splashViewModel.message.observe(this@SplashScreenActivity) { message ->
                 when (message) {
@@ -51,11 +60,14 @@ class SplashScreenActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     }
+
                     OWNER_NOT_AUTHENTICATED -> {
-                        val intent = Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
+                        val intent =
+                            Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
                         startActivity(intent)
                         finish()
                     }
+
                     OWNER_AUTHENTICATED -> {
                         val intent = Intent(this@SplashScreenActivity, HomeActivity::class.java)
                         startActivity(intent)

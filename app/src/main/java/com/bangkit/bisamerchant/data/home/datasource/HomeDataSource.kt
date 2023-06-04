@@ -9,6 +9,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -25,7 +27,7 @@ import javax.inject.Singleton
 class HomeDataSource @Inject constructor(
     private val pref: SharedPreferences,
     private val db: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
 ) {
 
     suspend fun getMerchantActive(callback: (Merchant) -> Unit): ListenerRegistration {
@@ -144,9 +146,12 @@ class HomeDataSource @Inject constructor(
                 )
             }
 
+            if (detailTransaction.trxType == "MERCHANT_WITHDRAW") {
+                merchantDocument.document(getMerchantId()).update("balance", newBalance).await()
+            }
 
             transactionDocument.document(newTransactionId).set(transaction).await()
-            merchantDocument.document(getMerchantId()).update("balance", newBalance).await()
+
             emit("Transaksi berhasil")
         } catch (e: Exception) {
             emit(e.message ?: "Terjadi kesalahan saat menambahkan transaksi")
@@ -257,11 +262,19 @@ class HomeDataSource @Inject constructor(
         pref.getMerchantId().first()
     }
 
-    suspend fun getTransactionsCount(): Long = withContext(Dispatchers.IO) {
-        pref.getTransactionCount().first()
+    suspend fun getTransactionsTodayCount(): Long = withContext(Dispatchers.IO) {
+        pref.getTransactionsTodayCount().first()
     }
 
-    suspend fun updateTransactionsCount(count: Long) = withContext(Dispatchers.IO) {
-        pref.updateTransactionCount(count)
+    suspend fun updateTransactionsTodayCount(count: Long) {
+        withContext(Dispatchers.IO) {
+            pref.updateTransactionsTodayCount(count)
+        }
+    }
+
+    companion object {
+        private const val NOTIFICATION_ID = 1
+        private const val CHANNEL_ID = "Bisa_Channel_01"
+        private const val CHANNEL_NAME = "Bisa Merchant Transaction"
     }
 }
