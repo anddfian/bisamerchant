@@ -1,10 +1,13 @@
 package com.bangkit.bisamerchant.presentation.utils
 
+import android.Manifest
+import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -14,7 +17,9 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.domain.home.model.MessageNotif
@@ -33,6 +38,11 @@ import java.util.EnumMap
 import java.util.Locale
 
 object Utils {
+    private const val NOTIFICATION_ID = 1
+    private const val CHANNEL_ID = "Bisa_Channel_01"
+    private const val CHANNEL_NAME = "Bisa Merchant Transaction"
+    private const val PERMISSION_REQUEST_CODE = 101
+
     fun currencyFormat(money: Long?): String {
         val formatter: NumberFormat = DecimalFormat("#,###")
         return formatter.format(money).replace(',', '.')
@@ -71,30 +81,29 @@ object Utils {
         return null
     }
 
-    fun sendNotification(
+    fun pushNotification(
         context: Context,
         contentIntent: PendingIntent,
-        channelId: String,
-        channelName: String,
-        notificationId: Int,
         resources: Resources,
-        message: MessageNotif
+        message: MessageNotif,
+        channelId: String = CHANNEL_ID,
+        notificationId: Int = NOTIFICATION_ID,
+        channelName: String = CHANNEL_NAME,
     ) {
         val mNotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
+            NotificationManagerCompat.from(context.applicationContext);
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-        val mBuilder = NotificationCompat.Builder(context, channelId)
+        val mBuilder = NotificationCompat.Builder(context.applicationContext, channelId)
             .setSmallIcon(R.drawable.ic_logo_colorized)
             .setContentTitle(message.title)
-            .setContentText(message.body).setSubText(message.subText)
+            .setContentText(message.body)
+            .setSubText(message.subText)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_colorized))
             .setStyle(NotificationCompat.BigTextStyle())
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setDefaults(NotificationCompat.DEFAULT_ALL).setSound(defaultSoundUri)
-            .setFullScreenIntent(contentIntent, true)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setSound(defaultSoundUri)
             .setContentIntent(contentIntent)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -108,7 +117,24 @@ object Utils {
         }
 
         val notification = mBuilder.build()
+
+        if (ActivityCompat.checkSelfPermission(
+                context.applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(
+                    context.applicationContext as Activity,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+            return
+        }
+
         mNotificationManager.notify(notificationId, notification)
+
     }
 
     fun layoutToBitmap(view: CardView): Bitmap {
@@ -172,4 +198,5 @@ object Utils {
         val regexPattern = Regex(pattern = "^DANA#CPM#[A-Za-z0-9 ]+$")
         return regexPattern.matches(inputString)
     }
+
 }

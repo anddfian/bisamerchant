@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -30,9 +31,11 @@ import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.presentation.profile.activity.ProfileActivity
 import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.setting.activity.SettingActivity
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -55,7 +58,8 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        triggerNotification()
+
+        pushNotification()
         setupFilterBottomSheet()
         updateUI()
         initTopAppBar()
@@ -70,15 +74,12 @@ class HomeActivity : AppCompatActivity() {
         bottomSheetDialog.setContentView(merchantAccountBottomSheetBinding.root)
     }
 
-    private fun triggerNotification() {
+    private fun pushNotification() {
         homeViewModel.getTransactionsToday()
         homeViewModel.messageNotif.observe(this) { message ->
-            Utils.sendNotification(
+            Utils.pushNotification(
                 context = this,
                 contentIntent = contentIntent(),
-                channelId = CHANNEL_ID,
-                channelName = CHANNEL_NAME,
-                notificationId = NOTIFICATION_ID,
                 resources = resources,
                 message = message,
             )
@@ -231,10 +232,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val NOTIFICATION_ID = 1
-        private const val CHANNEL_ID = "Bisa_Channel_01"
-        private const val CHANNEL_NAME = "Bisa Channel"
-
         @StringRes
         private val TAB_TITLES = intArrayOf(
             R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3

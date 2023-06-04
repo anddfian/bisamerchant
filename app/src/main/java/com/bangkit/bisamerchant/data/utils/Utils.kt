@@ -1,5 +1,7 @@
 package com.bangkit.bisamerchant.data.utils
 
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.Calendar
 
 object Utils {
@@ -12,5 +14,10 @@ object Utils {
             set(Calendar.MILLISECOND, 0)
         }
         return today.timeInMillis
+    }
+
+    fun currencyFormat(money: Long?): String {
+        val formatter: NumberFormat = DecimalFormat("#,###")
+        return formatter.format(money).replace(',', '.')
     }
 }
