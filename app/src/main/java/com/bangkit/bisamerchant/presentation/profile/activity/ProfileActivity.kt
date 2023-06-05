@@ -52,18 +52,18 @@ class ProfileActivity : AppCompatActivity() {
                 tvMerchantAddress.text = merchant.merchantAddress
                 tvMerchantEmail.text = merchant.email
                 tvMerchantType.text = merchant.merchantType
+                val progress = merchant.transactionCount?.toInt() ?: 0
                 when (merchant.transactionCount) {
                     in 0L..99L -> {
                         tvMerchantLoyalty.text = getString(R.string.bronze_merchant)
                         loyaltyCount.text = merchant.transactionCount.toString()
-                        progressIndicator.progress = merchant.transactionCount?.toInt() ?: 0
+                        progressIndicator.progress = if (progress > 0) progress * 100 / 100 else 0
                     }
                     in 100L..199L -> {
                         tvMerchantLoyalty.text = getString(R.string.silver_merchant)
                         loyaltyCount.text = merchant.transactionCount.toString()
                         loyaltyCountToNextLevel.text = getString(R.string.loyalty_target_gold)
-                        val progress = (merchant.transactionCount?.toInt() ?: 0) - 100
-                        progressIndicator.progress = progress
+                        progressIndicator.progress = progress * 100 / 200
                         loyaltyNow.text = getString(R.string.silver)
                         loyaltyNext.text = getString(R.string.gold)
                     }
@@ -71,7 +71,7 @@ class ProfileActivity : AppCompatActivity() {
                         tvMerchantLoyalty.text = getString(R.string.gold_merchant)
                         loyaltyCount.text = merchant.transactionCount.toString()
                         loyaltyCountToNextLevel.visibility = View.INVISIBLE
-                        progressIndicator.progress = 100
+                        progressIndicator.progress = progress * 100 / 300
                         loyaltyNow.text = getString(R.string.gold)
                         loyaltyNext.visibility = View.INVISIBLE
                     }
