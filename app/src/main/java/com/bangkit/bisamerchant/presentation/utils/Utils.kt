@@ -91,9 +91,9 @@ object Utils {
         channelName: String = CHANNEL_NAME,
     ) {
         val mNotificationManager =
-            NotificationManagerCompat.from(context.applicationContext);
+            NotificationManagerCompat.from(context);
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val mBuilder = NotificationCompat.Builder(context.applicationContext, channelId)
+        val mBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_logo_colorized)
             .setContentTitle(message.title)
             .setContentText(message.body)
@@ -119,13 +119,13 @@ object Utils {
         val notification = mBuilder.build()
 
         if (ActivityCompat.checkSelfPermission(
-                context.applicationContext,
+                context,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 ActivityCompat.requestPermissions(
-                    context.applicationContext as Activity,
+                    context as Activity,
                     arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                     PERMISSION_REQUEST_CODE
                 )

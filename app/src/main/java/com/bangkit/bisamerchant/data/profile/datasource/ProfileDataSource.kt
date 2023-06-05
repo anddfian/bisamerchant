@@ -3,10 +3,14 @@ package com.bangkit.bisamerchant.data.profile.datasource
 import com.bangkit.bisamerchant.data.utils.SharedPreferences
 import com.bangkit.bisamerchant.domain.profile.model.Merchant
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,7 +23,9 @@ class ProfileDataSource @Inject constructor(
 ) {
     suspend fun getMerchantActive(callback: (Merchant) -> Unit): ListenerRegistration {
         return withContext(Dispatchers.IO) {
-            val query = db.collection("merchant").whereEqualTo("merchantActive", true)
+            val merchantDocument = db.collection("merchant")
+            updateTransactionCount(merchantDocument)
+            val query = merchantDocument.whereEqualTo("merchantActive", true)
                 .whereEqualTo("email", auth.currentUser?.email)
 
             val listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
@@ -58,6 +64,19 @@ class ProfileDataSource @Inject constructor(
             }
 
             return@withContext listenerRegistration
+        }
+    }
+
+    private suspend fun updateTransactionCount(merchantDocument: CollectionReference) {
+        withContext(Dispatchers.IO) {
+            val transactionCount =
+                db.collection("transaction")
+                    .whereEqualTo("merchantId", pref.getMerchantId().first())
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .get().await()
+
+            merchantDocument.document(pref.getMerchantId().first())
+                .update("transactionCount", transactionCount.documents.size).await()
         }
     }
 }
