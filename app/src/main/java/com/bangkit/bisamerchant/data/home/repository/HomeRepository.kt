@@ -64,15 +64,10 @@ class HomeRepository @Inject constructor(
                             return@flow
                         }
 
-                        val (totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth) = homeDataSource.getCountAndAmountTransactionsLastMonth()
-
-                        if (totalAmountTransactionLastMonthUntilToday > 5000000L) {
-                            fee = (detailTransaction.amount * 0.7 / 100).toLong()
-                        }
-
+                        fee = homeDataSource.getTransactionFee(detailTransaction.amount)
                     }
 
-                    val newBalance = currentBalance - detailTransaction.amount + fee
+                    val newBalance = currentBalance - detailTransaction.amount - fee
                     homeDataSource.postTransaction(detailTransaction, newBalance, fee)
                         .collect { result ->
                             emit(result)
@@ -98,6 +93,10 @@ class HomeRepository @Inject constructor(
     override suspend fun validateWithdrawAmount(amount: Long): Flow<String> = flow {
         val result = homeDataSource.validateWithdrawAmount(amount)
         emit(result)
+    }
+
+    override suspend fun getTransactionFee(amount: Long): Flow<Long> = flow {
+        emit(homeDataSource.getTransactionFee(amount))
     }
 
     companion object {

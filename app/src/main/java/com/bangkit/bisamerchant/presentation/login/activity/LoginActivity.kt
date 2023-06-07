@@ -10,10 +10,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityLoginBinding
-import com.bangkit.bisamerchant.presentation.home.activity.HomeActivity
 import com.bangkit.bisamerchant.presentation.login.viewmodel.LoginViewModel
 import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
 import com.bangkit.bisamerchant.presentation.register.activity.RegisterActivity
+import com.bangkit.bisamerchant.presentation.splashscreen.activity.SplashScreenActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         loginViewModel.message.observe(this) {
             if (loginViewModel.message.value == LOGIN_SUCCESSFUL) {
                 val intent =
-                    Intent(this, HomeActivity::class.java)
+                    Intent(this, SplashScreenActivity::class.java)
                 startActivity(intent)
                 finish()
             } else if (loginViewModel.message.value == MERCHANT_NOT_FOUND){

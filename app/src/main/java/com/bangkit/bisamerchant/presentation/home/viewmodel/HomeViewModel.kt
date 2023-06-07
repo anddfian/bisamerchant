@@ -13,6 +13,7 @@ import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantActive
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantId
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchants
 import com.bangkit.bisamerchant.domain.home.usecase.GetTotalAmountTransactions
+import com.bangkit.bisamerchant.domain.home.usecase.GetTransactionFee
 import com.bangkit.bisamerchant.domain.home.usecase.GetTransactionsToday
 import com.bangkit.bisamerchant.domain.home.usecase.PostTransaction
 import com.bangkit.bisamerchant.domain.home.usecase.UpdateHideAmount
@@ -39,6 +40,7 @@ class HomeViewModel @Inject constructor(
     private val updateHideAmount: UpdateHideAmount,
     private val updateMerchantStatus: UpdateMerchantStatus,
     private val validateWithdrawAmount: ValidateWithdrawAmount,
+    private val getTransactionFee: GetTransactionFee,
 ) : ViewModel() {
     private val _merchant = MutableLiveData<Merchant>()
     val merchant: LiveData<Merchant> get() = _merchant
@@ -54,6 +56,9 @@ class HomeViewModel @Inject constructor(
 
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
+
+    private val _fee = MutableLiveData<Long>()
+    val fee: LiveData<Long> get() = _fee
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -116,6 +121,24 @@ class HomeViewModel @Inject constructor(
                     if (isAmountValidated.value == true && message.value != AMOUNT_VALIDATED) {
                         _isAmountValidated.value = false
                     }
+                }
+        }
+    }
+
+    fun getTransactionFee(
+        amount: Long,
+    ) {
+        viewModelScope.launch {
+            getTransactionFee.execute(amount)
+                .onStart {
+                    _isLoading.value = true
+                }
+                .catch { e ->
+                    _isLoading.value = false
+                }
+                .collect { result ->
+                    _isLoading.value = false
+                    _fee.value = result
                 }
         }
     }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -156,7 +157,14 @@ class HomeActivity : AppCompatActivity() {
         }
 
         merchantAccountBottomSheetBinding.btnAddMerchant.setOnClickListener {
-            startActivity(Intent(this@HomeActivity, MerchantRegisterActivity::class.java))
+            homeViewModel.merchantsList.observe(this) {list ->
+                if (list.size < 7) {
+                    startActivity(Intent(this@HomeActivity, MerchantRegisterActivity::class.java))
+                } else {
+                    Toast.makeText(this@HomeActivity,
+                        getString(R.string.you_have_reached_the_maximum_limit_of_merchants), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

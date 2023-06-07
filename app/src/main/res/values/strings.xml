@@ -174,4 +174,8 @@
     <string name="total_transaction">Total Transaction</string>
     <string name="rp50_000">Rp50.000</string>
     <string name="subtotal">Subtotal</string>
+    <string name="withdraw_confirmation">Withdraw Confirmation</string>
+    <string name="withdraw_to">Withdraw to %1$s</string>
+    <string name="continue_withdraw">Continue Withdraw</string>
+    <string name="you_have_reached_the_maximum_limit_of_merchants">You have reached the maximum limit of merchants</string>
 </resources>
