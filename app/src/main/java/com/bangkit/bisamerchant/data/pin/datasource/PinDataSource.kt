@@ -12,14 +12,13 @@ import javax.inject.Singleton
 @Singleton
 class PinDataSource @Inject constructor(
     private val db: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
 ) {
     suspend fun getOwnerPin(): String =
         withContext(Dispatchers.IO) {
             try {
                 val querySnapshot = db.collection("owner")
                     .whereEqualTo("email", auth.currentUser?.email)
-                    .limit(1)
                     .get()
                     .await()
 
@@ -31,4 +30,5 @@ class PinDataSource @Inject constructor(
                 "PIN salah"
             }
         }
+
 }

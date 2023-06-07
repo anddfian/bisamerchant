@@ -9,6 +9,6 @@ import javax.inject.Singleton
 class SplashRepository @Inject constructor(
     private val splashDatasource: SplashDatasource
 ) : ISplashRepository {
-    override suspend fun getMerchantActive() =
-        splashDatasource.getMerchantActive()
+    override suspend fun getAuthInfo() =
+        splashDatasource.getAuthInfo()
 }

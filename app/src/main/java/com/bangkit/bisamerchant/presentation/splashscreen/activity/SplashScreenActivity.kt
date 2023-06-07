@@ -1,15 +1,15 @@
 package com.bangkit.bisamerchant.presentation.splashscreen.activity
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bangkit.bisamerchant.databinding.ActivitySplashScreenBinding
 import com.bangkit.bisamerchant.presentation.home.activity.HomeActivity
-import com.bangkit.bisamerchant.presentation.onboarding.OnboardingActivity
+import com.bangkit.bisamerchant.presentation.login.activity.LoginActivity
 import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.onboarding.OnboardingActivity
 import com.bangkit.bisamerchant.presentation.splashscreen.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -29,16 +29,7 @@ class SplashScreenActivity : AppCompatActivity() {
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        startNotificationService()
         startSplashScreen()
-    }
-
-    private fun startNotificationService() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            this@SplashScreenActivity.startForegroundService(intent)
-        } else {
-            this@SplashScreenActivity.startService(intent)
-        }
     }
 
     override fun onDestroy() {
@@ -61,9 +52,16 @@ class SplashScreenActivity : AppCompatActivity() {
                         finish()
                     }
 
-                    OWNER_NOT_AUTHENTICATED -> {
+                    NEW_USER -> {
                         val intent =
                             Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+
+                    OWNER_NOT_AUTHENTICATED -> {
+                        val intent =
+                            Intent(this@SplashScreenActivity, LoginActivity::class.java)
                         startActivity(intent)
                         finish()
                     }
@@ -83,5 +81,6 @@ class SplashScreenActivity : AppCompatActivity() {
         private const val MERCHANT_NOT_FOUND = "Merchant not found"
         private const val OWNER_NOT_AUTHENTICATED = "Owner is not logged in"
         private const val OWNER_AUTHENTICATED = "Logged in"
+        private const val NEW_USER = "New User"
     }
 }

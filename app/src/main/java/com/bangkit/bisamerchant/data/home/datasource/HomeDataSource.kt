@@ -50,7 +50,7 @@ class HomeDataSource @Inject constructor(
                         val merchantType = document.getString("merchantType")
                         val email = document.getString("email")
                         val merchantName = document.getString("merchantName")
-                        val transactionCount = document.getLong("transactionCount")
+                        val tokenId = document.getString("tokenId")
 
                         data = Merchant(
                             id,
@@ -61,7 +61,7 @@ class HomeDataSource @Inject constructor(
                             merchantType,
                             email,
                             merchantName,
-                            transactionCount
+                            tokenId,
                         )
                     }
 
@@ -90,7 +90,7 @@ class HomeDataSource @Inject constructor(
                         val merchantType = document.getString("merchantType")
                         val email = document.getString("email")
                         val merchantName = document.getString("merchantName")
-                        val transactionCount = document.getLong("transactionCount")
+                        val tokenId = document.getString("tokenId")
 
                         data.add(
                             Merchant(
@@ -102,7 +102,7 @@ class HomeDataSource @Inject constructor(
                                 merchantType,
                                 email,
                                 merchantName,
-                                transactionCount
+                                tokenId,
                             )
                         )
                     }
@@ -117,16 +117,17 @@ class HomeDataSource @Inject constructor(
 
     suspend fun postTransaction(
         detailTransaction: DetailTransaction,
-        newBalance: Long
+        newBalance: Long,
+        fee: Long,
     ): Flow<String> = flow {
         val transactionDocument = db.collection("transaction")
         val merchantDocument = db.collection("merchant")
-
         val newTransactionId = transactionDocument.document().id
+
         try {
             val transaction = if (detailTransaction.trxType == "PAYMENT") {
                 hashMapOf(
-                    "amount" to detailTransaction.amount,
+                    "amount" to detailTransaction.amount + fee,
                     "merchantId" to detailTransaction.merchantId,
                     "payerId" to detailTransaction.payerId,
                     "id" to newTransactionId,
@@ -135,7 +136,7 @@ class HomeDataSource @Inject constructor(
                 )
             } else {
                 hashMapOf(
-                    "amount" to detailTransaction.amount,
+                    "amount" to detailTransaction.amount + fee,
                     "bankAccountNo" to detailTransaction.bankAccountNo,
                     "bankInst" to detailTransaction.bankInst,
                     "merchantId" to detailTransaction.merchantId,
@@ -145,11 +146,11 @@ class HomeDataSource @Inject constructor(
                 )
             }
             if (detailTransaction.trxType == "MERCHANT_WITHDRAW") {
-                merchantDocument.document(getMerchantId()).update("balance", newBalance).await()
+                val merchant = merchantDocument.document(getMerchantId())
+                merchant.update("balance", newBalance).await()
             }
 
             transactionDocument.document(newTransactionId).set(transaction).await()
-
             emit("Transaksi berhasil")
         } catch (e: Exception) {
             emit(e.message ?: "Terjadi kesalahan saat menambahkan transaksi")
@@ -234,6 +235,76 @@ class HomeDataSource @Inject constructor(
         }
     }
 
+    suspend fun validateWithdrawAmount(amount: Long): String {
+        val (totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth) = getCountAndAmountTransactionsLastMonth()
+        when {
+            totalWithdrawMoneyThisMonth > 3
+                    && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
+                return FAILED_WITHDRAW_COUNT_MAX_BRONZE_LEVEL
+            }
+
+            totalWithdrawMoneyThisMonth > 10
+                    && totalAmountTransactionLastMonthUntilToday <= 170000000L -> {
+                return FAILED_WITHDRAW_COUNT_MAX_SILVER_LEVEL
+            }
+
+            totalWithdrawMoneyThisMonth > 25 -> {
+                return FAILED_WITHDRAW_COUNT_MAX_GOLD_LEVEL
+            }
+
+            amount > 5000000L
+                    && totalWithdrawMoneyThisMonth < 3
+                    && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
+                return FAILED_WITHDRAW_MAX_BRONZE_LEVEL
+            }
+
+            amount > 170000000L && totalWithdrawMoneyThisMonth < 10
+                    && totalAmountTransactionLastMonthUntilToday < 170000000L -> {
+                return FAILED_WITHDRAW_MAX_SILVER_LEVEL
+            }
+
+            amount > 200000000L && totalWithdrawMoneyThisMonth < 25 -> {
+                return FAILED_WITHDRAW_MAX_GOLD_LEVEL
+            }
+
+            else -> {
+                return AMOUNT_VALIDATED
+            }
+        }
+    }
+
+    suspend fun getCountAndAmountTransactionsLastMonth(): Pair<Long, Int> {
+        val startOfMonthTimestamp = Utils.getStartOfMonthTimestamp()
+        val startOfLastMonthTimestamp = Utils.getStartOfLastMonthTimestamp()
+
+
+        val merchantId = getMerchantId()
+
+        val totalTransactionLastMonthUntilToday =
+            db.collection("transaction").whereEqualTo("merchantId", merchantId)
+                .whereGreaterThanOrEqualTo("timestamp", startOfLastMonthTimestamp)
+                .whereEqualTo("trxType", "PAYMENT")
+                .get()
+                .await()
+
+        var totalAmountTransactionLastMonthUntilToday = 0L
+        for (document in totalTransactionLastMonthUntilToday.documents) {
+            val transactionAmount = document.getLong("amount") ?: 0L
+            totalAmountTransactionLastMonthUntilToday += transactionAmount
+        }
+
+        val totalWithdrawMoneyThisMonth =
+            db.collection("transaction").whereEqualTo("merchantId", merchantId)
+                .whereGreaterThanOrEqualTo("timestamp", startOfMonthTimestamp)
+                .whereEqualTo("trxType", "MERCHANT_WITHDRAW")
+                .get()
+                .await()
+                .documents
+                .size
+
+        return Pair(totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth)
+    }
+
     suspend fun updateMerchantId(id: String) {
         withContext(Dispatchers.IO) {
             pref.saveMerchantId(id)
@@ -259,14 +330,19 @@ class HomeDataSource @Inject constructor(
     suspend fun getMerchantId() = withContext(Dispatchers.IO) {
         pref.getMerchantId().first()
     }
-
-    suspend fun getTransactionsTodayCount(): Long = withContext(Dispatchers.IO) {
-        pref.getTransactionsTodayCount().first()
-    }
-
-    suspend fun updateTransactionsTodayCount(count: Long) {
-        withContext(Dispatchers.IO) {
-            pref.updateTransactionsTodayCount(count)
-        }
+    companion object {
+        private const val FAILED_WITHDRAW_MAX_BRONZE_LEVEL =
+            "Maksimal penarikan di level Anda adalah 5 juta"
+        private const val FAILED_WITHDRAW_COUNT_MAX_BRONZE_LEVEL =
+            "Anda hanya dapat menarik dana sebanyak 3 kali dalam satu bulan"
+        private const val FAILED_WITHDRAW_MAX_SILVER_LEVEL =
+            "Maksimal penarikan di level Anda adalah 170 juta"
+        private const val FAILED_WITHDRAW_COUNT_MAX_SILVER_LEVEL =
+            "Anda hanya dapat menarik dana sebanyak 10 kali dalam satu bulan"
+        private const val FAILED_WITHDRAW_MAX_GOLD_LEVEL =
+            "Untuk penarikan > 200 juta hubungi Customer Service"
+        private const val FAILED_WITHDRAW_COUNT_MAX_GOLD_LEVEL =
+            "Anda hanya dapat menarik dana sebanyak 25 kali dalam satu bulan"
+        private const val AMOUNT_VALIDATED = "Silakan masukkan pin"
     }
 }

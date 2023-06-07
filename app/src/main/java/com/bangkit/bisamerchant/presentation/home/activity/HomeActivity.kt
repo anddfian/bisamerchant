@@ -1,41 +1,37 @@
 package com.bangkit.bisamerchant.presentation.home.activity
 
-import android.app.PendingIntent
-import android.content.Context
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
-import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.databinding.ActivityHomeBinding
 import com.bangkit.bisamerchant.databinding.MerchantAccountBottomSheetBinding
+import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.presentation.history.activity.HistoryActivity
 import com.bangkit.bisamerchant.presentation.home.adapter.MerchantAccountAdapter
-import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.home.adapter.SectionsPagerAdapter
-import com.bangkit.bisamerchant.presentation.invoice.activity.DetailTransactionActivity
-import com.bangkit.bisamerchant.presentation.utils.Utils
-import com.bangkit.bisamerchant.presentation.profile.activity.ProfileActivity
+import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.merchantregister.activity.MerchantRegisterActivity
+import com.bangkit.bisamerchant.presentation.profile.activity.ProfileActivity
 import com.bangkit.bisamerchant.presentation.setting.activity.SettingActivity
-import com.google.android.gms.tasks.OnCompleteListener
+import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -59,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        pushNotification()
+        requestNotificationPermission()
         setupFilterBottomSheet()
         updateUI()
         initTopAppBar()
@@ -74,15 +70,19 @@ class HomeActivity : AppCompatActivity() {
         bottomSheetDialog.setContentView(merchantAccountBottomSheetBinding.root)
     }
 
-    private fun pushNotification() {
-        homeViewModel.getTransactionsToday()
-        homeViewModel.messageNotif.observe(this) { message ->
-            Utils.pushNotification(
-                context = this,
-                contentIntent = contentIntent(),
-                resources = resources,
-                message = message,
-            )
+    private fun requestNotificationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
         }
     }
 
@@ -214,24 +214,9 @@ class HomeActivity : AppCompatActivity() {
         bottomSheetDialog.dismiss()
     }
 
-    private fun contentIntent(): PendingIntent {
-        val notificationIntent = Intent(this, HistoryActivity::class.java)
-
-        val pendingFlags: Int = if (Build.VERSION.SDK_INT >= 23) {
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
-
-        return PendingIntent.getActivity(
-            this,
-            0,
-            notificationIntent,
-            pendingFlags
-        )
-    }
-
     companion object {
+        private const val PERMISSION_REQUEST_CODE = 101
+
         @StringRes
         private val TAB_TITLES = intArrayOf(
             R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3

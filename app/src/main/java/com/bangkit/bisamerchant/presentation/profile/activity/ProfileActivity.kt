@@ -6,14 +6,11 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityProfileBinding
-import com.bangkit.bisamerchant.presentation.profile.adapter.SectionsPagerAdapter
 import com.bangkit.bisamerchant.presentation.profile.viewmodel.ProfileViewModel
+import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bumptech.glide.Glide
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,7 +27,6 @@ class ProfileActivity : AppCompatActivity() {
 
         initTopAppBar()
         updateUI(profileViewModel)
-        tabLayoutConnector()
     }
 
     private fun initTopAppBar() {
@@ -46,41 +42,61 @@ class ProfileActivity : AppCompatActivity() {
         profileViewModel: ProfileViewModel,
     ) {
         profileViewModel.getMerchantActive()
+        profileViewModel.getTotalTransactionsFromLastMonth()
         profileViewModel.merchant.observe(this) { merchant ->
             binding.apply {
                 tvMerchantName.text = merchant.merchantName
                 tvMerchantAddress.text = merchant.merchantAddress
                 tvMerchantEmail.text = merchant.email
                 tvMerchantType.text = merchant.merchantType
-                val progress = merchant.transactionCount?.toInt() ?: 0
-                when (merchant.transactionCount) {
-                    in 0L..99L -> {
+            }
+            Glide.with(binding.root)
+                .load(merchant.merchantLogo)
+                .placeholder(R.drawable.placeholder)
+                .into(binding.ivMerchantLogo)
+        }
+        profileViewModel.totalAmountTransactionsFromLastMonth.observe(this) { amountFromLastMonth ->
+            binding.apply {
+                when (amountFromLastMonth) {
+                    in 0L..5000000L -> {
                         tvMerchantLoyalty.text = getString(R.string.bronze_merchant)
-                        loyaltyCount.text = merchant.transactionCount.toString()
-                        progressIndicator.progress = if (progress > 0) progress * 100 / 100 else 0
+                        loyaltyCount.text = resources.getString(R.string.rp, Utils.currencyFormat(amountFromLastMonth))
+                        loyaltyCountToNextLevel.text = resources.getString(R.string.rp, Utils.currencyFormat(5000000L))
+                        progressIndicator.progress =
+                            ((amountFromLastMonth.times(100) / 5000000L)).toInt()
+                        tvMerchantBenefits.text = getString(R.string.bronze_merchant_benefits)
+                        beneifts1.text = getString(R.string.bronze_benefits_1)
+                        beneifts2.text = getString(R.string.bronze_benefits_2)
+                        info1.text = getString(R.string.bronze_info)
                     }
-                    in 100L..199L -> {
+                    
+                    in 5000000L..170000000L -> {
                         tvMerchantLoyalty.text = getString(R.string.silver_merchant)
-                        loyaltyCount.text = merchant.transactionCount.toString()
-                        loyaltyCountToNextLevel.text = getString(R.string.loyalty_target_gold)
-                        progressIndicator.progress = progress * 100 / 200
+                        loyaltyCount.text = resources.getString(R.string.rp, Utils.currencyFormat(amountFromLastMonth))
+                        loyaltyCountToNextLevel.text = resources.getString(R.string.rp, Utils.currencyFormat(170000000L))
+                        progressIndicator.progress =
+                            ((amountFromLastMonth.times(100) / 170000000L)).toInt()
                         loyaltyNow.text = getString(R.string.silver)
                         loyaltyNext.text = getString(R.string.gold)
+                        tvMerchantBenefits.text = getString(R.string.silver_merchant_benefits)
+                        beneifts1.text = getString(R.string.silver_benefits_1)
+                        beneifts2.text = getString(R.string.silver_benefits_2)
+                        info1.text = getString(R.string.silver_info)
                     }
                     else -> {
                         tvMerchantLoyalty.text = getString(R.string.gold_merchant)
-                        loyaltyCount.text = merchant.transactionCount.toString()
+                        loyaltyCount.text = resources.getString(R.string.rp, Utils.currencyFormat(amountFromLastMonth))
                         loyaltyCountToNextLevel.visibility = View.INVISIBLE
                         progressIndicator.progress = progress * 100 / 300
                         loyaltyNow.text = getString(R.string.gold)
                         loyaltyNext.visibility = View.INVISIBLE
+                        tvMerchantBenefits.text = getString(R.string.gold_merchant_benefits)
+                        beneifts1.text = getString(R.string.gold_benefits_1)
+                        beneifts2.text = getString(R.string.gold_benefits_2)
+                        info1.text = getString(R.string.gold_info)
                     }
                 }
             }
-            Glide.with(binding.root)
-                .load(merchant.merchantLogo)
-                .placeholder(R.drawable.ic_loading_24)
-                .into(binding.ivMerchantLogo)
         }
     }
 
@@ -94,27 +110,8 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun tabLayoutConnector() {
-        val sectionsPagerAdapter = SectionsPagerAdapter(this)
-        val viewPager: ViewPager2 = findViewById(R.id.view_pager)
-        viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.profile_tab_layout)
-        TabLayoutMediator(tabs, viewPager) { tab, position ->
-            tab.text = resources.getString(TAB_TITLES[position])
-        }.attach()
-
-        supportActionBar?.elevation = 0f
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        @StringRes
-        private val TAB_TITLES = intArrayOf(
-            R.string.bronze, R.string.silver, R.string.gold
-        )
     }
 }

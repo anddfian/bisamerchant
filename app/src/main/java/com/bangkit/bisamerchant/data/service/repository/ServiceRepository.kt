@@ -9,6 +9,6 @@ import javax.inject.Singleton
 class ServiceRepository @Inject constructor(private val serviceDataSource: ServiceDataSource) : IServiceRepository {
 
     override suspend fun postRegistrationToken(token: String) {
-        serviceDataSource.postRegistrationToken(token)
+        serviceDataSource.postTokenId(token)
     }
 }

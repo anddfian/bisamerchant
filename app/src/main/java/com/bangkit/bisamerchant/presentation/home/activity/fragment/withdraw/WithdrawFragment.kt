@@ -91,6 +91,9 @@ class WithdrawFragment : Fragment() {
         homeViewModel.isLoading.observe(viewLifecycleOwner) {
             showLoading(it)
         }
+        homeViewModel.message.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private val pinActivityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -149,13 +152,21 @@ class WithdrawFragment : Fragment() {
                 balance.let {
                     if (it != null) {
                         if (it < amount.toLong()) {
-                            Toast.makeText(requireContext(), "Balance not enough", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Balance not enough",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            withdrawAmount = amount.toLong()
-                            withdrawBankInst = bank
-                            withdrawAccountNumber = number.toLong()
-                            executePinLauncher()
+                            homeViewModel.validateWithdrawAmount(withdrawAmount)
+                            homeViewModel.isAmountValidated.observe(viewLifecycleOwner) { isValidated ->
+                                if (isValidated == true) {
+                                    withdrawAmount = amount.toLong()
+                                    withdrawBankInst = bank
+                                    withdrawAccountNumber = number.toLong()
+                                    executePinLauncher()
+                                }
+                            }
                         }
                     }
                 }

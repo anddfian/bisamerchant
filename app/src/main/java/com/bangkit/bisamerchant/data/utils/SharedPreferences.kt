@@ -8,14 +8,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SharedPreferences constructor(context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data")
     private val dataStore = context.dataStore
-
 
     fun getMerchantId(): Flow<String> = dataStore.data.map { preferences ->
         preferences[MERCHANT_ID] ?: ""
@@ -28,7 +26,11 @@ class SharedPreferences constructor(context: Context) {
     }
 
     suspend fun delete() {
-        dataStore.edit { it.clear() }
+        dataStore.edit { preferences ->
+            preferences[TOTAL_TRANSACTIONS] = 0
+            preferences[MERCHANT_ID] = ""
+            preferences[IS_AMOUNT_HIDE] = false
+        }
     }
 
     fun getTransactionCount(): Flow<Long> = dataStore.data.map { preferences ->
@@ -38,16 +40,6 @@ class SharedPreferences constructor(context: Context) {
     suspend fun updateTransactionCount(count: Long) {
         dataStore.edit { preferences ->
             preferences[TOTAL_TRANSACTIONS] = count
-        }
-    }
-
-    fun getTransactionsTodayCount(): Flow<Long> = dataStore.data.map { preferences ->
-        preferences[TOTAL_TRANSACTIONS_TODAY] ?: 0
-    }
-
-    suspend fun updateTransactionsTodayCount(count: Long) {
-        dataStore.edit { preferences ->
-            preferences[TOTAL_TRANSACTIONS_TODAY] = count
         }
     }
 
@@ -61,10 +53,20 @@ class SharedPreferences constructor(context: Context) {
         }
     }
 
+    fun getNewUser(): Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[NEW_USER] ?: false
+    }
+
+    suspend fun updateNewUser() {
+        dataStore.edit { preferences ->
+            preferences[NEW_USER] = true
+        }
+    }
+
     companion object {
         private val MERCHANT_ID = stringPreferencesKey("merchant_id")
         private val TOTAL_TRANSACTIONS = longPreferencesKey("total_transactions")
-        private val TOTAL_TRANSACTIONS_TODAY = longPreferencesKey("total_transactions_today")
+        private val NEW_USER = booleanPreferencesKey("new_user")
         private val IS_AMOUNT_HIDE = booleanPreferencesKey("is_amount_hide")
 
         @Volatile
