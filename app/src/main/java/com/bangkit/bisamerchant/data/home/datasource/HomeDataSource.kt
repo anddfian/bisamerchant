@@ -6,7 +6,6 @@ import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.Transaction
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -123,7 +122,6 @@ class HomeDataSource @Inject constructor(
         val transactionDocument = db.collection("transaction")
         val merchantDocument = db.collection("merchant")
         val newTransactionId = transactionDocument.document().id
-
         try {
             val transaction = if (detailTransaction.trxType == "PAYMENT") {
                 hashMapOf(
@@ -303,6 +301,16 @@ class HomeDataSource @Inject constructor(
                 .size
 
         return Pair(totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth)
+    }
+
+    suspend fun getTransactionFee(amount: Long): Long {
+        val (totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth) = getCountAndAmountTransactionsLastMonth()
+
+        if (totalAmountTransactionLastMonthUntilToday > 5000000L) {
+            return (amount * 0.7 / 100).toLong()
+        }
+
+        return 0
     }
 
     suspend fun updateMerchantId(id: String) {

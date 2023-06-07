@@ -19,4 +19,5 @@ interface IHomeRepository {
     suspend fun getTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration
     suspend fun getMerchantId(): String
     suspend fun validateWithdrawAmount(amount: Long): Flow<String>
+    suspend fun getTransactionFee(amount: Long): Flow<Long>
 }

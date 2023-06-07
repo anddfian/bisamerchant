@@ -96,8 +96,9 @@ class PaymentFragment : Fragment() {
 
     private fun transactionConfirmation(detailTransaction: DetailTransaction) {
         bottomSheetDialog.show()
+        transactionBottomSheetBinding.tvTransactionConfirmation.text = resources.getString(R.string.payment_confirmation)
         transactionBottomSheetBinding.tvAmountTransaction.text = resources.getString(R.string.rp, Utils.currencyFormat(detailTransaction.amount))
-        transactionBottomSheetBinding.tvIdCustomer.text = detailTransaction.payerId.toString()
+        transactionBottomSheetBinding.tvNumber.text = detailTransaction.payerId.toString()
         transactionBottomSheetBinding.subtotal.text = resources.getString(R.string.rp, Utils.currencyFormat(detailTransaction.amount))
         transactionBottomSheetBinding.tvTransactionType.text = resources.getString(R.string.payment)
         transactionBottomSheetBinding.btnContinueTransaction.setOnClickListener {

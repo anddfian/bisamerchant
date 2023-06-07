@@ -9,12 +9,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.FragmentWithdrawBinding
+import com.bangkit.bisamerchant.databinding.TransactionBottomSheetBinding
 import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.pin.activity.PinActivity
+import com.bangkit.bisamerchant.presentation.utils.Utils
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +30,12 @@ class WithdrawFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val homeViewModel: HomeViewModel by viewModels()
+
+    private var _bottomSheetDialog: BottomSheetDialog? = null
+    private val bottomSheetDialog get() = _bottomSheetDialog!!
+
+    private var _transactionBottomSheetBinding: TransactionBottomSheetBinding? = null
+    private val transactionBottomSheetBinding get() = _transactionBottomSheetBinding!!
 
     private var balance: Long? = 0L
     private var withdrawAmount = 0L
@@ -41,10 +52,11 @@ class WithdrawFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initClickListener()
-        updateUI(homeViewModel)
+        updateUI()
+        setupFilterBottomSheet()
     }
 
-    private fun updateUI(homeViewModel: HomeViewModel) {
+    private fun updateUI() {
         val bankItems = arrayOf(
             "BCA - Bank Central Asia",
             "Mandiri",
@@ -94,6 +106,13 @@ class WithdrawFragment : Fragment() {
         homeViewModel.message.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun setupFilterBottomSheet() {
+        _transactionBottomSheetBinding =
+            TransactionBottomSheetBinding.inflate(layoutInflater)
+        _bottomSheetDialog = BottomSheetDialog(requireContext())
+        bottomSheetDialog.setContentView(transactionBottomSheetBinding.root)
     }
 
     private val pinActivityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -158,19 +177,57 @@ class WithdrawFragment : Fragment() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
-                            homeViewModel.validateWithdrawAmount(withdrawAmount)
-                            homeViewModel.isAmountValidated.observe(viewLifecycleOwner) { isValidated ->
-                                if (isValidated == true) {
-                                    withdrawAmount = amount.toLong()
-                                    withdrawBankInst = bank
-                                    withdrawAccountNumber = number.toLong()
-                                    executePinLauncher()
-                                }
-                            }
+                            transactionConfirmation(amount.toLong(), bank, number.toLong())
+
+
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun transactionConfirmation(
+        amount: Long,
+        bank: String,
+        number: Long,
+    ) {
+        bottomSheetDialog.show()
+
+        transactionBottomSheetBinding.tvTransactionConfirmation.text =
+            getString(R.string.withdraw_confirmation)
+
+        transactionBottomSheetBinding.tvNumber.text = number.toString()
+
+        transactionBottomSheetBinding.subtotal.text =
+            getString(R.string.rp, Utils.currencyFormat(amount))
+
+        transactionBottomSheetBinding.tvTransactionType.text =
+            getString(R.string.withdraw_to, bank)
+
+        transactionBottomSheetBinding.btnContinueTransaction.text = getString(R.string.continue_withdraw)
+
+        transactionBottomSheetBinding.ivTransactionImg.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_top_right_24))
+
+        homeViewModel.getTransactionFee(amount)
+        homeViewModel.fee.observe(viewLifecycleOwner) { fee ->
+            transactionBottomSheetBinding.tvAmountTransaction.text =
+                getString(R.string.rp, Utils.currencyFormat(amount + fee))
+            transactionBottomSheetBinding.tvFee.text =
+                getString(R.string.rp, Utils.currencyFormat(fee))
+        }
+
+        transactionBottomSheetBinding.btnContinueTransaction.setOnClickListener {
+            homeViewModel.validateWithdrawAmount(amount)
+            homeViewModel.isAmountValidated.observe(viewLifecycleOwner) { isValidated ->
+                if (isValidated == true) {
+                    withdrawAmount = amount
+                    withdrawBankInst = bank
+                    withdrawAccountNumber = number
+                    executePinLauncher()
+                }
+            }
+            bottomSheetDialog.dismiss()
         }
     }
 
