@@ -4,10 +4,8 @@ import com.bangkit.bisamerchant.data.utils.SharedPreferences
 import com.bangkit.bisamerchant.data.utils.Utils
 import com.bangkit.bisamerchant.domain.profile.model.Merchant
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -27,7 +25,6 @@ class ProfileDataSource @Inject constructor(
     suspend fun getMerchantActive(callback: (Merchant) -> Unit): ListenerRegistration {
         return withContext(Dispatchers.IO) {
             val merchantDocument = db.collection("merchant")
-            updateTransactionCount(merchantDocument)
             val query = merchantDocument.whereEqualTo("merchantActive", true)
                 .whereEqualTo("email", auth.currentUser?.email)
 
