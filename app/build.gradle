@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    // UI
+    // ui
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -50,15 +50,15 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
-    // Firebase
+    // firebase
     implementation platform('com.google.firebase:firebase-bom:31.5.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx:22.0.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.6.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.2.0'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
 
-
-    //ktx
+    // ktx
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx'
     implementation 'androidx.activity:activity-ktx'
     implementation 'androidx.fragment:fragment-ktx:1.5.7'
@@ -72,11 +72,14 @@ dependencies {
     // zxing
     implementation 'com.google.zxing:core:3.4.1'
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
 
-
-    // Testing
+    // testing
     testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.mockito:mockito-core:5.3.1"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.0.0"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation "io.mockk:mockk:1.12.0"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
