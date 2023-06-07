@@ -167,4 +167,11 @@
     <string name="silver_info">The maximum withdrawal limit is 10 times per month.</string>
     <string name="gold_info">The maximum withdrawal limit is 25 times per month.</string>
     <string name="info">Info</string>
+    <string name="continue_payment">Continue Payment</string>
+    <string name="payment_confirmation">Payment Confirmation</string>
+    <string name="free">Free</string>
+    <string name="transaction_fee">Transaction Fee</string>
+    <string name="total_transaction">Total Transaction</string>
+    <string name="rp50_000">Rp50.000</string>
+    <string name="subtotal">Subtotal</string>
 </resources>

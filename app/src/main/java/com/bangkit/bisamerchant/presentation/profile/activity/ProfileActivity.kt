@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityProfileBinding
@@ -87,7 +86,7 @@ class ProfileActivity : AppCompatActivity() {
                         tvMerchantLoyalty.text = getString(R.string.gold_merchant)
                         loyaltyCount.text = resources.getString(R.string.rp, Utils.currencyFormat(amountFromLastMonth))
                         loyaltyCountToNextLevel.visibility = View.INVISIBLE
-                        progressIndicator.progress = progress * 100 / 300
+                        progressIndicator.progress = 100
                         loyaltyNow.text = getString(R.string.gold)
                         loyaltyNext.visibility = View.INVISIBLE
                         tvMerchantBenefits.text = getString(R.string.gold_merchant_benefits)

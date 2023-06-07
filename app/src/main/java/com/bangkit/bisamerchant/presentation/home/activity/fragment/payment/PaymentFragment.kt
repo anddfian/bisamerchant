@@ -20,9 +20,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.FragmentPaymentBinding
+import com.bangkit.bisamerchant.databinding.TransactionBottomSheetBinding
 import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
 import com.bangkit.bisamerchant.presentation.utils.Utils
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.zxing.client.android.Intents
 import com.journeyapps.barcodescanner.CaptureActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,8 +33,15 @@ import dagger.hilt.android.AndroidEntryPoint
 class PaymentFragment : Fragment() {
     private var scannedAmount: Long? = null
     private var _binding: FragmentPaymentBinding? = null
+
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by viewModels()
+
+    private var _bottomSheetDialog: BottomSheetDialog? = null
+    private val bottomSheetDialog get() = _bottomSheetDialog!!
+
+    private var _transactionBottomSheetBinding: TransactionBottomSheetBinding? = null
+    private val transactionBottomSheetBinding get() = _transactionBottomSheetBinding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,6 +54,7 @@ class PaymentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initClickListener()
         updateUI()
+        setupFilterBottomSheet()
     }
 
     private fun updateUI() {
@@ -56,6 +66,14 @@ class PaymentFragment : Fragment() {
             showLoading(it)
         }
     }
+
+    private fun setupFilterBottomSheet() {
+        _transactionBottomSheetBinding =
+            TransactionBottomSheetBinding.inflate(layoutInflater)
+        _bottomSheetDialog = BottomSheetDialog(requireContext())
+        bottomSheetDialog.setContentView(transactionBottomSheetBinding.root)
+    }
+
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -73,6 +91,18 @@ class PaymentFragment : Fragment() {
             )
         } else {
             initiateScan()
+        }
+    }
+
+    private fun transactionConfirmation(detailTransaction: DetailTransaction) {
+        bottomSheetDialog.show()
+        transactionBottomSheetBinding.tvAmountTransaction.text = resources.getString(R.string.rp, Utils.currencyFormat(detailTransaction.amount))
+        transactionBottomSheetBinding.tvIdCustomer.text = detailTransaction.payerId.toString()
+        transactionBottomSheetBinding.subtotal.text = resources.getString(R.string.rp, Utils.currencyFormat(detailTransaction.amount))
+        transactionBottomSheetBinding.tvTransactionType.text = resources.getString(R.string.payment)
+        transactionBottomSheetBinding.btnContinueTransaction.setOnClickListener {
+            homeViewModel.postTransaction(detailTransaction)
+            bottomSheetDialog.dismiss()
         }
     }
 
@@ -96,7 +126,7 @@ class PaymentFragment : Fragment() {
                                 trxType = "PAYMENT"
                             )
                         }?.let {
-                            homeViewModel.postTransaction(
+                            transactionConfirmation(
                                 it
                             )
                         }
@@ -228,6 +258,9 @@ class PaymentFragment : Fragment() {
         super.onDestroyView()
         scannedAmount = null
         _binding = null
+        if (_binding == null) {
+            _transactionBottomSheetBinding = null
+        }
     }
 
     companion object {
