@@ -1,12 +1,17 @@
 package com.bangkit.bisamerchant.data.profile.datasource
 
 import com.bangkit.bisamerchant.data.utils.SharedPreferences
+import com.bangkit.bisamerchant.data.utils.Utils
 import com.bangkit.bisamerchant.domain.profile.model.Merchant
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,7 +43,6 @@ class ProfileDataSource @Inject constructor(
                         val merchantType = document.getString("merchantType")
                         val email = document.getString("email")
                         val merchantName = document.getString("merchantName")
-                        val transactionCount = document.getLong("transactionCount")
 
                         data = Merchant(
                             id,
@@ -49,7 +53,6 @@ class ProfileDataSource @Inject constructor(
                             merchantType,
                             email,
                             merchantName,
-                            transactionCount
                         )
                     }
 
@@ -59,5 +62,25 @@ class ProfileDataSource @Inject constructor(
 
             return@withContext listenerRegistration
         }
+    }
+
+    suspend fun getTotalTransactionsFromLastMonth(): Flow<Long> = flow {
+        val startOfLastMonthTimestamp = Utils.getStartOfLastMonthTimestamp()
+
+        val merchantId = pref.getMerchantId().first()
+
+        val totalTransactionLastMonthUntilToday =
+            db.collection("transaction").whereEqualTo("merchantId", merchantId)
+                .whereGreaterThanOrEqualTo("timestamp", startOfLastMonthTimestamp)
+                .whereEqualTo("trxType", "PAYMENT")
+                .get()
+                .await()
+
+        var totalAmountTransactionLastMonthUntilToday = 0L
+        for (document in totalTransactionLastMonthUntilToday.documents) {
+            val transactionAmount = document.getLong("amount") ?: 0L
+            totalAmountTransactionLastMonthUntilToday += transactionAmount
+        }
+        emit(totalAmountTransactionLastMonthUntilToday)
     }
 }

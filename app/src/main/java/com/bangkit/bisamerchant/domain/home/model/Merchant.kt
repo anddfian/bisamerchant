@@ -9,5 +9,5 @@ data class Merchant(
 	val merchantType: String? = null,
 	val email: String? = null,
 	val merchantName: String? = null,
-	val transactionCount: Long? = null
+	val tokenId: String? = null
 )

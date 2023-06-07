@@ -160,7 +160,11 @@
     <string name="jenis_transaksi">Jenis Transaksi</string>
     <string name="id_transaksi">ID Transaksi</string>
     <string name="_2r6a1wk83jcoufq0ubwd">2R6a1WK83JCOUfQ0UbWd</string>
-    <string name="date_example">01 Mei 2023 - 08:18</string>
+    <string name="date_example">01 Mei 2023 – 08:18</string>
     <string name="total">Total</string>
     <string name="rp65_000">Rp65.000</string>
+    <string name="bronze_info">The maximum withdrawal limit is 3 times per month.</string>
+    <string name="silver_info">The maximum withdrawal limit is 10 times per month.</string>
+    <string name="gold_info">The maximum withdrawal limit is 25 times per month.</string>
+    <string name="info">Info</string>
 </resources>

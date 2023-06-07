@@ -4,6 +4,7 @@ import com.bangkit.bisamerchant.data.profile.datasource.ProfileDataSource
 import com.bangkit.bisamerchant.domain.profile.model.Merchant
 import com.bangkit.bisamerchant.domain.profile.repository.IProfileRepository
 import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,4 +14,7 @@ class ProfileRepository @Inject constructor(
 ) : IProfileRepository {
     override suspend fun getMerchantActive(callback: (Merchant) -> Unit): ListenerRegistration =
         profileDataSource.getMerchantActive(callback)
+
+    override suspend fun getTotalTransactionsFromLastMonth(): Flow<Long> =
+        profileDataSource.getTotalTransactionsFromLastMonth()
 }

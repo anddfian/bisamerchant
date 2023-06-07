@@ -45,7 +45,7 @@ class HomeRepository @Inject constructor(
 
     override suspend fun postTransaction(detailTransaction: DetailTransaction): Flow<String> =
         flow {
-
+            var fee = 0L
             val currentBalance = if (detailTransaction.trxType == "PAYMENT") {
                 detailTransaction.payerId?.let { homeDataSource.getPayerBalance(it) }
             } else {
@@ -54,10 +54,29 @@ class HomeRepository @Inject constructor(
 
             if (currentBalance != null) {
                 if (currentBalance >= detailTransaction.amount) {
-                    val newBalance = currentBalance - detailTransaction.amount
-                    homeDataSource.postTransaction(detailTransaction, newBalance).collect { result ->
-                        emit(result)
+
+                    if (detailTransaction.trxType == "MERCHANT_WITHDRAW") {
+                        val validationMessage =
+                            homeDataSource.validateWithdrawAmount(detailTransaction.amount)
+
+                        if (validationMessage != AMOUNT_VALIDATED) {
+                            emit(validationMessage)
+                            return@flow
+                        }
+
+                        val (totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth) = homeDataSource.getCountAndAmountTransactionsLastMonth()
+
+                        if (totalAmountTransactionLastMonthUntilToday > 5000000L) {
+                            fee = (detailTransaction.amount * 0.7 / 100).toLong()
+                        }
+
                     }
+
+                    val newBalance = currentBalance - detailTransaction.amount + fee
+                    homeDataSource.postTransaction(detailTransaction, newBalance, fee)
+                        .collect { result ->
+                            emit(result)
+                        }
                 } else {
                     emit("Saldo tidak cukup")
                 }
@@ -76,9 +95,12 @@ class HomeRepository @Inject constructor(
     override suspend fun getMerchantId() =
         homeDataSource.getMerchantId()
 
-    override suspend fun getTransactionsTodayCount() =
-        homeDataSource.getTransactionsTodayCount()
+    override suspend fun validateWithdrawAmount(amount: Long): Flow<String> = flow {
+        val result = homeDataSource.validateWithdrawAmount(amount)
+        emit(result)
+    }
 
-    override suspend fun updateTransactionsTodayCount(count: Long) =
-        homeDataSource.updateTransactionsTodayCount(count)
+    companion object {
+        private const val AMOUNT_VALIDATED = "Silakan masukkan pin"
+    }
 }
