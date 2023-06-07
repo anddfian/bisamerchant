@@ -6,6 +6,7 @@ import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.Transaction
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -144,7 +145,6 @@ class HomeDataSource @Inject constructor(
                     "trxType" to detailTransaction.trxType
                 )
             }
-
             if (detailTransaction.trxType == "MERCHANT_WITHDRAW") {
                 val merchant = merchantDocument.document(getMerchantId())
                 merchant.update("balance", newBalance).await()
@@ -330,7 +330,6 @@ class HomeDataSource @Inject constructor(
     suspend fun getMerchantId() = withContext(Dispatchers.IO) {
         pref.getMerchantId().first()
     }
-
     companion object {
         private const val FAILED_WITHDRAW_MAX_BRONZE_LEVEL =
             "Maksimal penarikan di level Anda adalah 5 juta"

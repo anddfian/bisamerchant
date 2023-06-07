@@ -50,7 +50,7 @@
     <string name="cash_in_example_1">Cash In - Fulan Store</string>
     <string name="money_zero">0</string>
     <string name="balance">Balance</string>
-    <string name="bisa_store">Fulan Store</string>
+    <string name="bisa_store"> </string>
     <string name="history">History</string>
     <string name="profile">Profile</string>
     <string name="icon_qr">Icon QR</string>

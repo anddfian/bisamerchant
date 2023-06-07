@@ -20,6 +20,7 @@ class LoginDatasource @Inject constructor(
     fun login(email: String, password: String): Flow<String> = flow {
         try {
             auth.signInWithEmailAndPassword(email, password).await()
+            postRegistrationToken(email)
             val querySnapshot = db.collection("merchant").whereEqualTo("email", email)
                 .whereEqualTo("merchantActive", true).limit(1).get().await()
 

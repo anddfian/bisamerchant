@@ -69,6 +69,7 @@ class ProfileActivity : AppCompatActivity() {
                         beneifts2.text = getString(R.string.bronze_benefits_2)
                         info1.text = getString(R.string.bronze_info)
                     }
+                    
                     in 5000000L..170000000L -> {
                         tvMerchantLoyalty.text = getString(R.string.silver_merchant)
                         loyaltyCount.text = resources.getString(R.string.rp, Utils.currencyFormat(amountFromLastMonth))
@@ -86,7 +87,7 @@ class ProfileActivity : AppCompatActivity() {
                         tvMerchantLoyalty.text = getString(R.string.gold_merchant)
                         loyaltyCount.text = resources.getString(R.string.rp, Utils.currencyFormat(amountFromLastMonth))
                         loyaltyCountToNextLevel.visibility = View.INVISIBLE
-                        progressIndicator.progress = 100
+                        progressIndicator.progress = progress * 100 / 300
                         loyaltyNow.text = getString(R.string.gold)
                         loyaltyNext.visibility = View.INVISIBLE
                         tvMerchantBenefits.text = getString(R.string.gold_merchant_benefits)
