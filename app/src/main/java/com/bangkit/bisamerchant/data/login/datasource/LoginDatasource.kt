@@ -24,6 +24,7 @@ class LoginDatasource @Inject constructor(
                 .whereEqualTo("merchantActive", true).limit(1).get().await()
 
             if (!querySnapshot.isEmpty) {
+                auth.currentUser?.email?.let { postRegistrationToken(it) }
                 emit(LOGIN_SUCCESSFUL)
             } else {
                 throw Exception(MERCHANT_NOT_FOUND)

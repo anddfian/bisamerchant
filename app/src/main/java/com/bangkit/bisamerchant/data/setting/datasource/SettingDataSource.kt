@@ -3,9 +3,7 @@ package com.bangkit.bisamerchant.data.setting.datasource
 import com.bangkit.bisamerchant.data.utils.SharedPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,11 +14,9 @@ class SettingDataSource @Inject constructor(
     private val db: FirebaseFirestore,
 ) {
     suspend fun logout() {
-        withContext(Dispatchers.IO) {
-            deleteTokenId()
-            pref.delete()
-            auth.signOut()
-        }
+        deleteTokenId()
+        pref.delete()
+        auth.signOut()
     }
 
     private suspend fun deleteTokenId() {

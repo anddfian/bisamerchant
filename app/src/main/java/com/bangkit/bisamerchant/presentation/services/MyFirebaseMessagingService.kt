@@ -2,6 +2,7 @@ package com.bangkit.bisamerchant.presentation.services
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import com.bangkit.bisamerchant.domain.home.model.MessageNotif
 import com.bangkit.bisamerchant.domain.service.usecase.PostRegistrationToken
 import com.bangkit.bisamerchant.presentation.history.activity.HistoryActivity
@@ -13,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MyFirebaseMessagingService :
@@ -38,7 +40,7 @@ class MyFirebaseMessagingService :
             val contentIntent = createPendingIntent(action)
 
             Utils.pushNotification(
-                applicationContext,
+                this,
                 contentIntent,
                 resources,
                 MessageNotif(title, body, null)
@@ -49,12 +51,14 @@ class MyFirebaseMessagingService :
     private fun createPendingIntent(action: String?): PendingIntent {
         val intent = Intent(this, HistoryActivity::class.java)
         intent.putExtra("action", action)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val flags =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+
         return PendingIntent.getActivity(
             this,
             0,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            flags,
         )
     }
 }

@@ -11,10 +11,8 @@ class LoginRepository @Inject constructor(
     private val loginDatasource: LoginDatasource
 ) : ILoginRepository {
 
-    override suspend fun login(email: String, password: String) : Flow<String> {
-        loginDatasource.postRegistrationToken(email)
-        return loginDatasource.login(email, password)
-    }
+    override suspend fun login(email: String, password: String): Flow<String> =
+        loginDatasource.login(email, password)
 
     override suspend fun resetPassword(email: String) =
         loginDatasource.resetPassword(email)

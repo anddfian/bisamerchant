@@ -1,6 +1,9 @@
 package com.bangkit.bisamerchant.presentation.home.activity
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,6 +55,7 @@ class HomeActivity : AppCompatActivity() {
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        requestNotificationPermission()
         setupFilterBottomSheet()
         updateUI()
         initTopAppBar()
@@ -63,6 +68,22 @@ class HomeActivity : AppCompatActivity() {
             MerchantAccountBottomSheetBinding.inflate(layoutInflater)
         _bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setContentView(merchantAccountBottomSheetBinding.root)
+    }
+
+    private fun requestNotificationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+        }
     }
 
     private fun updateUI() {
@@ -194,6 +215,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val PERMISSION_REQUEST_CODE = 101
+
         @StringRes
         private val TAB_TITLES = intArrayOf(
             R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3

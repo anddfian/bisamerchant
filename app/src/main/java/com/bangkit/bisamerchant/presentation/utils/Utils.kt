@@ -1,13 +1,9 @@
 package com.bangkit.bisamerchant.presentation.utils
 
-import android.Manifest
-import android.app.Activity
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -15,11 +11,8 @@ import android.graphics.Canvas
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.cardview.widget.CardView
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.domain.home.model.MessageNotif
@@ -41,7 +34,6 @@ object Utils {
     private const val NOTIFICATION_ID = 1
     private const val CHANNEL_ID = "Bisa_Channel_01"
     private const val CHANNEL_NAME = "Bisa Merchant Transaction"
-    private const val PERMISSION_REQUEST_CODE = 101
 
     fun currencyFormat(money: Long?): String {
         val formatter: NumberFormat = DecimalFormat("#,###")
@@ -91,9 +83,9 @@ object Utils {
         channelName: String = CHANNEL_NAME,
     ) {
         val mNotificationManager =
-            NotificationManagerCompat.from(context.applicationContext);
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val mBuilder = NotificationCompat.Builder(context.applicationContext, channelId)
+        val mBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_logo_colorized)
             .setContentTitle(message.title)
             .setContentText(message.body)
@@ -115,24 +107,7 @@ object Utils {
             mBuilder.setChannelId(channelId)
             mNotificationManager.createNotificationChannel(channel)
         }
-
         val notification = mBuilder.build()
-
-        if (ActivityCompat.checkSelfPermission(
-                context.applicationContext,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ActivityCompat.requestPermissions(
-                    context.applicationContext as Activity,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    PERMISSION_REQUEST_CODE
-                )
-            }
-            return
-        }
-
         mNotificationManager.notify(notificationId, notification)
 
     }
