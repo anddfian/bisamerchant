@@ -17,6 +17,7 @@ import com.bangkit.bisamerchant.presentation.merchantsetting.activity.MerchantSe
 import com.bangkit.bisamerchant.presentation.setting.viewmodel.SettingViewModel
 import com.bangkit.bisamerchant.presentation.termpolicy.PrivacyPolicyActivity
 import com.bangkit.bisamerchant.presentation.termpolicy.TermConditionActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,12 +59,19 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.btn_logout -> {
-                settingViewModel.logout()
-
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                this.startActivity(intent)
-                finish()
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Yakin ingin keluar dari akun ini?")
+                    .setNegativeButton("Batal") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton("Keluar") { _, _ ->
+                        settingViewModel.logout()
+                        val intent = Intent(this, LoginActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        this.startActivity(intent)
+                        finish()
+                    }
+                    .show()
             }
         }
     }

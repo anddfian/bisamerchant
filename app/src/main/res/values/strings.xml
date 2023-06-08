@@ -17,8 +17,10 @@
     <string name="login_help_email">Enter Email</string>
     <string name="login_password">Password</string>
     <string name="login_help_password">Enter Password</string>
-    <string name="forgot_password">Forgot Password?</string>
-    <string name="create_account">Create New Account</string>
+    <string name="forgot_password">Lupa Password?</string>
+    <string name="create_account_intro">Belum punya akun?</string>
+    <string name="create_account">Daftar</string>
+    <string name="login_intro">Sudah punya akun?</string>
     <string name="login_button">Login</string>
     <string name="term_policy"><![CDATA[Email akan digunakan sebagai ID kamu & menjaga akun selalu aman. Dengan melanjutkan, kamu setuju dengan]]></string>
     <string name="notification_menu">Notification Menu</string>
