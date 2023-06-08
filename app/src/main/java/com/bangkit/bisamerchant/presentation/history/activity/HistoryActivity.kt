@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -50,8 +51,8 @@ class HistoryActivity : AppCompatActivity() {
         setupFilterBottomSheet()
         setContentView(binding.root)
 
-        updateUI(historyViewModel)
-        initClickListener(historyViewModel)
+        updateUI()
+        initClickListener()
         initTopAppBar()
     }
 
@@ -81,7 +82,7 @@ class HistoryActivity : AppCompatActivity() {
         bottomSheetDialog.setContentView(filterBottomSheetBinding.root)
     }
 
-    private fun initClickListener(historyViewModel: HistoryViewModel) {
+    private fun initClickListener() {
         var trxType: String? = null
         var queryDirection: Query.Direction = Query.Direction.DESCENDING
 
@@ -181,9 +182,7 @@ class HistoryActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUI(
-        historyViewModel: HistoryViewModel
-    ) {
+    private fun updateUI() {
         lifecycleScope.launch {
             historyViewModel.getTransactions()
             historyViewModel.totalAmountTransaction.observe(this@HistoryActivity) { amount ->
@@ -209,6 +208,18 @@ class HistoryActivity : AppCompatActivity() {
             }
             showRecyclerHistories()
         }
+
+        historyViewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+
+        historyViewModel.message.observe(this) {
+            Toast.makeText(this@HistoryActivity, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun showRecyclerHistories() {

@@ -72,24 +72,23 @@ class HomeDataSource @Inject constructor(
         }
     }
 
-    suspend fun getMerchants(callback: (List<Merchant>) -> Unit): ListenerRegistration {
-        return withContext(Dispatchers.IO) {
-            val query = db.collection("merchant").whereEqualTo("email", auth.currentUser?.email)
+    suspend fun getMerchants() = flow {
+        val data = mutableListOf<Merchant>()
+        val query = db.collection("merchant").whereEqualTo("email", auth.currentUser?.email)
 
-            val listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-                querySnapshot?.let {
-                    val data = mutableListOf<Merchant>()
-
-                    for (document in querySnapshot.documents) {
-                        val id = document.id
-                        val balance = document.getLong("balance")
-                        val merchantActive = document.getBoolean("merchantActive")
-                        val merchantLogo = document.getString("merchantLogo")
-                        val merchantAddress = document.getString("merchantAddress")
-                        val merchantType = document.getString("merchantType")
-                        val email = document.getString("email")
-                        val merchantName = document.getString("merchantName")
-                        val tokenId = document.getString("tokenId")
+        try {
+            query.get().addOnSuccessListener {
+                for (document in it.documents) {
+                    document.apply {
+                        val id = id
+                        val balance = getLong("balance")
+                        val merchantActive = getBoolean("merchantActive")
+                        val merchantLogo = getString("merchantLogo")
+                        val merchantAddress = getString("merchantAddress")
+                        val merchantType = getString("merchantType")
+                        val email = getString("email")
+                        val merchantName = getString("merchantName")
+                        val tokenId = getString("tokenId")
 
                         data.add(
                             Merchant(
@@ -105,12 +104,13 @@ class HomeDataSource @Inject constructor(
                             )
                         )
                     }
-
-                    callback(data)
                 }
-            }
+            }.await()
 
-            return@withContext listenerRegistration
+            emit(data)
+
+        } catch (e: Exception) {
+            throw Exception(e.localizedMessage)
         }
     }
 
@@ -236,13 +236,11 @@ class HomeDataSource @Inject constructor(
     suspend fun validateWithdrawAmount(amount: Long): String {
         val (totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth) = getCountAndAmountTransactionsLastMonth()
         when {
-            totalWithdrawMoneyThisMonth > 3
-                    && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
+            totalWithdrawMoneyThisMonth > 3 && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
                 return FAILED_WITHDRAW_COUNT_MAX_BRONZE_LEVEL
             }
 
-            totalWithdrawMoneyThisMonth > 10
-                    && totalAmountTransactionLastMonthUntilToday <= 170000000L -> {
+            totalWithdrawMoneyThisMonth > 10 && totalAmountTransactionLastMonthUntilToday <= 170000000L -> {
                 return FAILED_WITHDRAW_COUNT_MAX_SILVER_LEVEL
             }
 
@@ -250,14 +248,11 @@ class HomeDataSource @Inject constructor(
                 return FAILED_WITHDRAW_COUNT_MAX_GOLD_LEVEL
             }
 
-            amount > 5000000L
-                    && totalWithdrawMoneyThisMonth < 3
-                    && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
+            amount > 5000000L && totalWithdrawMoneyThisMonth < 3 && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
                 return FAILED_WITHDRAW_MAX_BRONZE_LEVEL
             }
 
-            amount > 170000000L && totalWithdrawMoneyThisMonth < 10
-                    && totalAmountTransactionLastMonthUntilToday < 170000000L -> {
+            amount > 170000000L && totalWithdrawMoneyThisMonth < 10 && totalAmountTransactionLastMonthUntilToday < 170000000L -> {
                 return FAILED_WITHDRAW_MAX_SILVER_LEVEL
             }
 
@@ -271,7 +266,7 @@ class HomeDataSource @Inject constructor(
         }
     }
 
-    suspend fun getCountAndAmountTransactionsLastMonth(): Pair<Long, Int> {
+    private suspend fun getCountAndAmountTransactionsLastMonth(): Pair<Long, Int> {
         val startOfMonthTimestamp = Utils.getStartOfMonthTimestamp()
         val startOfLastMonthTimestamp = Utils.getStartOfLastMonthTimestamp()
 
@@ -281,9 +276,7 @@ class HomeDataSource @Inject constructor(
         val totalTransactionLastMonthUntilToday =
             db.collection("transaction").whereEqualTo("merchantId", merchantId)
                 .whereGreaterThanOrEqualTo("timestamp", startOfLastMonthTimestamp)
-                .whereEqualTo("trxType", "PAYMENT")
-                .get()
-                .await()
+                .whereEqualTo("trxType", "PAYMENT").get().await()
 
         var totalAmountTransactionLastMonthUntilToday = 0L
         for (document in totalTransactionLastMonthUntilToday.documents) {
@@ -294,11 +287,7 @@ class HomeDataSource @Inject constructor(
         val totalWithdrawMoneyThisMonth =
             db.collection("transaction").whereEqualTo("merchantId", merchantId)
                 .whereGreaterThanOrEqualTo("timestamp", startOfMonthTimestamp)
-                .whereEqualTo("trxType", "MERCHANT_WITHDRAW")
-                .get()
-                .await()
-                .documents
-                .size
+                .whereEqualTo("trxType", "MERCHANT_WITHDRAW").get().await().documents.size
 
         return Pair(totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth)
     }
@@ -329,7 +318,7 @@ class HomeDataSource @Inject constructor(
         pref.getHideAmount().first()
     }
 
-    suspend fun deleteMerchant() {
+    private suspend fun deleteMerchant() {
         withContext(Dispatchers.IO) {
             pref.delete()
         }
@@ -338,6 +327,7 @@ class HomeDataSource @Inject constructor(
     suspend fun getMerchantId() = withContext(Dispatchers.IO) {
         pref.getMerchantId().first()
     }
+
     companion object {
         private const val FAILED_WITHDRAW_MAX_BRONZE_LEVEL =
             "Maksimal penarikan di level Anda adalah 5 juta"

@@ -3,6 +3,7 @@ package com.bangkit.bisamerchant.presentation.profile.activity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bangkit.bisamerchant.R
@@ -25,7 +26,7 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initTopAppBar()
-        updateUI(profileViewModel)
+        updateUI()
     }
 
     private fun initTopAppBar() {
@@ -37,11 +38,8 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUI(
-        profileViewModel: ProfileViewModel,
-    ) {
+    private fun updateUI() {
         profileViewModel.getMerchantActive()
-        profileViewModel.getTotalTransactionsFromLastMonth()
         profileViewModel.merchant.observe(this) { merchant ->
             binding.apply {
                 tvMerchantName.text = merchant.merchantName
@@ -54,6 +52,8 @@ class ProfileActivity : AppCompatActivity() {
                 .placeholder(R.drawable.placeholder)
                 .into(binding.ivMerchantLogo)
         }
+
+        profileViewModel.getTotalTransactionsFromLastMonth()
         profileViewModel.totalAmountTransactionsFromLastMonth.observe(this) { amountFromLastMonth ->
             binding.apply {
                 when (amountFromLastMonth) {
@@ -97,6 +97,18 @@ class ProfileActivity : AppCompatActivity() {
                 }
             }
         }
+
+        profileViewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+
+        profileViewModel.message.observe(this) {
+            Toast.makeText(this@ProfileActivity, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -4,21 +4,25 @@ import com.bangkit.bisamerchant.data.history.datasource.HistoryDataSource
 import com.bangkit.bisamerchant.domain.history.model.FilteredTransaction
 import com.bangkit.bisamerchant.domain.history.model.Transaction
 import com.bangkit.bisamerchant.domain.history.repository.IHistoryRepository
-import com.google.firebase.firestore.ListenerRegistration
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class HistoryRepository @Inject constructor(private val historyDataSource: HistoryDataSource) :
     IHistoryRepository {
-    override suspend fun getTransactions(callback: (List<Transaction>) -> Unit): ListenerRegistration =
-        historyDataSource.getTransactions(callback)
+    override suspend fun getTransactions() =
+        historyDataSource.getTransactions()
 
-    override suspend fun getTransactionsWithFilter(
-        filteredTransaction: FilteredTransaction, callback: (List<Transaction>) -> Unit
-    ): ListenerRegistration =
-        historyDataSource.getTransactionsWithFilter(filteredTransaction, callback)
+    override suspend fun getTransactionsWithFilter(filteredTransaction: FilteredTransaction) =
+        historyDataSource.getTransactionsWithFilter(filteredTransaction)
 
-    override fun getTotalAmountTransactions(listTransactions: List<Transaction>): Long =
-        historyDataSource.getTotalAmountTransactions(listTransactions)
+    override suspend fun getTotalAmountTransactions(listTransactions: List<Transaction>) =
+        listTransactions.fold(0L) { totalAmount, transaction ->
+            if (transaction.trxType == "PAYMENT") {
+                totalAmount + transaction.amount
+            } else {
+                totalAmount - transaction.amount
+            }
+        }
+
 }

@@ -40,7 +40,7 @@ class SplashScreenActivity : AppCompatActivity() {
     private fun startSplashScreen() {
         lifecycleScope.launch {
             delay(threeSecond)
-            splashViewModel.getMerchantActive()
+            splashViewModel.getAuthInfo()
             splashViewModel.message.observe(this@SplashScreenActivity) { message ->
                 when (message) {
                     MERCHANT_NOT_FOUND -> {

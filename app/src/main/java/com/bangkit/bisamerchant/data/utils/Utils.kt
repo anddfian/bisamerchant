@@ -1,7 +1,5 @@
 package com.bangkit.bisamerchant.data.utils
 
-import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.util.Calendar
 
 object Utils {

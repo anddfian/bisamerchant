@@ -2,6 +2,7 @@ package com.bangkit.bisamerchant.presentation.login.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -24,8 +25,11 @@ class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding?.root)
 
         updateUI()
+        initTopAppBar()
+        setupCustomInput()
+    }
 
-
+    private fun setupCustomInput() {
         binding.apply {
             this?.btnResetPassword?.setOnClickListener(this@ResetPasswordActivity).also {
                 this?.btnResetPassword?.isEnabled = false
@@ -42,6 +46,15 @@ class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
                 binding?.btnResetPassword?.isEnabled = filled
             }
         })
+    }
+
+    private fun initTopAppBar() {
+        setSupportActionBar(binding?.profileTopAppBar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(true)
+            title = getString(R.string.forgot_password_title)
+        }
     }
 
     private fun updateUI() {
@@ -79,6 +92,16 @@ class ResetPasswordActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressedDispatcher.onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

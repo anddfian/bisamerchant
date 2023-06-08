@@ -5,11 +5,12 @@ import com.bangkit.bisamerchant.data.utils.Utils
 import com.bangkit.bisamerchant.domain.history.model.FilteredTransaction
 import com.bangkit.bisamerchant.domain.history.model.Transaction
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,41 +20,38 @@ class HistoryDataSource @Inject constructor(
     private val db: FirebaseFirestore,
 ) {
 
-    suspend fun getTransactions(callback: (List<Transaction>) -> Unit): ListenerRegistration {
-        val merchantId = pref.getMerchantId().first()
-        val query = db.collection("transaction").whereEqualTo("merchantId", merchantId)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+    suspend fun getTransactions() = flow {
+        try {
+            val merchantId = pref.getMerchantId().first()
+            val data = mutableListOf<Transaction>()
+            db.collection("transaction").whereEqualTo("merchantId", merchantId)
+                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnSuccessListener {
+                    for (document in it.documents) {
+                        val amount = document.getLong("amount")
+                        val trxType = document.getString("trxType")
+                        val id = document.id
+                        val timestamp = document.getLong("timestamp")
 
-        val listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-            querySnapshot?.let {
-                val data = mutableListOf<Transaction>()
-
-                for (document in querySnapshot.documents) {
-                    val amount = document.getLong("amount")
-                    val trxType = document.getString("trxType")
-                    val id = document.id
-                    val timestamp = document.getLong("timestamp")
-
-                    if (amount != null) {
-                        data.add(
-                            Transaction(
-                                amount, trxType, id, timestamp
+                        if (amount != null) {
+                            data.add(
+                                Transaction(
+                                    amount, trxType, id, timestamp
+                                )
                             )
-                        )
+                        }
                     }
-                }
-                callback(data)
-            }
+                }.await()
+            emit(data)
+        } catch (e: Exception) {
+            throw Exception(e.localizedMessage)
         }
-
-        return listenerRegistration
-    }
+    }.flowOn(Dispatchers.IO)
 
     suspend fun getTransactionsWithFilter(
-        filteredTransaction: FilteredTransaction,
-        callback: (List<Transaction>) -> Unit
-    ): ListenerRegistration =
-        withContext(Dispatchers.IO) {
+        filteredTransaction: FilteredTransaction
+    ) = flow {
+        try {
+            val data = mutableListOf<Transaction>()
             val direction = filteredTransaction.queryDirection ?: Query.Direction.ASCENDING
             val merchantId = pref.getMerchantId().first()
             val start = filteredTransaction.startDate ?: 0
@@ -61,53 +59,37 @@ class HistoryDataSource @Inject constructor(
             val dayMidnight = 86399000L
             val end = filteredTransaction.endDate?.plus(dayMidnight) ?: Utils.getTodayTimestamp()
                 .plus(dayMidnight)
+
             val query = if (filteredTransaction.trxType != null) {
-                db.collection("transaction")
-                    .whereEqualTo("merchantId", merchantId)
+                db.collection("transaction").whereEqualTo("merchantId", merchantId)
                     .whereEqualTo("trxType", filteredTransaction.trxType)
                     .whereGreaterThanOrEqualTo("timestamp", start)
-                    .whereLessThanOrEqualTo("timestamp", end)
-                    .orderBy("timestamp", direction)
+                    .whereLessThanOrEqualTo("timestamp", end).orderBy("timestamp", direction)
             } else {
-                db.collection("transaction")
-                    .whereEqualTo("merchantId", merchantId)
+                db.collection("transaction").whereEqualTo("merchantId", merchantId)
                     .whereGreaterThanOrEqualTo("timestamp", start)
-                    .whereLessThanOrEqualTo("timestamp", end)
-                    .orderBy("timestamp", direction)
+                    .whereLessThanOrEqualTo("timestamp", end).orderBy("timestamp", direction)
             }
 
-            val listenerRegistration = query.addSnapshotListener { querySnapshot, _ ->
-                querySnapshot?.let {
-                    val data =
-                        mutableListOf<Transaction>()
+            query.get().addOnSuccessListener {
+                for (document in it.documents) {
+                    val amount = document.getLong("amount")
+                    val type = document.getString("trxType")
+                    val id = document.id
+                    val timestamp = document.getLong("timestamp")
 
-                    for (document in querySnapshot.documents) {
-                        val amount = document.getLong("amount")
-                        val type = document.getString("trxType")
-                        val id = document.id
-                        val timestamp = document.getLong("timestamp")
-
-                        if (amount != null) {
-                            data.add(
-                                Transaction(
-                                    amount, type, id, timestamp
-                                )
+                    if (amount != null) {
+                        data.add(
+                            Transaction(
+                                amount, type, id, timestamp
                             )
-                        }
+                        )
                     }
-                    callback(data)
                 }
-            }
-
-            return@withContext listenerRegistration
+            }.await()
+            emit(data)
+        } catch (e: Exception) {
+            throw Exception(e.localizedMessage)
         }
-
-    fun getTotalAmountTransactions(listTransactions: List<Transaction>): Long =
-        listTransactions.fold(0L) { totalAmount, transaction ->
-            if (transaction.trxType == "PAYMENT") {
-                totalAmount + transaction.amount
-            } else {
-                totalAmount - transaction.amount
-            }
-        }
+    }.flowOn(Dispatchers.IO)
 }

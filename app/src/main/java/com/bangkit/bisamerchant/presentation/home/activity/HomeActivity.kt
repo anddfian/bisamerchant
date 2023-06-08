@@ -219,6 +219,7 @@ class HomeActivity : AppCompatActivity() {
         if (_binding == null) {
             _merchantAccountBottomSheetBinding = null
         }
+        homeViewModel.listenerRegistration?.remove()
         bottomSheetDialog.dismiss()
     }
 

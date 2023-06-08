@@ -33,6 +33,7 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         initTopAppBar()
+        updateUI()
         setupClickListeners()
     }
 
@@ -60,11 +61,12 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.btn_logout -> {
                 MaterialAlertDialogBuilder(this)
-                    .setTitle("Yakin ingin keluar dari akun ini?")
-                    .setNegativeButton("Batal") { dialog, _ ->
+                    .setTitle(getString(R.string.logout_confirmation))
+                    .setMessage(getString(R.string.logout_confirmation_message))
+                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                         dialog.dismiss()
                     }
-                    .setPositiveButton("Keluar") { _, _ ->
+                    .setPositiveButton(getString(R.string.logout)) { _, _ ->
                         settingViewModel.logout()
                         val intent = Intent(this, LoginActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -74,6 +76,19 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
                     .show()
             }
         }
+    }
+
+    private fun updateUI() {
+        settingViewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+        settingViewModel.message.observe(this) {
+            Toast.makeText(this@SettingActivity, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

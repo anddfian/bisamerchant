@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetTotalAmountTransactions @Inject constructor(private val historyRepository: IHistoryRepository) {
 
-    fun execute(listTransactions: List<Transaction>) =
+    suspend fun execute(listTransactions: List<Transaction>) =
         historyRepository.getTotalAmountTransactions(listTransactions)
 }

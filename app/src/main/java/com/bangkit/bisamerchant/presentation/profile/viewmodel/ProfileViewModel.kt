@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.bangkit.bisamerchant.domain.profile.model.Merchant
 import com.bangkit.bisamerchant.domain.profile.usecase.GetMerchantActive
 import com.bangkit.bisamerchant.domain.profile.usecase.GetTotalTransactionsFromLastMonth
-import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -20,6 +19,9 @@ class ProfileViewModel @Inject constructor(
     private val getTotalTransactionsFromLastMonth: GetTotalTransactionsFromLastMonth,
 ) : ViewModel() {
 
+    private val _message = MutableLiveData<String>()
+    val message: LiveData<String> get() = _message
+
     private val _merchant = MutableLiveData<Merchant>()
     val merchant: LiveData<Merchant> get() = _merchant
 
@@ -29,13 +31,20 @@ class ProfileViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private var listenerRegistration: ListenerRegistration? = null
-
     fun getMerchantActive() {
         viewModelScope.launch {
-            listenerRegistration = getMerchantActive.execute { merchant ->
-                _merchant.value = merchant
-            }
+            getMerchantActive.execute()
+                .onStart {
+                    _isLoading.value = true
+                }
+                .catch { e ->
+                    _isLoading.value = false
+                    _message.value = e.message.toString()
+                }
+                .collect { result ->
+                    _isLoading.value = false
+                    _merchant.value = result
+                }
         }
     }
 
@@ -47,6 +56,7 @@ class ProfileViewModel @Inject constructor(
                 }
                 .catch { e ->
                     _totalAmountTransactionsFromLastMonth.value = 0L
+                    _message.value = e.message.toString()
                     _isLoading.value = false
                 }
                 .collect { result ->

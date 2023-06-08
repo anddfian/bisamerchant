@@ -13,14 +13,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val getMerchantActive: GetAuthInfo
+    private val getAuthInfo: GetAuthInfo,
 ): ViewModel() {
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
-    fun getMerchantActive() {
+    fun getAuthInfo() {
         viewModelScope.launch {
-            getMerchantActive.execute()
+            getAuthInfo.execute()
                 .onStart {}
                 .catch { e ->
                     _message.value = "${e.message}"

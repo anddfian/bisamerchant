@@ -42,7 +42,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pengaturan Merchant"
+                android:text="@string/merchant_setting"
                 style="@style/TextAppearance.Material3.BodyLarge"/>
 
             <ImageView
@@ -75,7 +75,7 @@
                 style="@style/TextAppearance.Material3.BodyLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Syarat dan Ketentuan" />
+                android:text="@string/terms_and_conditions" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -103,7 +103,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kebijakan Privasi"
+                android:text="@string/privacy_policy"
                 style="@style/TextAppearance.Material3.BodyLarge"/>
 
             <ImageView
@@ -131,7 +131,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Frequently Asked Question"
+                android:text="@string/frequently_asked_question"
                 style="@style/TextAppearance.Material3.BodyLarge"/>
 
             <ImageView
@@ -159,7 +159,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Customer Care"
+                android:text="@string/customer_care"
                 style="@style/TextAppearance.Material3.BodyLarge"/>
 
             <ImageView
@@ -193,4 +193,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:elevation="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

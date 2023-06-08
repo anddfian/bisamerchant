@@ -29,12 +29,10 @@ class LoginViewModel @Inject constructor(
             login.execute(email, password)
                 .onStart {
                     _isLoading.value = true
-                }
-                .catch { e ->
-                    _message.value = "${e.message}"
+                }.catch { e ->
+                    _message.value = e.message.toString()
                     _isLoading.value = false
-                }
-                .collect { result ->
+                }.collect { result ->
                     _isLoading.value = false
                     _message.value = result
                 }
@@ -43,16 +41,13 @@ class LoginViewModel @Inject constructor(
 
     fun resetPassword(email: String) {
         viewModelScope.launch {
-            resetPassword.execute(email)
-                .onStart {
+            resetPassword.execute(email).onStart {
                     _isLoading.value = true
-                }
-                .catch { e ->
-                    _message.value = "${e.message}"
+                }.catch { e ->
+                    _message.value = e.message.toString()
                     _isLoading.value = false
                     _message.value = null
-                }
-                .collect { result ->
+                }.collect { result ->
                     _isLoading.value = false
                     _message.value = result
                 }

@@ -10,8 +10,8 @@
         android:id="@+id/top_app_bar_container"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:backgroundTint="?attr/colorPrimary"
         android:layout_alignParentTop="true"
+        android:backgroundTint="?attr/colorPrimary"
         app:paddingEnd="16dp">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -23,14 +23,10 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/top_app_bar_container">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_below="@id/top_app_bar_container">
 
             <RelativeLayout
                 android:id="@+id/transaction_toolbar"
@@ -73,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_daily_transactions"
-                    android:text="@string/semua_transaksi"
+                    android:text="@string/all_transactions"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorOnPrimary" />
 
@@ -105,24 +101,27 @@
                 android:id="@+id/rv_transactions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/transaction_toolbar"
+                android:layout_below="@id/transaction_toolbar"
                 tools:listitem="@layout/transaction_card" />
 
             <TextView
                 android:id="@+id/tv_no_transactions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
                 android:gravity="center"
                 android:text="@string/tidak_ada_transaksi"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/transaction_toolbar" />
+                tools:visibility="visible" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="2dp"
+                android:visibility="gone"
+                android:layout_centerInParent="true"
+                tools:visibility="visible" />
+        </RelativeLayout>
 </RelativeLayout>

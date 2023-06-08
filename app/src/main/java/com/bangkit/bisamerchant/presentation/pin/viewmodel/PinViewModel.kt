@@ -31,7 +31,7 @@ class PinViewModel @Inject constructor(
                     _isLoading.value = true
                 }
                 .catch { e ->
-                    _message.value = "Terjadi kesalahan: ${e.message}"
+                    _message.value = e.message.toString()
                     _isLoading.value = false
                 }
                 .collect { result ->
