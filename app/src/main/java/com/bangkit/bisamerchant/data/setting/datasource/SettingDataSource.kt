@@ -1,14 +1,17 @@
 package com.bangkit.bisamerchant.data.setting.datasource
 
 import com.bangkit.bisamerchant.data.utils.SharedPreferences
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class SettingDataSource @Inject constructor(
@@ -18,9 +21,9 @@ class SettingDataSource @Inject constructor(
 ) {
     suspend fun logout() = flow {
         try {
-            pref.delete()
-            auth.signOut()
             deleteTokenId()
+            auth.signOut()
+            pref.delete()
             emit("You have been logged out successfully")
         } catch (e: Exception) {
             throw Exception(e.localizedMessage)
@@ -28,25 +31,36 @@ class SettingDataSource @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     private suspend fun deleteTokenId() {
-        try {
-            val querySnapshot = db.collection("merchant")
-                .whereEqualTo("email", auth.currentUser?.email)
-                .get()
-                .await()
+        return suspendCoroutine { continuation ->
+            try {
+                db.collection("merchant")
+                    .whereEqualTo("email", auth.currentUser?.email)
+                    .limit(7)
+                    .get()
+                    .addOnSuccessListener { snapshot ->
+                        val documents = snapshot.documents
 
-            for (documentSnapshot in querySnapshot.documents) {
-                val documentId = documentSnapshot.id
-                try {
-                    db.collection("merchant")
-                        .document(documentId)
-                        .update("tokenId", null)
-                        .await()
-                } catch (e: Exception) {
-                    e.localizedMessage
-                }
+                        val updateTasks = documents.map { document ->
+                            db.collection("merchant")
+                                .document(document.id)
+                                .update("tokenId", null)
+                        }
+
+                        // Wait for all update tasks to complete
+                        Tasks.whenAllComplete(updateTasks)
+                            .addOnSuccessListener {
+                                continuation.resume(Unit)
+                            }
+                            .addOnFailureListener { exception ->
+                                continuation.resumeWithException(exception)
+                            }
+                    }
+                    .addOnFailureListener { exception ->
+                        continuation.resumeWithException(exception)
+                    }
+            } catch (e: Exception) {
+                continuation.resumeWithException(e)
             }
-        } catch (e: Exception) {
-            e.localizedMessage
         }
     }
 }

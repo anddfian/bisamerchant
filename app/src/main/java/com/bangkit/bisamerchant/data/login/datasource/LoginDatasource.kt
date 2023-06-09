@@ -33,7 +33,7 @@ class LoginDatasource @Inject constructor(
         } catch (e: Exception) {
             throw Exception(e.localizedMessage ?: "Failed to login")
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     suspend fun postRegistrationToken(email: String) {
         try {
