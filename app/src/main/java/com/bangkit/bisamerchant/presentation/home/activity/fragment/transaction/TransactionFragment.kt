@@ -33,16 +33,14 @@ class TransactionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateUI(homeViewModel)
+        updateUI()
     }
 
-    private fun updateUI(
-        homeViewModel: HomeViewModel
-    ) {
-        homeViewModel.getTransactionsToday()
+    private fun updateUI() {
         binding.tvDate.text = Utils.getCurrentDate()
 
         lifecycleScope.launch {
+            homeViewModel.getTransactionsToday()
             homeViewModel.totalAmountTransactionToday.observe(viewLifecycleOwner) { amount ->
                 binding.tvAmountDailyTransactions.text = Utils.currencyFormat(amount)
             }
