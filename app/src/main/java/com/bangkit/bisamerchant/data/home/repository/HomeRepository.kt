@@ -69,15 +69,15 @@ class HomeRepository @Inject constructor(
                             emit(result)
                         }
                 } else {
-                    emit("Saldo tidak cukup")
+                    emit("Insufficient money")
                 }
 
             } else {
-                emit("User tidak ditemukan")
+                emit("User not found")
             }
 
         }.catch { e ->
-            emit("Terjadi kesalahan: ${e.message}")
+            emit(e.message.toString())
         }.flowOn(Dispatchers.IO)
 
     override suspend fun getTransactionsToday(callback: (List<Transaction>) -> Unit): ListenerRegistration =
@@ -96,6 +96,6 @@ class HomeRepository @Inject constructor(
     }
 
     companion object {
-        private const val AMOUNT_VALIDATED = "Silakan masukkan pin"
+        private const val AMOUNT_VALIDATED = "Enter PIN"
     }
 }

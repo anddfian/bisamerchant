@@ -194,7 +194,7 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
-        private const val AMOUNT_VALIDATED = "Enter Pin"
+        private const val AMOUNT_VALIDATED = "Enter PIN"
     }
 
 }
