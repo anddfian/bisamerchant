@@ -149,12 +149,12 @@ class HomeDataSource @Inject constructor(
             }
 
             transactionDocument.document(newTransactionId).set(transaction).await()
-            emit("Transaksi berhasil")
+            emit("The transaction was successful")
         } catch (e: Exception) {
-            emit(e.message ?: "Terjadi kesalahan saat menambahkan transaksi")
+            emit(e.message ?: "An error occurred while adding the transaction")
         }
     }.catch { e ->
-        emit("Terjadi kesalahan: ${e.message}")
+        emit(e.message.toString())
     }.flowOn(Dispatchers.IO)
 
     suspend fun getPayerBalance(payerId: String): Long? = withContext(Dispatchers.IO) {
@@ -236,15 +236,15 @@ class HomeDataSource @Inject constructor(
     suspend fun validateWithdrawAmount(amount: Long): String {
         val (totalAmountTransactionLastMonthUntilToday, totalWithdrawMoneyThisMonth) = getCountAndAmountTransactionsLastMonth()
         when {
-            totalWithdrawMoneyThisMonth > 3 && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
+            totalWithdrawMoneyThisMonth >= 3 && totalAmountTransactionLastMonthUntilToday <= 5000000L -> {
                 return FAILED_WITHDRAW_COUNT_MAX_BRONZE_LEVEL
             }
 
-            totalWithdrawMoneyThisMonth > 10 && totalAmountTransactionLastMonthUntilToday <= 170000000L -> {
+            totalWithdrawMoneyThisMonth >= 10 && totalAmountTransactionLastMonthUntilToday <= 170000000L -> {
                 return FAILED_WITHDRAW_COUNT_MAX_SILVER_LEVEL
             }
 
-            totalWithdrawMoneyThisMonth > 25 -> {
+            totalWithdrawMoneyThisMonth >= 25 -> {
                 return FAILED_WITHDRAW_COUNT_MAX_GOLD_LEVEL
             }
 
@@ -330,17 +330,17 @@ class HomeDataSource @Inject constructor(
 
     companion object {
         private const val FAILED_WITHDRAW_MAX_BRONZE_LEVEL =
-            "Maksimal penarikan di level Anda adalah 5 juta"
+            "The maximum withdrawal at your level is 5 million"
         private const val FAILED_WITHDRAW_COUNT_MAX_BRONZE_LEVEL =
-            "Anda hanya dapat menarik dana sebanyak 3 kali dalam satu bulan"
+            "You can only withdraw funds up to 3 times in one month"
         private const val FAILED_WITHDRAW_MAX_SILVER_LEVEL =
-            "Maksimal penarikan di level Anda adalah 170 juta"
+            "The maximum withdrawal at your level is 170 million"
         private const val FAILED_WITHDRAW_COUNT_MAX_SILVER_LEVEL =
-            "Anda hanya dapat menarik dana sebanyak 10 kali dalam satu bulan"
+            "You can only withdraw funds up to 10 times in one month"
         private const val FAILED_WITHDRAW_MAX_GOLD_LEVEL =
-            "Untuk penarikan > 200 juta hubungi Customer Service"
+            "For withdrawals > 200 million, please contact Customer Service"
         private const val FAILED_WITHDRAW_COUNT_MAX_GOLD_LEVEL =
-            "Anda hanya dapat menarik dana sebanyak 25 kali dalam satu bulan"
-        private const val AMOUNT_VALIDATED = "Silakan masukkan pin"
+            "You can only withdraw funds up to 25 times in one month"
+        private const val AMOUNT_VALIDATED = "Enter PIN"
     }
 }

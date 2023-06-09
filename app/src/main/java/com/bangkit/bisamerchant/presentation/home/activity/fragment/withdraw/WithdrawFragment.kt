@@ -178,8 +178,6 @@ class WithdrawFragment : Fragment() {
                             ).show()
                         } else {
                             transactionConfirmation(amount.toLong(), bank, number.toLong())
-
-
                         }
                     }
                 }

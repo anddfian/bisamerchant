@@ -27,7 +27,7 @@ class PinDataSource @Inject constructor(
                 val decryptedPin = AESUtil.decrypt(pin.toString())
                 decryptedPin
             } catch (e: Exception) {
-                "PIN salah"
+                e.localizedMessage ?: "Wrong PIN"
             }
         }
 
