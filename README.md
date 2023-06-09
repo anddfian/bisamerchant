@@ -63,4 +63,4 @@ Perform various relevant actions within the application to check its features an
 
 <img src="https://i.imgur.com/vz8DAIx.jpg" height=500><img src="https://i.imgur.com/nEZohvi.jpg" height=500><img src="https://i.imgur.com/mwsWLay.jpg" height=500>  
 <img src="https://i.imgur.com/OsIonGP.jpg" height=500><img src="https://i.imgur.com/1sShzQc.jpg" height=500><img src="https://i.imgur.com/RRsvRla.jpg" height=500>  
-<img src="https://i.imgur.com/c2PS635.jpg" height=500><img src="https://i.imgur.com/kkchH6k.jpg" height=500><
+<img src="https://i.imgur.com/c2PS635.jpg" height=500><img src="https://i.imgur.com/kkchH6k.jpg" height=500>
