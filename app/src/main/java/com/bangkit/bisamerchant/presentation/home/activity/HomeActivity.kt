@@ -109,7 +109,6 @@ class HomeActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
             launch {
                 homeViewModel.getMerchants()
@@ -152,6 +151,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.tvMerchantName.setOnClickListener {
+            homeViewModel.getMerchants()
+            homeViewModel.merchantsList.observe(this@HomeActivity) { merchantList ->
+                if (merchantList.isNotEmpty()) {
+                    setTransactionsData(merchantList)
+                }
+            }
             showRecyclerMerchants()
             bottomSheetDialog.show()
         }
