@@ -11,7 +11,7 @@ Team Member:
 Language: Kotlin.  
 IDE: Android Studio.  
 Distribution: Android Package Kit.  
-Libraries: Android Jetpack, Firebase Firestore, Glide, Zxing.  
+Libraries: Android Jetpack, Firebase Firestore, Glide, Zxing, Hilt, Dagger.  
 Platform: Android.  
 API: Firebase Cloud API.  
 
