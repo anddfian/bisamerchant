@@ -1,21 +1,19 @@
 package com.bangkit.bisamerchant.presentation.home.activity.fragment.transaction
 
-import android.app.PendingIntent
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bangkit.bisamerchant.domain.home.model.Transaction
-import com.bangkit.bisamerchant.presentation.utils.Utils
 import com.bangkit.bisamerchant.databinding.FragmentTransactionBinding
+import com.bangkit.bisamerchant.domain.home.model.Transaction
 import com.bangkit.bisamerchant.presentation.home.viewmodel.HomeViewModel
-import com.bangkit.bisamerchant.presentation.invoice.activity.DetailTransactionActivity
+import com.bangkit.bisamerchant.presentation.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -58,7 +56,18 @@ class TransactionFragment : Fragment() {
             }
             showRecyclerFollows()
         }
+        homeViewModel.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
+        }
+        homeViewModel.message.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        }
     }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
 
     private fun showRecyclerFollows() {
         val layoutManager = LinearLayoutManager(requireContext())

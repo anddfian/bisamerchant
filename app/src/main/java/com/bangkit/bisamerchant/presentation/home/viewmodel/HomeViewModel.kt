@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.bangkit.bisamerchant.domain.home.model.DetailTransaction
 import com.bangkit.bisamerchant.domain.home.model.Merchant
 import com.bangkit.bisamerchant.domain.home.model.Transaction
-import com.bangkit.bisamerchant.domain.home.usecase.DeleteMerchant
 import com.bangkit.bisamerchant.domain.home.usecase.GetHideAmount
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantActive
 import com.bangkit.bisamerchant.domain.home.usecase.GetMerchantId
@@ -29,7 +28,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val deleteMerchant: DeleteMerchant,
     private val getHideAmount: GetHideAmount,
     private val getMerchantActive: GetMerchantActive,
     private val getMerchantId: GetMerchantId,
@@ -69,7 +67,7 @@ class HomeViewModel @Inject constructor(
     private val _totalAmountTransactionToday = MutableLiveData<Long>()
     val totalAmountTransactionToday: LiveData<Long> get() = _totalAmountTransactionToday
 
-    private var listenerRegistration: ListenerRegistration? = null
+    var listenerRegistration: ListenerRegistration? = null
 
     fun getTransactionsToday() {
         viewModelScope.launch {
@@ -77,6 +75,14 @@ class HomeViewModel @Inject constructor(
                 _transactions.value = transactions
                 _totalAmountTransactionToday.value =
                     getTotalAmountTransactions.execute(transactions)
+            }
+        }
+    }
+
+    fun getMerchantActive() {
+        viewModelScope.launch {
+            listenerRegistration = getMerchantActive.execute { merchant ->
+                _merchant.value = merchant
             }
         }
     }
@@ -90,7 +96,7 @@ class HomeViewModel @Inject constructor(
                     _isLoading.value = true
                 }
                 .catch { e ->
-                    _message.value = "Terjadi kesalahan: ${e.message}"
+                    _message.value = e.message.toString()
                     _isLoading.value = false
                 }
                 .collect { result ->
@@ -109,7 +115,7 @@ class HomeViewModel @Inject constructor(
                     _isLoading.value = true
                 }
                 .catch { e ->
-                    _message.value = "Terjadi kesalahan: ${e.message}"
+                    _message.value = e.message.toString()
                     _isLoading.value = false
                 }
                 .collect { result ->
@@ -143,31 +149,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getMerchantActive() {
-        viewModelScope.launch {
-            listenerRegistration = getMerchantActive.execute { merchant ->
-                _merchant.value = merchant
-            }
-        }
-    }
-
     fun getMerchants() {
         viewModelScope.launch {
-            listenerRegistration = getMerchants.execute { merchants ->
-                _merchantsList.value = merchants
-            }
+            getMerchants.execute()
+                .onStart {
+                    _isLoading.value = true
+                }
+                .catch { e ->
+                    _isLoading.value = false
+                }
+                .collect { result ->
+                    _isLoading.value = false
+                    _merchantsList.value = result
+                }
         }
     }
 
     fun updateMerchantStatus(id: String?) {
         viewModelScope.launch {
             updateMerchantStatus.execute(id)
-        }
-    }
-
-    fun deleteMerchant() {
-        viewModelScope.launch {
-            deleteMerchant.execute()
         }
     }
 
@@ -188,8 +188,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        listenerRegistration?.remove()
+    }
+
     companion object {
-        private const val AMOUNT_VALIDATED = "Silakan masukkan pin"
+        private const val AMOUNT_VALIDATED = "Enter Pin"
     }
 
 }

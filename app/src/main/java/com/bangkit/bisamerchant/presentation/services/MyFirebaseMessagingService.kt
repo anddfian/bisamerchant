@@ -42,7 +42,6 @@ class MyFirebaseMessagingService :
             Utils.pushNotification(
                 this,
                 contentIntent,
-                resources,
                 MessageNotif(title, body, null)
             )
         }

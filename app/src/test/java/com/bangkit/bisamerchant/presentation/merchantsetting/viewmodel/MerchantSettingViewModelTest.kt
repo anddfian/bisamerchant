@@ -1,4 +1,4 @@
-package com.bangkit.bisamerchant
+package com.bangkit.bisamerchant.presentation.merchantsetting.viewmodel
 
 import android.net.Uri
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -6,33 +6,44 @@ import androidx.lifecycle.Observer
 import com.bangkit.bisamerchant.domain.merchantsetting.model.Merchant
 import com.bangkit.bisamerchant.domain.merchantsetting.usecase.GetMerchantActive
 import com.bangkit.bisamerchant.domain.merchantsetting.usecase.UpdateMerchantInfo
-import com.bangkit.bisamerchant.presentation.merchantsetting.viewmodel.MerchantSettingViewModel
-import io.mockk.*
+import io.mockk.confirmVerified
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class MerchantSettingViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testScope = TestCoroutineScope(testDispatcher)
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     private lateinit var viewModel: MerchantSettingViewModel
+
+    @Mock
     private lateinit var getMerchantActive: GetMerchantActive
+
+    @Mock
     private lateinit var updateMerchantInfo: UpdateMerchantInfo
+
     private lateinit var merchantObserver: Observer<Merchant>
     private lateinit var messageObserver: Observer<String>
     private lateinit var isLoadingObserver: Observer<Boolean>
@@ -40,12 +51,13 @@ class MerchantSettingViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        getMerchantActive = mockk(relaxed = true)
-        updateMerchantInfo = mockk(relaxed = true)
+
         merchantObserver = mockk(relaxed = true)
         messageObserver = mockk(relaxed = true)
         isLoadingObserver = mockk(relaxed = true)
+
         viewModel = MerchantSettingViewModel(getMerchantActive, updateMerchantInfo)
+
         viewModel.merchant.observeForever(merchantObserver)
         viewModel.message.observeForever(messageObserver)
         viewModel.isLoading.observeForever(isLoadingObserver)
@@ -54,46 +66,50 @@ class MerchantSettingViewModelTest {
     @After
     fun cleanup() {
         Dispatchers.resetMain()
-        testScope.cleanupTestCoroutines()
+
         viewModel.merchant.removeObserver(merchantObserver)
         viewModel.message.removeObserver(messageObserver)
         viewModel.isLoading.removeObserver(isLoadingObserver)
     }
 
     @Test
-    fun getMerchantActive() =
-        testScope.runBlockingTest {
-            // Given
-            val mockMerchant = mockk<Merchant>()
+    fun `getMerchantActive should return data merchant active when success`() {
 
-            coEvery { getMerchantActive.execute(any()) } answers {
-                val merchantCallback = arg<(Merchant) -> Unit>(0)
-                merchantCallback.invoke(mockMerchant)
-                mockk(relaxed = true)
-            }
+        val expectedResult = Merchant(
+            merchantLogo = "https://image",
+            merchantAddress = "Merchant Location",
+            merchantType = "Merchant Type",
+            merchantName = "Merchant Name",
+        )
 
-            // When
+        runTest {
+            `when`(getMerchantActive.execute()).thenReturn(flow { emit(expectedResult) })
+
             viewModel.getMerchantActive()
 
-            // Then
-            verify { merchantObserver.onChanged(mockMerchant) }
+            verify { isLoadingObserver.onChanged(true) }
+            verify { isLoadingObserver.onChanged(false) }
 
-            confirmVerified(merchantObserver)
+            confirmVerified(isLoadingObserver)
+            assertNotNull(viewModel.merchant.value)
+            assertEquals(viewModel.merchant.value, expectedResult)
         }
+    }
 
     @Test
-    fun updateMerchantInfo() =
-        testScope.runBlockingTest {
-            // Given
-            val name = "Merchant Name"
-            val address = "Merchant Address"
-            val type = "Merchant Type"
-            val newPhoto: Uri? = null
-            val successMessage = "Merchant info updated successfully"
+    fun `updateMerchantInfo should return success message when success`() {
 
-            coEvery {
-                updateMerchantInfo.execute(name, address, type, newPhoto)
-            } returns flowOf(successMessage)
+        // Given
+        val name = "Merchant Name"
+        val address = "Merchant Address"
+        val type = "Merchant Type"
+        val newPhoto: Uri? = null
+
+        val expectedResponse = "Merchant info updated successfully"
+
+        runTest {
+
+            `when`(updateMerchantInfo.execute(name, address, type, newPhoto)).thenReturn(flow { emit(expectedResponse) })
 
             // When
             viewModel.updateMerchantInfo(name, address, type, newPhoto)
@@ -101,8 +117,11 @@ class MerchantSettingViewModelTest {
             // Then
             verify { isLoadingObserver.onChanged(true) }
             verify { isLoadingObserver.onChanged(false) }
-            verify { messageObserver.onChanged(successMessage) }
+            verify { messageObserver.onChanged(expectedResponse) }
 
             confirmVerified(isLoadingObserver, messageObserver)
+            assertNotNull(viewModel.message.value)
+            assertEquals(viewModel.message.value, expectedResponse)
         }
+    }
 }

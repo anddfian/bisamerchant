@@ -46,7 +46,6 @@ class MerchantRegisterDataSource @Inject constructor(
             "merchantType" to type,
             "merchantActive" to true,
             "balance" to 0,
-            "transactionCount" to 0
         )
 
         try {

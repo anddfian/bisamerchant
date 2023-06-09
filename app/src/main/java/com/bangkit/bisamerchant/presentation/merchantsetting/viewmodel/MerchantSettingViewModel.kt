@@ -30,13 +30,21 @@ class MerchantSettingViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private var listenerRegistration: ListenerRegistration? = null
-
     fun getMerchantActive() {
         viewModelScope.launch {
-            listenerRegistration = getMerchantActive.execute { merchant ->
-                _merchant.value = merchant
-            }
+            getMerchantActive.execute()
+                .onStart {
+                    _isLoading.value = true
+                }
+                .catch { e ->
+                    _isLoading.value = false
+                    _message.value = e.message.toString()
+                }
+                .collect { result ->
+                    _isLoading.value = false
+                    _merchant.value = result
+                }
+
         }
     }
 
@@ -47,7 +55,8 @@ class MerchantSettingViewModel @Inject constructor(
                     _isLoading.value = true
                 }
                 .catch { e ->
-                    _message.value = "Terjadi kesalahan: ${e.message}"
+                    _isLoading.value = false
+                    _message.value = e.message.toString()
                 }
                 .collect { result ->
                     _isLoading.value = false

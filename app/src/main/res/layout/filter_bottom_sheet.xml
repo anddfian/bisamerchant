@@ -116,19 +116,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/semua_transaksi" />
+            android:text="@string/all_transactions" />
 
         <RadioButton
             android:id="@+id/rb_transaction_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/transaksi_masuk" />
+            android:text="@string/transaction_in" />
 
         <RadioButton
             android:id="@+id/rb_transaction_out"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/transaksi_keluar" />
+            android:text="@string/transaction_out" />
     </RadioGroup>
 
     <Button

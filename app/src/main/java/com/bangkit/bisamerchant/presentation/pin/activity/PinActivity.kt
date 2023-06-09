@@ -131,7 +131,6 @@ class PinActivity : AppCompatActivity(), TextWatcher {
 
         if (pinEntered.isNotEmpty()) {
             val pin = pinEntered.toString()
-            val hasPinDigits = pinDigits.any { it.isNotEmpty() }
             if (pin.length == 6) {
                 pinViewModel.validateOwnerPin(pin.toInt())
                 pinViewModel.isPinValid.observe(this@PinActivity) {
@@ -144,7 +143,7 @@ class PinActivity : AppCompatActivity(), TextWatcher {
                         binding.digit6.setText("")
                         Toast.makeText(
                             this@PinActivity,
-                            "PIN salah, silakan ulangi",
+                            "Incorrect PIN, Please try again.",
                             Toast.LENGTH_SHORT
                         ).show()
                     } else if (it == true) {

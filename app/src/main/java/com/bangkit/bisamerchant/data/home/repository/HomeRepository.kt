@@ -21,8 +21,8 @@ class HomeRepository @Inject constructor(
     override suspend fun getMerchantActive(callback: (Merchant) -> Unit) =
         homeDataSource.getMerchantActive(callback)
 
-    override suspend fun getMerchants(callback: (List<Merchant>) -> Unit) =
-        homeDataSource.getMerchants(callback)
+    override suspend fun getMerchants() =
+        homeDataSource.getMerchants()
 
     override suspend fun updateMerchantStatus(id: String?) =
         homeDataSource.updateMerchantStatus(id)
@@ -38,10 +38,6 @@ class HomeRepository @Inject constructor(
 
     override fun getTotalAmountTransactions(listTransactions: List<Transaction>): Long =
         homeDataSource.getTotalAmountTransactions(listTransactions)
-
-    override suspend fun deleteMerchant() =
-        homeDataSource.deleteMerchant()
-
 
     override suspend fun postTransaction(detailTransaction: DetailTransaction): Flow<String> =
         flow {

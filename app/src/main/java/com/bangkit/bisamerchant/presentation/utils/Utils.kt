@@ -4,9 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.media.RingtoneManager
 import android.net.Uri
@@ -76,7 +74,6 @@ object Utils {
     fun pushNotification(
         context: Context,
         contentIntent: PendingIntent,
-        resources: Resources,
         message: MessageNotif,
         channelId: String = CHANNEL_ID,
         notificationId: Int = NOTIFICATION_ID,
@@ -86,11 +83,10 @@ object Utils {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val mBuilder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_logo_colorized)
+            .setSmallIcon(R.drawable.ic_notification_24)
             .setContentTitle(message.title)
             .setContentText(message.body)
             .setSubText(message.subText)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_colorized))
             .setStyle(NotificationCompat.BigTextStyle())
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)

@@ -1,35 +1,42 @@
-package com.bangkit.bisamerchant
+package com.bangkit.bisamerchant.presentation.merchantregister.viewmodel
 
 import android.net.Uri
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.bangkit.bisamerchant.domain.merchantregister.usecase.RegisterMerchant
-import com.bangkit.bisamerchant.presentation.merchantregister.viewmodel.MerchantRegisterViewModel
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class MerchantRegisterViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testScope = TestCoroutineScope(testDispatcher)
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     private lateinit var viewModel: MerchantRegisterViewModel
+
+    @Mock
     private lateinit var registerMerchant: RegisterMerchant
+
     private lateinit var messageObserver: Observer<String>
     private lateinit var isLoadingObserver: Observer<Boolean>
     private lateinit var isRegisterSuccessObserver: Observer<Boolean>
@@ -37,11 +44,13 @@ class MerchantRegisterViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        registerMerchant = mockk(relaxed = true)
+
         messageObserver = mockk(relaxed = true)
         isLoadingObserver = mockk(relaxed = true)
         isRegisterSuccessObserver = mockk(relaxed = true)
+
         viewModel = MerchantRegisterViewModel(registerMerchant)
+
         viewModel.message.observeForever(messageObserver)
         viewModel.isLoading.observeForever(isLoadingObserver)
         viewModel.isRegisterSuccess.observeForever(isRegisterSuccessObserver)
@@ -50,32 +59,43 @@ class MerchantRegisterViewModelTest {
     @After
     fun cleanup() {
         Dispatchers.resetMain()
-        testScope.cleanupTestCoroutines()
         viewModel.message.removeObserver(messageObserver)
         viewModel.isLoading.removeObserver(isLoadingObserver)
         viewModel.isRegisterSuccess.removeObserver(isRegisterSuccessObserver)
     }
 
     @Test
-    fun registerMerchant() = testScope.runBlockingTest {
+    fun `registerMerchant should update isRegisterSuccess and emit expected response when registration is successful`() {
+
         // Given
         val name = "Merchant Name"
         val address = "Merchant Address"
         val type = "Merchant Type"
         val photo: Uri = mockk()
-        val successMessage = "Register merchant successful"
 
-        coEvery { registerMerchant.execute(name, address, type, photo) } returns flowOf(successMessage)
+        val expectedResponse = "Register merchant successful"
 
-        // When
-        viewModel.registerMerchant(name, address, type, photo)
+        runTest {
+            // When
+            `when`(registerMerchant.execute(name, address, type, photo)).thenReturn(flow { emit(expectedResponse) })
+            viewModel.registerMerchant(name, address, type, photo)
 
-        // Then
-        verify { isLoadingObserver.onChanged(true) }
-        verify { isLoadingObserver.onChanged(false) }
-        verify { messageObserver.onChanged(successMessage) }
-        verify { isRegisterSuccessObserver.onChanged(true) }
+            // Then
+            verify { isLoadingObserver.onChanged(true) }
+            verify { isLoadingObserver.onChanged(false) }
+            verify { isRegisterSuccessObserver.onChanged(true) }
+            verify { messageObserver.onChanged(expectedResponse) }
 
-        confirmVerified(isLoadingObserver, messageObserver, isRegisterSuccessObserver)
+            confirmVerified(
+                messageObserver,
+                isLoadingObserver,
+                isRegisterSuccessObserver
+            )
+
+            assertNotNull(viewModel.message.value)
+            Assert.assertSame(viewModel.message.value, expectedResponse)
+            assertNotNull(viewModel.isRegisterSuccess.value)
+            Assert.assertSame(viewModel.isRegisterSuccess.value, true)
+        }
     }
 }
