@@ -116,7 +116,6 @@ class HomeDataSource @Inject constructor(
 
     suspend fun postTransaction(
         detailTransaction: DetailTransaction,
-        newBalance: Long,
         fee: Long,
     ): Flow<String> = flow {
         val transactionDocument = db.collection("transaction")
@@ -142,10 +141,6 @@ class HomeDataSource @Inject constructor(
                     "timestamp" to detailTransaction.timestamp,
                     "trxType" to detailTransaction.trxType
                 )
-            }
-            if (detailTransaction.trxType == "MERCHANT_WITHDRAW") {
-                val merchant = merchantDocument.document(getMerchantId())
-                merchant.update("balance", newBalance).await()
             }
 
             transactionDocument.document(newTransactionId).set(transaction).await()
