@@ -16,8 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bangkit.bisamerchant.R
 import com.bangkit.bisamerchant.databinding.ActivityMerchantRegisterBinding
-import com.bangkit.bisamerchant.presentation.home.activity.HomeActivity
 import com.bangkit.bisamerchant.presentation.merchantregister.viewmodel.MerchantRegisterViewModel
+import com.bangkit.bisamerchant.presentation.splashscreen.activity.SplashScreenActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import dagger.hilt.android.AndroidEntryPoint
@@ -169,7 +169,7 @@ class MerchantRegisterActivity : AppCompatActivity(), View.OnClickListener {
             if (isSuccess) {
                 val intent = Intent(
                     this@MerchantRegisterActivity,
-                    HomeActivity::class.java
+                    SplashScreenActivity::class.java
                 )
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)

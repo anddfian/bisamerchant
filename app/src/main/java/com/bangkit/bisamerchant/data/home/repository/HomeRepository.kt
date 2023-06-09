@@ -63,8 +63,7 @@ class HomeRepository @Inject constructor(
                         fee = homeDataSource.getTransactionFee(detailTransaction.amount)
                     }
 
-                    val newBalance = currentBalance - detailTransaction.amount - fee
-                    homeDataSource.postTransaction(detailTransaction, newBalance, fee)
+                    homeDataSource.postTransaction(detailTransaction, fee)
                         .collect { result ->
                             emit(result)
                         }
